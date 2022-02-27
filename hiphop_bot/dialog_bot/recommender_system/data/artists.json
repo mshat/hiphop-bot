@@ -1,0 +1,348 @@
+{
+    "emo": {
+        "lizer": {
+            "year_of_birth": 1998,
+            "group_members_num": 1,
+            "theme": "feelings",
+            "is_male": true
+        },
+        "мукка": {
+            "year_of_birth": 1994,
+            "group_members_num": 1,
+            "theme": "feelings",
+            "is_male": true
+        },
+		"джизус": {
+            "year_of_birth": 1997,
+            "group_members_num": 1,
+            "theme": "feelings",
+            "is_male": true
+        }
+    },
+    "raprock": {
+        "25/17": {
+            "year_of_birth": 1987,
+            "group_members_num": 2,
+            "theme": "art",
+            "is_male": true
+        },
+        "anacondaz": {
+            "year_of_birth": 1987,
+            "group_members_num": 5,
+            "theme": "fun",
+            "is_male": true
+        },
+        "скриптонит": {
+            "year_of_birth": 1990,
+            "group_members_num": 4,
+            "theme": "soft-gangsta",
+            "is_male": true
+        },
+        "noize mc": {
+            "year_of_birth": 1985,
+            "group_members_num": 4,
+            "theme": "conscious",
+            "is_male": true
+        },
+        "loqiemean": {
+            "year_of_birth": 1993,
+            "group_members_num": 4,
+            "theme": "art",
+            "is_male": true
+        }
+    },
+    "cloud": {
+        "pharaoh": {
+            "year_of_birth": 1996,
+            "group_members_num": 1,
+            "theme": "soft-gangsta",
+            "is_male": true
+        },
+        "boulevard depo": {
+            "year_of_birth": 1991,
+            "group_members_num": 1,
+            "theme": "fun",
+            "is_male": true
+        },
+        "mnogoznaal": {
+            "year_of_birth": 1993,
+            "group_members_num": 1,
+            "theme": "art",
+            "is_male": true
+        },
+        "kizaru": {
+            "year_of_birth": 1989,
+            "group_members_num": 1,
+            "theme": "soft-gangsta",
+            "is_male": true
+        }
+    },
+    "electronicvocal": {
+        "лсп": {
+            "year_of_birth": 1989,
+            "group_members_num": 3,
+            "theme": "art",
+            "is_male": true
+        },
+        "atl": {
+            "year_of_birth": 1989,
+            "group_members_num": 3,
+            "theme": "fun",
+            "is_male": true
+        },
+        "макс корж": {
+            "year_of_birth": 1988,
+            "group_members_num": 1,
+            "theme": "fun",
+            "is_male": true
+        },
+        "slava marlow": {
+            "year_of_birth": 1999,
+            "group_members_num": 1,
+            "theme": "fun",
+            "is_male": true
+        }
+    },
+    "grime": {
+        "oxxxymiron": {
+            "year_of_birth": 1985,
+            "group_members_num": 1,
+            "theme": "conscious",
+            "is_male": true
+        },
+        "соня мармеладова": {
+            "year_of_birth": 1990,
+            "group_members_num": 1,
+            "theme": "soft-gangsta",
+            "is_male": true
+        },
+        "alyona alyona": {
+            "year_of_birth": 1991,
+            "group_members_num": 1,
+            "theme": "soft-gangsta",
+            "is_male": false
+        }
+    },
+    "mumble": {
+        "gone.fludd": {
+            "year_of_birth": 1994,
+            "group_members_num": 1,
+            "theme": "fun",
+            "is_male": true
+        },
+        "morgenshtern": {
+            "year_of_birth": 1998,
+            "group_members_num": 1,
+            "theme": "fun",
+            "is_male": true
+        },
+        "face": {
+            "year_of_birth": 1997,
+            "group_members_num": 1,
+            "theme": "soft-gangsta",
+            "is_male": true
+        },
+        "big baby tape": {
+            "year_of_birth": 2000,
+            "group_members_num": 1,
+            "theme": "soft-gangsta",
+            "is_male": true
+        },
+        "элджей": {
+            "year_of_birth": 1994,
+            "group_members_num": 1,
+            "theme": "fun",
+            "is_male": true
+        }
+    },
+    "rapcore": {
+        "ram": {
+            "year_of_birth": 1992,
+            "group_members_num": 1,
+            "theme": "hard-gangsta",
+            "is_male": true
+        },
+        "sid": {
+            "year_of_birth": 1995,
+            "group_members_num": 1,
+            "theme": "hard-gangsta",
+            "is_male": true
+        },
+        "redo": {
+            "year_of_birth": 1993,
+            "group_members_num": 1,
+            "theme": "hard-gangsta",
+            "is_male": true
+        }
+    },
+    "underground": {
+        "полумягкие": {
+            "year_of_birth": 1990,
+            "group_members_num": 2,
+            "theme": "hard-gangsta",
+            "is_male": true
+        },
+        "оу74": {
+            "year_of_birth": 1990,
+            "group_members_num":5,
+            "theme": "hard-gangsta",
+            "is_male": true
+        },
+        "паша техник": {
+            "year_of_birth": 1984,
+            "group_members_num":5,
+            "theme": "hard-gangsta",
+            "is_male": true
+        },
+        "овсянкин": {
+            "year_of_birth": 1984,
+            "group_members_num":1,
+            "theme": "hard-gangsta",
+            "is_male": true
+        }
+    },
+    "hookah": {
+        "miyagi": {
+            "year_of_birth": 1990,
+            "group_members_num": 1,
+            "theme": "feelings",
+            "is_male": true
+        },
+        "jah khalib": {
+            "year_of_birth": 1993,
+            "group_members_num": 1,
+            "theme": "feelings",
+            "is_male": true
+        },
+        "hammali & navai": {
+            "year_of_birth": 1992,
+            "group_members_num": 2,
+            "theme": "feelings",
+            "is_male": true
+        }
+    },
+    "pop": {
+        "rakhim": {
+            "year_of_birth": 1998,
+            "group_members_num": 1,
+            "theme": "fun",
+            "is_male": true
+        },
+        "егор крид": {
+            "year_of_birth": 1994,
+            "group_members_num": 1,
+            "theme": "feelings",
+            "is_male": true
+        },
+        "тимати": {
+            "year_of_birth": 1983,
+            "group_members_num": 1,
+            "theme": "feelings",
+            "is_male": true
+        },
+        "pyrokinesis": {
+            "year_of_birth": 1995,
+            "group_members_num": 1,
+            "theme": "fun",
+            "is_male": true
+        },
+        "t-fest": {
+            "year_of_birth": 1997,
+            "group_members_num": 1,
+            "theme": "feelings",
+            "is_male": true
+        }
+    },
+    "gangsta": {
+        "кровосток": {
+            "year_of_birth": 1971,
+            "group_members_num": 3,
+            "theme": "hard-gangsta",
+            "is_male": true
+        },
+        "смоки мо": {
+            "year_of_birth": 1982,
+            "group_members_num": 1,
+            "theme": "hard-gangsta",
+            "is_male": true
+        },
+        "рем дигга": {
+            "year_of_birth": 1987,
+            "group_members_num": 1,
+            "theme": "hard-gangsta",
+            "is_male": true
+        },
+        "ак-47": {
+            "year_of_birth": 1987,
+            "group_members_num": 2,
+            "theme": "hard-gangsta",
+            "is_male": true
+        },
+        "каспийский груз": {
+            "year_of_birth": 1983,
+            "group_members_num": 2,
+            "theme": "hard-gangsta",
+            "is_male": true
+        }
+    },
+    "workout": {
+        "d-man 55": {
+            "year_of_birth": 1982,
+            "group_members_num": 1,
+            "theme": "workout",
+            "is_male": true
+        },
+        "грот": {
+            "year_of_birth": 1988,
+            "group_members_num": 1,
+            "theme": "art",
+            "is_male": true
+        },
+        "миша маваши": {
+            "year_of_birth": 1985,
+            "group_members_num": 1,
+            "theme": "workout",
+            "is_male": true
+        }
+    },
+    "classic": {
+        "guf": {
+            "year_of_birth": 1979,
+            "group_members_num": 1,
+            "theme": "hard-gangsta",
+            "is_male": true
+        },
+        "баста": {
+            "year_of_birth": 1980,
+            "group_members_num": 1,
+            "theme": "hard-gangsta",
+            "is_male": true
+        },
+        "каста": {
+            "year_of_birth": 1978,
+            "group_members_num": 4,
+            "theme": "art",
+            "is_male": true
+        }
+    },
+    "soft": {
+        "лигалайз": {
+            "year_of_birth": 1977,
+            "group_members_num": 1,
+            "theme": "hard-gangsta",
+            "is_male": true
+        },
+        "многоточие": {
+            "year_of_birth": 1978,
+            "group_members_num": 1,
+            "theme": "feelings",
+            "is_male": true
+        },
+        "krec": {
+            "year_of_birth": 1980,
+            "group_members_num": 1,
+            "theme": "feelings",
+            "is_male": true
+        }
+    }
+}
