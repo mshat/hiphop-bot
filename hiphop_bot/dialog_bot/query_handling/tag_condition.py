@@ -8,7 +8,7 @@ from hiphop_bot.dialog_bot.sentence_analyzer.word import Word
 class PatternMatcher:  # TODO как-то вынести в отдельный модуль, разрешив циклический импорт
     def __init__(
             self,
-            conditions: List[AndTagCondition | OrTagCondition | AndMultiTagCondition, OrMultiTagCondition],
+            conditions: List[TagCondition, NotTagCondition, MultiTagCondition],
     ):
         self.conditions = conditions
 

@@ -2,7 +2,7 @@ from typing import List, Tuple, Dict
 from hiphop_bot.dialog_bot.sentence_analyzer.word import Word
 from hiphop_bot.dialog_bot.sentence_analyzer.argument import Argument
 from hiphop_bot.dialog_bot.sentence_analyzer.query import Query
-from hiphop_bot.dialog_bot.query_handling.tag_condition import PatternMatcher, AndMultiTagCondition, OrMultiTagCondition, AndTagCondition, OrTagCondition
+from hiphop_bot.dialog_bot.query_handling.tag_condition import PatternMatcher, TagCondition, NotTagCondition, MultiTagCondition
 
 ALL = -1
 
@@ -10,7 +10,7 @@ ALL = -1
 class QueryPattern:
     def __init__(
             self,
-            conditions: List[AndTagCondition | OrTagCondition | AndMultiTagCondition | OrMultiTagCondition],
+            conditions: List[TagCondition | NotTagCondition | MultiTagCondition],
             required_argument_type: str = None,
             required_arguments: Dict[str, int] = None,
     ):

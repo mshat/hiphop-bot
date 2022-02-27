@@ -4,7 +4,7 @@ from hiphop_bot.dialog_bot.query_solving.user import User
 from hiphop_bot.dialog_bot.query_solving.dialog import DialogState
 from hiphop_bot.dialog_bot.config import DEBUG
 from hiphop_bot.dialog_bot.data.const import LINE_LEN
-
+from hiphop_bot.dialog_bot.query_handling.handlers import create_query_pattern_table
 
 def test(sentences: [str]):
     user = User()
@@ -20,9 +20,9 @@ def test(sentences: [str]):
 
 
 def main():
+    create_query_pattern_table()
     user = User()
     query_solver = QuerySolver(user)
-
     print(f'{"="*LINE_LEN}\n'
           'Вас приветствует разговорный бот.\n'
           'Я кое-что знаю о русском хип-хопе и готов ответить на ваши вопросы по этой теме.\n'

@@ -1,33 +1,37 @@
-from typing import Callable
+from typing import List, Dict
+from abc import ABC, abstractmethod
+from hiphop_bot.dialog_bot.query_handling.tag_condition import TagCondition, NotTagCondition, MultiTagCondition
 from hiphop_bot.dialog_bot.sentence_analyzer.query import Query
-from hiphop_bot.dialog_bot.config import SHOW_QUERY_PATTERNS, DEBUG
+from hiphop_bot.dialog_bot.config import DEBUG
 from hiphop_bot.dialog_bot.query_handling.query_pattern import QueryPattern
-
-QUERY_PATTERN_STRINGS = []
-
-
-def log_query_pattern_strings():
-    with open('../query_pattern_strings.txt', 'w', encoding='utf-8') as f:
-        for line in QUERY_PATTERN_STRINGS:
-            f.write(f'{line}\n')
+from hiphop_bot.dialog_bot.query_solving.user import User
+from hiphop_bot.dialog_bot.query_solving.dialog import Dialog, DialogState
 
 
-class QueryHandler:
-    pattern: QueryPattern
-    handle: Callable
+class QueryHandler(ABC):
+    conditions: List[TagCondition | NotTagCondition | MultiTagCondition]
+    required_argument_type: str | None
+    required_arguments: Dict[str, int] | None
+    debug_msg: str
+    debug_res: str
 
-    def __init__(self, pattern: QueryPattern, handle_func: Callable, debug_msg: str = '', debug_res: str = ''):
-        self.pattern = pattern
-        self.handle = handle_func
-        self.debug_msg = debug_msg
-        self.debug_res = debug_res
+    @abstractmethod
+    def __init__(self):
+        self.conditions = []
+        self.required_argument_type = None
+        self.required_arguments = None
+        self.debug_msg = ''
 
         self.used_keywords = []
         self.used_args = []
 
-        QUERY_PATTERN_STRINGS.append(self.__str__())
-        if SHOW_QUERY_PATTERNS:
-            print(self.__str__())
+    @property
+    def pattern(self):
+        return QueryPattern(self.conditions, self.required_argument_type, self.required_arguments)
+
+    @abstractmethod
+    def handle(self, query: Query, user: User, dialog: Dialog, show=True):
+        pass
 
     def match_pattern(self, query: Query):
         res, self.used_keywords, self.used_args = self.pattern.match(query)
