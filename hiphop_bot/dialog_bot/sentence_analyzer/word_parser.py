@@ -14,11 +14,11 @@ class WordParser:
             raise WordParsingError('Empty input')
         self._word = word
 
-    def parse(self, dialog_state) -> Word:
+    def parse(self) -> Word:
         parsed_word = MorphAnalyzer.parse(self._word)[0]  # TODO не обязательно первый вариант правильный
         return Word(
             word=self._word,
             normal_word=parsed_word.normal_form,
             morph_speech_part=parsed_word.tag.POS,
-            tag=WORD_CLASSIFIER.assign_tags(parsed_word.normal_form, dialog_state),
+            tag=WORD_CLASSIFIER.assign_tags(parsed_word.normal_form),
         )
