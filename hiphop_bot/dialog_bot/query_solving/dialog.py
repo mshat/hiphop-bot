@@ -14,19 +14,27 @@ class DialogState(enum.Enum):
 
 class Dialog:
     _state: DialogState
-    search_result: List
-    output_message: str
-    output_artists: List
-    output_genres: List
-    debug_message: str
+    search_result: List | None
+    output_message: str | None
+    output_artists: List | None
+    output_genres: List | None
+    debug_message: str | None
 
     def __init__(self):
         self._state = DialogState.start
-        self.search_result = []
-        self.output_message = ''
-        self.output_genres = []
-        self.output_artists = []
-        self.debug_message = ''
+        self.search_result = None
+        self.output_message = None
+        self.output_genres = None
+        self.output_artists = None
+        self.debug_message = None
+
+    def reset_output(self):
+        if self.state not in (DialogState.search, DialogState.filter):
+            self.search_result = None
+        self.output_message = None
+        self.output_genres = None
+        self.output_artists = None
+        self.debug_message = None
 
     @property
     def state(self):

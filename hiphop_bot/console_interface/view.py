@@ -34,12 +34,7 @@ def filter_search_result(user: User, dialog: Dialog):
 
 
 def print_recommendations(user: User, dialog: Dialog):
-    filtered = filter_search_result(user, dialog)
-    if filtered:
-        recommended_artists = filtered
-    else:
-        recommended_artists = dialog.search_result
-
+    recommended_artists = dialog.search_result
     if recommended_artists:
         if user.dislikes:
             print(f'Список дизлайков: {", ".join(user.dislikes)}')
@@ -97,23 +92,39 @@ class ConsolePrinter:
         self._user = val
 
     def print(self):
-        if self.dialog.debug_message:
+        if DEBUG and self.dialog.debug_message is not None:
             print(f'DEBUG {self.dialog.debug_message}')
             self.dialog.debug_message = ''
 
-        if self.dialog.search_result:
-            print_recommendations(self.user, self.dialog)
-            self.dialog.search_result = []
-            print_after_search_message()
+        if self.dialog.search_result is not None:
+            if not self.dialog.search_result:
+                print('Ничего не найдено')
+            else:
+                filtered = filter_search_result(self.user, self.dialog)
+                if filtered:
+                    self.dialog.search_result = filtered
+                    print_recommendations(self.user, self.dialog)
+                    print_after_search_message()
+                else:
+                    print('Не найдено результатов, подходящих под фильтры')
+                    return
 
-        if self.dialog.output_artists:
-            print_artists(self.user, self.dialog)
-            self.dialog.output_artists = []
+        if self.dialog.output_artists is not None:
+            if not self.dialog.output_artists:
+                print('Ничего не найдено')
+            else:
+                print_artists(self.user, self.dialog)
 
-        if self.dialog.output_genres:
-            print_genres(self.user, self.dialog)
-            self.dialog.output_genres = []
+        if self.dialog.output_genres is not None:
+            if not self.dialog.output_genres:
+                print('Ничего не найдено')
+            else:
+                print_genres(self.user, self.dialog)
 
-        if self.dialog.output_message:
-            print(self.dialog.output_message)
-            self.dialog.output_message = ''
+        if self.dialog.output_message is not None:
+            if not self.dialog.output_message:
+                print('Я не смог найти ответ')
+            else:
+                print(self.dialog.output_message)
+
+        self.dialog.reset_output()
