@@ -33,8 +33,7 @@ def filter_search_result(user: User, dialog: Dialog):
         )
 
 
-def print_recommendations(user: User, dialog: Dialog):
-    recommended_artists = dialog.search_result
+def print_recommendations(user: User, recommended_artists: List):
     if recommended_artists:
         if user.dislikes:
             print(f'Список дизлайков: {", ".join(user.dislikes)}')
@@ -101,8 +100,7 @@ class ConsolePrinter:
             else:
                 filtered = filter_search_result(self.user, self.dialog)
                 if filtered:
-                    self.dialog.search_result = filtered
-                    print_recommendations(self.user, self.dialog)
+                    print_recommendations(self.user, filtered)
                     print_after_search_message()
                 else:
                     print('Не найдено результатов, подходящих под фильтры')
