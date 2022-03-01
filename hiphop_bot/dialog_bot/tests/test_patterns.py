@@ -1,7 +1,6 @@
 from typing import Dict
 import unittest
 import unittest.mock
-import hiphop_bot.dialog_bot.query_handling.handlers as handlers
 from hiphop_bot.dialog_bot.query_solving.dialog import Dialog, DialogState
 from hiphop_bot.dialog_bot.query_solving.query_solver import QuerySolver
 from hiphop_bot.dialog_bot.sentence_analyzer.sentence_parser import SentenceParser
