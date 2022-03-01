@@ -1,5 +1,5 @@
 from hiphop_bot.dialog_bot.sentence_analyzer.sentence_parser import SentenceParser
-from hiphop_bot.dialog_bot.query_solving.query_solver import QuerySolver
+from hiphop_bot.dialog_bot.query_solving.query_solver import QuerySolver, SOLVED, UNSOLVED
 from hiphop_bot.dialog_bot.query_solving.user import User
 from hiphop_bot.dialog_bot.query_solving.dialog import DialogState
 from hiphop_bot.dialog_bot.config import DEBUG
@@ -27,10 +27,14 @@ def main():
             print('Вы что-то хотели?..')
             continue
         query = SentenceParser(sentence).parse(query_solver.state)
-        query_solver.solve(query)
-        console_printer.dialog = query_solver.dialog
-        console_printer.user = query_solver.user
-        console_printer.print()
+        res = query_solver.solve(query)
+        if res == SOLVED:
+            console_printer.dialog = query_solver.dialog
+            console_printer.user = query_solver.user
+            console_printer.print()
+        elif res == UNSOLVED:
+            print('Я вас не понял :(')
+
         if DEBUG: print('[CURRENT STATE]', query_solver.state)
         print()
 
