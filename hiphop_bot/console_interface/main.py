@@ -4,7 +4,7 @@ from hiphop_bot.dialog_bot.query_solving.user import User
 from hiphop_bot.dialog_bot.query_solving.dialog import DialogState
 from hiphop_bot.dialog_bot.config import DEBUG
 from hiphop_bot.dialog_bot.data.const import LINE_LEN
-from hiphop_bot.console_interface.console_printer import ConsolePrinter
+from hiphop_bot.console_interface.view import ConsolePrinter
 
 
 def main():

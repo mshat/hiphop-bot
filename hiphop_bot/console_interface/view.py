@@ -41,9 +41,6 @@ def show_recommendations(user: User, dialog: Dialog):
 
         interface.print_recommendations(artists, output_len=user.output_len, debug=DEBUG)
 
-        if dialog.state in (DialogState.search, DialogState.filter):
-            print_after_search_message()
-
 
 def show_artists(user: User, dialog: Dialog):
     artists = dialog.output_artists
@@ -83,15 +80,20 @@ class ConsolePrinter:
         if self.dialog.debug_message:
             print(f'DEBUG {self.dialog.debug_message}')
             self.dialog.debug_message = ''
+
         if self.dialog.search_result:
             show_recommendations(self.user, self.dialog)
             self.dialog.search_result = []
+            print_after_search_message()
+
         if self.dialog.output_artists:
             show_artists(self.user, self.dialog)
             self.dialog.output_artists = []
+
         if self.dialog.output_genres:
             show_genres(self.user, self.dialog)
             self.dialog.output_genres = []
+
         if self.dialog.output_message:
             print(self.dialog.output_message)
             self.dialog.output_message = ''

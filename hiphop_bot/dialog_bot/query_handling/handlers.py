@@ -17,15 +17,6 @@ from hiphop_bot.dialog_bot.data.data import GENRES
 from hiphop_bot.dialog_bot.sentence_analyzer.argument import ArtistArgument, NumArgument, SexArgument, GenreArgument
 
 
-AFTER_SEARCH_MESSAGE = (
-    f'{"="*LINE_LEN}\n'
-    f'Вы находитесь в режиме ФИЛЬТРАЦИИ. Вы можете добавить фильтры к '
-    f'полученному результату поиска.\n'
-    'Чтобы задать новый вопрос, скажите мне начать сначала\n'
-    f'{"=" * LINE_LEN}'
-)
-
-
 def create_query_pattern_table():
     query_pattern_strings = []
     handlers = [RestartHandler, SetOutputLenHandler, FilterBySexIncludeHandler, FilterBySexExcludeHandler,
@@ -367,7 +358,6 @@ class SearchBySexHandler(QueryHandler):
         artists = interface.get_all_artists()
         artists = filter.filter_artists(artists, sex=sex.value.value)
         dialog.output_artists = artists
-        dialog.output_message = AFTER_SEARCH_MESSAGE
         return DialogState.search
 
 
@@ -390,7 +380,6 @@ class SearchByAgeRangeHandler(QueryHandler):
             dialog.search_result = artists
         else:
             return DialogState.start
-        dialog.output_message = AFTER_SEARCH_MESSAGE
         return DialogState.search
 
 
@@ -416,7 +405,6 @@ class SearchByAgeHandler(QueryHandler):
 
         dialog.output_artists = artists
         dialog.search_result = artists
-        dialog.output_message = AFTER_SEARCH_MESSAGE
         return DialogState.search
 
 
@@ -431,7 +419,6 @@ class SearchByGenreHandler(QueryHandler):
         genre = get_arguments_by_type(query, 'GenreArgument')[0]
         artists = interface.get_artists_by_genre(genre.value)
         dialog.output_artists = artists
-        dialog.output_message = AFTER_SEARCH_MESSAGE
         return DialogState.search
 
 
@@ -474,7 +461,6 @@ class ShowAllArtistsHandler(QueryHandler):
     def handle(self, query: Query, user: User, dialog: Dialog, show=True):
         artists = interface.get_all_artists()
         dialog.output_artists = artists
-        dialog.output_message = AFTER_SEARCH_MESSAGE
         dialog.output_message += '\nКстати, в запросах вы можете указывать имя артиста или ' \
                                  'группы на русском языке, даже если тут он записан на английском'
         return DialogState.search
