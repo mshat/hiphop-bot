@@ -128,8 +128,6 @@ class QuerySolver:
             if next_state:
                 self.state = next_state
                 return SOLVED
-            else:
-                self.state = DialogState.start
 
         # like/dislike, number query, search, info
         if self.state in (DialogState.start, DialogState.number, DialogState.like, DialogState.dislike, DialogState.info):
