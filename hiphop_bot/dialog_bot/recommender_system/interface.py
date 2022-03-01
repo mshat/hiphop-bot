@@ -1,5 +1,5 @@
 import os
-from typing import List, Iterable
+from typing import List
 from collections import OrderedDict
 from hiphop_bot.dialog_bot.recommender_system.recommendation_list import get_recommendations
 from hiphop_bot.dialog_bot.recommender_system.recommendation_list import (
@@ -19,36 +19,6 @@ normalize_proximities(ARTIST_PAIRS_PROXIMITY, min_proximity, max_proximity)
 
 class ParseError(Exception): pass
 class ArgumentError(Exception): pass
-
-
-def print_recommendations(recommendations, output_len=None, debug=False):
-    if output_len is None:
-        output_len = 100000
-    for i, artist_name in enumerate(recommendations):
-        if i < output_len:
-            if debug:
-                print(artist_name, recommendations[artist_name])
-            else:
-                print(artist_name)
-
-
-def print_artists(artists: List[GenreVisualNode], max_output_len=None, debug=False):
-    if max_output_len is None:
-        max_output_len = 100000
-    for i, artist in enumerate(artists):
-        if i < max_output_len:
-            if debug:
-                print(artist.name, artist.genre)
-            else:
-                print(artist.name)
-
-
-def print_messages(messages: Iterable[str], max_output_len=None):
-    if max_output_len is None:
-        max_output_len = 100000
-    for i, item in enumerate(messages):
-        if i < max_output_len:
-            print(item)
 
 
 def find_artist(name: str) -> GenreVisualNode:
