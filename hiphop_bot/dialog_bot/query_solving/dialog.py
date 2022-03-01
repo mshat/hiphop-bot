@@ -15,10 +15,18 @@ class DialogState(enum.Enum):
 class Dialog:
     _state: DialogState
     search_result: List
+    output_message: str
+    output_artists: List
+    output_genres: List
+    debug_message: str
 
     def __init__(self):
         self._state = DialogState.start
         self.search_result = []
+        self.output_message = ''
+        self.output_genres = []
+        self.output_artists = []
+        self.debug_message = ''
 
     @property
     def state(self):

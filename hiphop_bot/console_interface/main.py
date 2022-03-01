@@ -4,25 +4,13 @@ from hiphop_bot.dialog_bot.query_solving.user import User
 from hiphop_bot.dialog_bot.query_solving.dialog import DialogState
 from hiphop_bot.dialog_bot.config import DEBUG
 from hiphop_bot.dialog_bot.data.const import LINE_LEN
-from hiphop_bot.dialog_bot.query_handling.handlers import create_query_pattern_table
-
-
-def test(sentences: [str]):
-    user = User()
-    query_solver = QuerySolver(user)
-    for sentence_ in sentences:
-        query_ = SentenceParser(sentence_).parse(query_solver.state)
-        print(f'Вход: {query_.raw_sentence}')
-        # print(query_.keywords)
-        res_ = query_solver.solve(query_)
-        # print(user)
-        print(res_)
-        print()
+from hiphop_bot.console_interface.view import ConsolePrinter
 
 
 def main():
     user = User()
     query_solver = QuerySolver(user)
+    console_printer = ConsolePrinter()
     print(f'{"="*LINE_LEN}\n'
           'Вас приветствует разговорный бот.\n'
           'Я кое-что знаю о русском хип-хопе и готов ответить на ваши вопросы по этой теме.\n'
@@ -40,6 +28,9 @@ def main():
             continue
         query = SentenceParser(sentence).parse(query_solver.state)
         query_solver.solve(query)
+        console_printer.dialog = query_solver.dialog
+        console_printer.user = query_solver.user
+        console_printer.print()
         if DEBUG: print('[CURRENT STATE]', query_solver.state)
         print()
 

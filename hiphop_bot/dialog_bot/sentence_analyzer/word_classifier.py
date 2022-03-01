@@ -21,7 +21,7 @@ class WordClassifier:
         else:
             return self._exclude_keywords_by_query_type(['filter'])
 
-    def assign_tags(self, word: str, dialog_state):
+    def assign_tags(self, word: str):
         # keywords = self._get_keywords_by_dialog_state(dialog_state)
         if word not in self.keywords:
             return None

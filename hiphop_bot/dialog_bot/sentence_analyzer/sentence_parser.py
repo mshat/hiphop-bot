@@ -76,7 +76,7 @@ class SentenceParser:
         for word in raw_words:
             if word not in PLACEHOLDERS.values():
                 word_parser = WordParser(word)
-                parsed_words.append(word_parser.parse(dialog_state))
+                parsed_words.append(word_parser.parse())
             else:
                 parsed_words.append(Placeholder(word))
         return Query(

@@ -43,10 +43,10 @@ def print_artists(artists: List[GenreVisualNode], max_output_len=None, debug=Fal
                 print(artist.name)
 
 
-def print_strings(strings: Iterable[str], max_output_len=None):
+def print_messages(messages: Iterable[str], max_output_len=None):
     if max_output_len is None:
         max_output_len = 100000
-    for i, item in enumerate(strings):
+    for i, item in enumerate(messages):
         if i < max_output_len:
             print(item)
 
