@@ -28,6 +28,9 @@ class Dialog:
         self.output_artists = None
         self.debug_message = None
 
+    def reset_search_result(self):
+        self.search_result = None
+
     def reset_output(self):
         if self.state not in (DialogState.search, DialogState.filter):
             self.search_result = None

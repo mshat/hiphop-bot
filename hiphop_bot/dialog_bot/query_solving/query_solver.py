@@ -24,7 +24,7 @@ class QuerySolver:
     def state(self, val):
         self.dialog.state = val
         if val == DialogState.start:
-            self.dialog.search_result = []
+            self.dialog.reset_search_result()
         if val in (DialogState.search, DialogState.filter) and not ENABLE_FILTERS:
             self.dialog.state = DialogState.start
 

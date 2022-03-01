@@ -94,7 +94,6 @@ class ConsolePrinter:
     def print(self):
         if DEBUG and self.dialog.debug_message is not None:
             print(f'DEBUG {self.dialog.debug_message}')
-            self.dialog.debug_message = ''
 
         if self.dialog.search_result is not None:
             if not self.dialog.search_result:
