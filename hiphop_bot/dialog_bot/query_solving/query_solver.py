@@ -26,15 +26,19 @@ class QuerySolver:
         if val in (DialogState.search, DialogState.filter) and not ENABLE_FILTERS:
             self.dialog.state = DialogState.start
 
+    @property
+    def user(self):
+        return self._user
+
     def unknown(self, query: Query):
         print('Я не понял вопрос')
         if DEBUG:
             print(f'[UNRECOGNIZED SENTENCE] {query.arguments} {query.keywords} {query.words}')
 
-    def match_patterns(self, handlers_: List[QueryHandler], query: Query, show=True) -> DialogState | None:
+    def match_patterns(self, handlers_: List[QueryHandler], query: Query) -> DialogState | None:
         for handler in handlers_:
             if handler.match_pattern(query):
-                next_state = handler.handle(query, self._user, self.dialog, show)
+                next_state = handler.handle(query, self._user, self.dialog)
                 handler.remove_used_keywords_and_args(query)
                 return next_state
         return None
@@ -67,7 +71,6 @@ class QuerySolver:
             next_state = search_handler.handle(query, self._user, self.dialog)
             search_handler.remove_used_keywords_and_args(query)
             self.solve_multi_filters(query)
-            handlers.show_recommendations(self._user, self.dialog)
             return next_state
 
         search_handlers = [
@@ -90,7 +93,7 @@ class QuerySolver:
         ]
         return self.match_patterns(info_handlers, query)
 
-    def match_filter_patterns(self, query: Query, show=True) -> DialogState | None:
+    def match_filter_patterns(self, query: Query) -> DialogState | None:
         filter_handlers = [
             handlers.FilterBySexExcludeHandler(),
             handlers.FilterBySexIncludeHandler(),
@@ -102,11 +105,11 @@ class QuerySolver:
             handlers.RemoveFiltersHandler(),
             handlers.RemoveResultLenFilterHandler(),
         ]
-        return self.match_patterns(filter_handlers, query, show=show)
+        return self.match_patterns(filter_handlers, query)
 
     def solve_multi_filters(self, query: Query) -> None:
         while True:
-            next_state = self.match_filter_patterns(query, show=False)
+            next_state = self.match_filter_patterns(query)
             if next_state is None:
                 break
 

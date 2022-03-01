@@ -11,11 +11,19 @@ from hiphop_bot.dialog_bot.query_solving.user import User
 from hiphop_bot.dialog_bot.recommender_system import filter
 from hiphop_bot.dialog_bot.recommender_system import interface
 from hiphop_bot.dialog_bot.sentence_analyzer.query import Query
-from hiphop_bot.dialog_bot.config import DEBUG, ENABLE_FILTERS
+from hiphop_bot.dialog_bot.config import DEBUG
 from hiphop_bot.dialog_bot.data.const import SexFilter, GroupTypeFilter, LINE_LEN
 from hiphop_bot.dialog_bot.data.data import GENRES
 from hiphop_bot.dialog_bot.sentence_analyzer.argument import ArtistArgument, NumArgument, SexArgument, GenreArgument
-from hiphop_bot.dialog_bot.tools.debug_print import debug_print
+
+
+AFTER_SEARCH_MESSAGE = (
+    f'{"="*LINE_LEN}\n'
+    f'Вы находитесь в режиме ФИЛЬТРАЦИИ. Вы можете добавить фильтры к '
+    f'полученному результату поиска.\n'
+    'Чтобы задать новый вопрос, скажите мне начать сначала\n'
+    f'{"=" * LINE_LEN}'
+)
 
 
 def create_query_pattern_table():
@@ -38,45 +46,6 @@ def create_query_pattern_table():
             f.write(f'{line}\n')
 
 
-def print_after_search_message():
-    if ENABLE_FILTERS:
-        print(f'{"="*LINE_LEN}\n'
-              f'Вы находитесь в режиме ФИЛЬТРАЦИИ. Вы можете добавить фильтры к полученному результату поиска.\n'
-              'Чтобы задать новый вопрос, скажите мне начать сначала\n'
-              f'{"=" * LINE_LEN}'
-              )
-
-
-def filter_search_result(user: User, dialog: Dialog):
-    if dialog.search_result:
-        return filter.filter_recommendations(
-            dialog.search_result,
-            group_type=user.group_type_filter.value,
-            sex=user.sex_filter.value,
-            younger=user.younger_filter,
-            older=user.older_filter,
-        )
-
-
-def show_recommendations(user: User, dialog: Dialog):
-    filtered = filter_search_result(user, dialog)
-    if filtered:
-        artists = filtered
-    else:
-        artists = dialog.search_result
-
-    if artists:
-        if user.dislikes:
-            print(f'Список дизлайков: {", ".join(user.dislikes)}')
-        if user.str_filters != '':
-            print(f'Установлены фильтры: {user.str_filters}')
-
-        interface.print_recommendations(artists, output_len=user.output_len, debug=DEBUG)
-
-        if dialog.state in (DialogState.search, DialogState.filter):
-            print_after_search_message()
-
-
 def get_arguments_by_type(query: Query, argument_type: str) \
         -> List[ArtistArgument | NumArgument | SexArgument | GenreArgument]:
     return [argument for type_, arguments in query.arguments.items() for argument in arguments if type_ == argument_type]
@@ -88,7 +57,7 @@ class RestartHandler(QueryHandler):
         self.conditions = [And('restart')]
         self.debug_msg = 'Рестарт'
 
-    def handle(self, query: Query, user: User, dialog: Dialog, show=True):
+    def handle(self, query: Query, user: User, dialog: Dialog):
         return DialogState.start
 
 
@@ -102,15 +71,12 @@ class SetOutputLenHandler(QueryHandler):
         self.required_argument_type = 'NumArgument'
         self.debug_msg = 'Изменить количество выводимых результатов'
 
-    def handle(self, query: Query, user: User, dialog: Dialog, show=True):
+    def handle(self, query: Query, user: User, dialog: Dialog):
         output_len = get_arguments_by_type(query, 'NumArgument')[-1]
 
         user.output_len = int(output_len.value)
 
-        if show:
-            show_recommendations(user, dialog)
-
-        print(f'Буду выводить по {output_len.value} строк')
+        dialog.output_message = f'Буду выводить по {output_len.value} строк'
         return DialogState.start
 
 
@@ -123,12 +89,10 @@ class FilterBySexIncludeHandler(QueryHandler):
 
     def handle(self, query: Query, user: User, dialog: Dialog, show=True):
         sex = get_arguments_by_type(query, 'SexArgument')[0]
-        debug_print(f'Убрать всех, кроме {sex.value.value} пола')
+        dialog.debug_message = f'Убрать всех, кроме {sex.value.value} пола'
 
         user.add_sex_filter(sex.value)
 
-        if show:
-            show_recommendations(user, dialog)
         return DialogState.filter
 
 
@@ -141,13 +105,10 @@ class FilterBySexExcludeHandler(QueryHandler):
 
     def handle(self, query: Query, user: User, dialog: Dialog, show=True):
         sex_arg = get_arguments_by_type(query, 'SexArgument')[0]
-        debug_print(f'Убрать артистов {sex_arg.value} пола')
+        dialog.debug_message = f'Убрать артистов {sex_arg.value} пола'
 
         sex = SexFilter.male if sex_arg.value == SexFilter.female else SexFilter.female
         user.add_sex_filter(sex)
-
-        if show:
-            show_recommendations(user, dialog)
 
         return DialogState.filter
 
@@ -163,13 +124,10 @@ class FilterByAgeRangeHandler(QueryHandler):
         age = get_arguments_by_type(query, 'NumArgument')
         if len(age) >= 2:
             from_age, to_age = sorted([int(age[0].value), int(age[1].value)])
-            debug_print(f'фильтр от {from_age} до {to_age} лет')
+            dialog.debug_message = f'фильтр от {from_age} до {to_age} лет'
 
             user.older_filter = from_age
             user.younger_filter = to_age
-
-            if show:
-                show_recommendations(user, dialog)
         else:
             return DialogState.filter
         return DialogState.filter
@@ -186,16 +144,14 @@ class FilterByAgeIncludeHandler(QueryHandler):
         age = get_arguments_by_type(query, 'NumArgument')[0]
         age = int(age.value)
         if 'younger' in query.query_tag_structure:
-            debug_print(f'фильтр до {age} лет')
+            dialog.debug_message = f'фильтр до {age} лет'
             user.younger_filter = age
         elif 'older' in query.query_tag_structure:
-            debug_print(f'фильтр от {age} лет')
+            dialog.debug_message = f'фильтр от {age} лет'
             user.older_filter = age
         else:
             return DialogState.filter
 
-        if show:
-            show_recommendations(user, dialog)
         return DialogState.filter
 
 
@@ -210,16 +166,14 @@ class FilterByAgeExcludeHandler(QueryHandler):
         age = get_arguments_by_type(query, 'NumArgument')[0]
         age = int(age.value)
         if 'younger' in query.query_tag_structure:
-            debug_print(f'фильтр от {age} лет')
+            dialog.debug_message = f'фильтр от {age} лет'
             user.older_filter = age
         elif 'older' in query.query_tag_structure:
-            debug_print(f'фильтр до {age} лет')
+            dialog.debug_message = f'фильтр до {age} лет'
             user.younger_filter = age
         else:
             return DialogState.filter
 
-        if show:
-            show_recommendations(user, dialog)
         return DialogState.filter
 
 
@@ -248,9 +202,7 @@ class FilterByMembersCountHandler(QueryHandler):
         else:
             return DialogState.filter
 
-        if show:
-            show_recommendations(user, dialog)
-        debug_print(f'оставить {user.group_type_filter}')
+        dialog.debug_message = f'оставить {user.group_type_filter}'
         return DialogState.filter
 
 
@@ -262,8 +214,7 @@ class RemoveFiltersHandler(QueryHandler):
 
     def handle(self, query: Query, user: User, dialog: Dialog, show=True):
         user.set_all_filters_to_default()
-        if show:
-            show_recommendations(user, dialog)
+
         return DialogState.filter
 
 
@@ -278,8 +229,7 @@ class RemoveResultLenFilterHandler(QueryHandler):
 
     def handle(self, query: Query, user: User, dialog: Dialog, show=True):
         user.output_len = 1000
-        if show:
-            show_recommendations(user, dialog)
+
         return DialogState.filter
 
 
@@ -295,7 +245,7 @@ class ExcludeDislikeHandler(QueryHandler):
         liked_artists = [artist.value for artist in liked_artists]
         for artist in liked_artists:
             user.add_like(artist)
-        print(f'Поставлен лайк: {", ".join(liked_artists)}')
+        dialog.output_message = f'Поставлен лайк: {", ".join(liked_artists)}'
         return DialogState.like
 
 
@@ -319,7 +269,7 @@ class ExcludeLikeHandler(QueryHandler):
         disliked_artists = [artist.value for artist in disliked_artists]
         for artist in disliked_artists:
             user.add_dislike(artist)
-        print(f'Поставлен дизлайк: {", ".join(disliked_artists)}')
+        dialog.output_message = f'Поставлен дизлайк: {", ".join(disliked_artists)}'
         return DialogState.dislike
 
 
@@ -327,7 +277,7 @@ class DislikeHandler(ExcludeLikeHandler):
     def __init__(self):
         super().__init__()
         self.conditions = [And('dislike')]
-        self.required_arguments={'ArtistArgument': ALL}
+        self.required_arguments = {'ArtistArgument': ALL}
         self.debug_msg = 'Дизлайк'
 
 
@@ -343,9 +293,9 @@ class NumberWithSexHandler(QueryHandler):
         artists = interface.get_all_artists()
         artists = filter.filter_artists(artists, sex=sex.value.value)
         if sex.value == SexFilter.male:
-            print(f'В базе {len(artists)} исполнителя мужского пола')
+            dialog.output_message = f'В базе {len(artists)} исполнителя мужского пола'
         else:
-            print(f'В базе {len(artists)} исполнитель женского пола')
+            dialog.output_message = f'В базе {len(artists)} исполнитель женского пола'
         return DialogState.number
 
 
@@ -360,12 +310,12 @@ class NumberWithAgeRangeHandler(QueryHandler):
         age = get_arguments_by_type(query, 'NumArgument')
         if len(age) >= 2:
             from_age, to_age = sorted([int(age[0].value), int(age[1].value)])
-            debug_print(f'количество артистов от {from_age} до {to_age} лет')
+            dialog.debug_message = f'количество артистов от {from_age} до {to_age} лет'
 
             artists = interface.get_all_artists()
             artists = filter.filter_artists(artists, older=from_age, younger=to_age)
 
-            print(f'Количество исполнителей от {from_age} до {to_age} лет: {len(artists)}')
+            dialog.output_message = f'Количество исполнителей от {from_age} до {to_age} лет: {len(artists)}'
         else:
             return
         return DialogState.number
@@ -386,10 +336,10 @@ class NumberWithAgeHandler(QueryHandler):
 
         if 'younger' in query.query_tag_structure:
             artists = filter.filter_artists(artists, younger=age)
-            print(f'Количество артистов до {age} лет: {len(artists)}')
+            dialog.output_message = f'Количество артистов до {age} лет: {len(artists)}'
         elif 'older' in query.query_tag_structure:
             artists = filter.filter_artists(artists, older=age)
-            print(f'Количество артистов от {age} лет: {len(artists)}')
+            dialog.output_message = f'Количество артистов от {age} лет: {len(artists)}'
         return DialogState.number
 
 
@@ -401,7 +351,7 @@ class NumberHandler(QueryHandler):
 
     def handle(self, query: Query, user: User, dialog: Dialog, show=True):
         artists = interface.get_all_artists()
-        print(f'В базе {len(artists)} исполнителя')
+        dialog.output_message = f'В базе {len(artists)} исполнителя'
         return DialogState.number
 
 
@@ -416,8 +366,8 @@ class SearchBySexHandler(QueryHandler):
         sex = get_arguments_by_type(query, 'SexArgument')[0]
         artists = interface.get_all_artists()
         artists = filter.filter_artists(artists, sex=sex.value.value)
-        interface.print_artists(artists)
-        print_after_search_message()
+        dialog.output_artists = artists
+        dialog.output_message = AFTER_SEARCH_MESSAGE
         return DialogState.search
 
 
@@ -432,15 +382,15 @@ class SearchByAgeRangeHandler(QueryHandler):
         age = get_arguments_by_type(query, 'NumArgument')
         if len(age) >= 2:
             from_age, to_age = sorted([int(age[0].value), int(age[1].value)])
-            debug_print(f'количество артистов от {from_age} до {to_age} лет')
+            dialog.debug_message = f'количество артистов от {from_age} до {to_age} лет'
 
             artists = interface.get_all_artists()
             artists = filter.filter_artists(artists, older=from_age, younger=to_age)
-            interface.print_artists(artists)
+            dialog.output_artists = artists
             dialog.search_result = artists
         else:
             return DialogState.start
-        print_after_search_message()
+        dialog.output_message = AFTER_SEARCH_MESSAGE
         return DialogState.search
 
 
@@ -458,15 +408,15 @@ class SearchByAgeHandler(QueryHandler):
         artists = interface.get_all_artists()
 
         if 'younger' in query.query_tag_structure:
-            debug_print(f'фильтр до {age} лет')
+            dialog.debug_message = f'фильтр до {age} лет'
             artists = filter.filter_artists(artists, younger=age)
         elif 'older' in query.query_tag_structure:
-            debug_print(f'фильтр от {age} лет')
+            dialog.debug_message = f'фильтр от {age} лет'
             artists = filter.filter_artists(artists, older=age)
 
-        interface.print_artists(artists)
+        dialog.output_artists = artists
         dialog.search_result = artists
-        print_after_search_message()
+        dialog.output_message = AFTER_SEARCH_MESSAGE
         return DialogState.search
 
 
@@ -480,8 +430,8 @@ class SearchByGenreHandler(QueryHandler):
     def handle(self, query: Query, user: User, dialog: Dialog, show=True):
         genre = get_arguments_by_type(query, 'GenreArgument')[0]
         artists = interface.get_artists_by_genre(genre.value)
-        interface.print_artists(artists, debug=DEBUG)
-        print_after_search_message()
+        dialog.output_artists = artists
+        dialog.output_message = AFTER_SEARCH_MESSAGE
         return DialogState.search
 
 
@@ -507,12 +457,11 @@ class RecommendationHandler(QueryHandler):
 
     def handle(self, query: Query, user: User, dialog: Dialog, show=True):
         if len(user.likes) == 0:
-            print('Для начала расскажите, какие музыканты или группы вам нравятся?')
+            dialog.output_message = 'Для начала расскажите, какие музыканты или группы вам нравятся?'
             return DialogState.start
         dialog.search_result = interface.recommend_by_liked_with_disliked(user.dislikes, user.likes, DEBUG)
 
-        print(f'Список лайков: {", ".join(user.likes)}')
-        show_recommendations(user, dialog)
+        dialog.output_message = f'Список лайков: {", ".join(user.likes)}'
         return DialogState.search
 
 
@@ -524,10 +473,10 @@ class ShowAllArtistsHandler(QueryHandler):
 
     def handle(self, query: Query, user: User, dialog: Dialog, show=True):
         artists = interface.get_all_artists()
-        interface.print_artists(artists)
-        print_after_search_message()
-        print('Кстати, в запросах вы можете указывать имя артиста или группы на русском языке, даже если тут он '
-              'записан на английском')
+        dialog.output_artists = artists
+        dialog.output_message = AFTER_SEARCH_MESSAGE
+        dialog.output_message += '\nКстати, в запросах вы можете указывать имя артиста или ' \
+                                 'группы на русском языке, даже если тут он записан на английском'
         return DialogState.search
 
 
@@ -539,8 +488,8 @@ class ShowAllGenresHandler(QueryHandler):
 
     def handle(self, query: Query, user: User, dialog: Dialog, show=True):
         genres = set(GENRES.values())
-        interface.print_strings(genres)
-        print('Кстати, в фильтрах вы можете указывать название жанра на русском языке')
+        dialog.output_genres = genres
+        dialog.output_message = 'Кстати, в фильтрах вы можете указывать название жанра на русском языке'
         return DialogState.start
 
 
@@ -555,22 +504,22 @@ class InfoHandler(QueryHandler):
         artist_arg = get_arguments_by_type(query, 'ArtistArgument')[0]
         artist = interface.get_artist_by_name(artist_arg.value)
         if not artist:
-            print('Артист не найден :(')
+            dialog.output_message = 'Артист не найден :('
         else:
             sex = "мужской" if artist.male_or_female == 1 else "женский"
             if artist.group_members_number == 1:
-                print(f'Артист {artist.name}')
+                dialog.output_message = f'Артист {artist.name}'
             elif artist.group_members_number == 2:
-                print(f'Дуэт {artist.name}')
+                dialog.output_message = f'Дуэт {artist.name}'
             else:
-                print(f'Группа {artist.name}')
+                dialog.output_message = f'Группа {artist.name}'
             if artist.group_members_number > 1:
-                print(f'Возраст фронтмэна: {artist.age}')
-                print(f'Пол фронтмэна: {sex}')
-                print(f'Количество участников: {artist.group_members_number}')
+                dialog.output_message = f'Возраст фронтмэна: {artist.age}\n'
+                dialog.output_message += f'Пол фронтмэна: {sex}\n'
+                dialog.output_message += f'Количество участников: {artist.group_members_number}\n'
             else:
-                print(f'Возраст: {artist.age}')
-                print(f'Пол: {sex}')
+                dialog.output_message = f'Возраст: {artist.age}\n'
+                dialog.output_message += f'Пол: {sex}'
 
         return DialogState.info
 
@@ -582,8 +531,8 @@ class InfoAboutBotHandler(QueryHandler):
         self.debug_msg = 'Информация о боте'
 
     def handle(self, query: Query, user: User, dialog: Dialog, show=True):
-        debug_print('Информация о боте')
-        print('Я - ваш помощник в мире русского хипхопа. Меня сделал Шатохин Максим, ИУ7-12М')
+        dialog.debug_message = 'Информация о боте'
+        dialog.output_message = 'Я - ваш помощник в мире русского хипхопа. Меня сделал Шатохин Максим, ИУ7-12М'
         return DialogState.info
 
 
@@ -594,8 +543,8 @@ class InfoAboutBotOpportunitiesHandler(QueryHandler):
         self.debug_msg = 'Информация о возможностях бота'
 
     def handle(self, query: Query, user: User, dialog: Dialog, show=True):
-        debug_print('Возможности бота')
-        print("""Вы можете в свободной форме задавать мне вопросы или поручать команды.
+        dialog.debug_message = 'Возможности бота'
+        dialog.output_message = """Вы можете в свободной форме задавать мне вопросы или поручать команды.
         Я могу выполнять следующие действия:
 
         1. Рекомендация по артисту                       
@@ -625,7 +574,6 @@ class InfoAboutBotOpportunitiesHandler(QueryHandler):
         25. Вывести информацию о возможностях бота                
         26. Вывести информацию об устройстве бота                 
         27. Вернуться к начальному состоянию"""
-              )
         return DialogState.info
 
 
@@ -636,8 +584,8 @@ class InfoAboutBotAlgorithmHandler(QueryHandler):
         self.debug_msg = 'Информация об устройстве бота'
 
     def handle(self, query: Query, user: User, dialog: Dialog, show=True):
-        debug_print('Алгоритм бота')
-        print("""Я работаю следующим образом:
+        dialog.debug_message = 'Алгоритм бота'
+        dialog.output_message = """Я работаю следующим образом:
         Вначале, когда я получаю от вас текстовое сообщение, я удаляю из него лишние пробелы и запятые.
         Затем в полученном предложении происходит поиск аргументов. Я имею словари аргументов, таких как
         имена музыкантов, названия жанров и пол людей. В первую очередь я извлекаю из текста именно их.
@@ -662,5 +610,5 @@ class InfoAboutBotAlgorithmHandler(QueryHandler):
 
         Список шаблонов с условиями вы можете увидеть в файле query_pattern_strings.txt. Он генерируется автоматически при 
         запуске handlers.py.
-        """)
+        """
         return DialogState.info

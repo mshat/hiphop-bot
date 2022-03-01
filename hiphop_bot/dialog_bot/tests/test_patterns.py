@@ -158,11 +158,58 @@ class DataForTests:
 TEST_DATA = DataForTests()
 
 
+class TestQuerySolving(unittest.TestCase):
+    def setUp(self) -> None:
+        self.query_solver = QuerySolver(User())
+
+    def _test_sentences(self, state: DialogState, sentences: Dict[str, str]):
+        for sentence, expected_handler in sentences.items():
+            with self.subTest(i=sentence):
+                with unittest.mock.patch(
+                        f'hiphop_bot.dialog_bot.query_handling.handlers.{expected_handler}.handle'
+                ) as patched_handle_method:
+                    self.query_solver.state = state
+                    query = SentenceParser(sentence).parse(self.query_solver.state)
+                    self.query_solver.solve(query)
+
+                    patched_handle_method.assert_called()
+
+    def test_search_by_name(self):
+        self._test_sentences(DialogState.start, DataForTests.search_by_name)
+
+    def test_recommend(self):
+        self._test_sentences(DialogState.start, DataForTests.recommendation)
+
+    def test_search_by_genre(self):
+        self._test_sentences(DialogState.start, DataForTests.search_by_genre)
+
+    def test_search_by_sex(self):
+        self._test_sentences(DialogState.start, DataForTests.search_by_sex)
+
+    def test_search_by_age(self):
+        self._test_sentences(DialogState.start, DataForTests.search_by_age)
+
+    def test_search_show_all(self):
+        self._test_sentences(DialogState.start, DataForTests.search_show_all)
+
+    def test_filter(self):
+        self._test_sentences(DialogState.search, DataForTests.test_filter)
+
+    def test_like_dislike(self):
+        self._test_sentences(DialogState.start, DataForTests.like_dislike)
+
+    def test_number_queries(self):
+        self._test_sentences(DialogState.start, DataForTests.number_queries)
+
+    def test_info(self):
+        self._test_sentences(DialogState.start, DataForTests.test_info)
+
+
 class TestIntegrationStates(unittest.TestCase):
     def setUp(self) -> None:
         self.user = User()
         self.dialog = Dialog()
-        
+
     def check_next_states(self, state, allowed_sentences: list, disallowed_sentences: list):
         query_solver = QuerySolver(self.user)
 
@@ -344,50 +391,4 @@ class TestIntegrationStates(unittest.TestCase):
                 res = query_solver.solve(query)
                 self.assertEqual(res, expected_handler)
 
-
-class TestQueries(unittest.TestCase):
-    def setUp(self) -> None:
-        self.query_solver = QuerySolver(User())
-
-    def _test_sentences(self, state: DialogState, sentences: Dict[str, str]):
-        for sentence, expected_handler in sentences.items():
-            with self.subTest(i=sentence):
-                with unittest.mock.patch(
-                        f'hiphop_bot.dialog_bot.query_handling.handlers.{expected_handler}.handle'
-                ) as patched_handle_method:
-                    self.query_solver.state = state
-                    query = SentenceParser(sentence).parse(self.query_solver.state)
-                    self.query_solver.solve(query)
-
-                    patched_handle_method.assert_called()
-
-    def test_search_by_name(self):
-        self._test_sentences(DialogState.start, DataForTests.search_by_name)
-
-    def test_recommend(self):
-        self._test_sentences(DialogState.start, DataForTests.recommendation)
-
-    def test_search_by_genre(self):
-        self._test_sentences(DialogState.start, DataForTests.search_by_genre)
-
-    def test_search_by_sex(self):
-        self._test_sentences(DialogState.start, DataForTests.search_by_sex)
-
-    def test_search_by_age(self):
-        self._test_sentences(DialogState.start, DataForTests.search_by_age)
-
-    def test_search_show_all(self):
-        self._test_sentences(DialogState.start, DataForTests.search_show_all)
-
-    def test_filter(self):
-        self._test_sentences(DialogState.search, DataForTests.test_filter)
-
-    def test_like_dislike(self):
-        self._test_sentences(DialogState.start, DataForTests.like_dislike)
-
-    def test_number_queries(self):
-        self._test_sentences(DialogState.start, DataForTests.number_queries)
-
-    def test_info(self):
-        self._test_sentences(DialogState.start, DataForTests.test_info)
 
