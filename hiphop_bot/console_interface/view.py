@@ -87,18 +87,6 @@ class ConsolePrinter:
         if DEBUG and self.dialog.debug_message is not None:
             print(f'DEBUG {self.dialog.debug_message}')
 
-        if self.dialog.search_result is not None:
-            if not self.dialog.search_result:
-                print('Ничего не найдено')
-            else:
-                filtered = filter_search_result(self.user, self.dialog)
-                if filtered:
-                    print_artists(self.user, filtered)
-                    print_after_search_message()
-                else:
-                    print('Не найдено результатов, подходящих под фильтры')
-                    return
-
         if self.dialog.output_genres is not None:
             if not self.dialog.output_genres:
                 print('Ничего не найдено')
@@ -110,5 +98,17 @@ class ConsolePrinter:
                 print('Я не смог найти ответ')
             else:
                 print(self.dialog.output_message)
+
+        if self.dialog.search_result is not None:
+            if not self.dialog.search_result:
+                print('Ничего не найдено')
+            else:
+                filtered = filter_search_result(self.user, self.dialog)
+                if filtered:
+                    print_artists(self.user, filtered)
+                    print_after_search_message()
+                else:
+                    print('Не найдено результатов, подходящих под фильтры')
+                    return
 
         self.dialog.reset_output()

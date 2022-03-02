@@ -107,17 +107,6 @@ class AnswerGenerator:
         if DEBUG and self.dialog.debug_message is not None:
             out_msg.msg += f'DEBUG {self.dialog.debug_message}'
 
-        if self.dialog.search_result is not None:
-            if not self.dialog.search_result:
-                out_msg.msg += 'Ничего не найдено'
-            else:
-                filtered = filter_search_result(self.user, self.dialog)
-                if filtered:
-                    out_msg.msg += generate_recommendations_message(self.user, filtered)
-                    out_msg.msg += get_after_search_message()
-                else:
-                    out_msg.msg += 'Не найдено результатов, подходящих под фильтры'
-
         if self.dialog.output_genres is not None:
             if not self.dialog.output_genres:
                 out_msg.msg += 'Ничего не найдено'
@@ -129,6 +118,17 @@ class AnswerGenerator:
                 out_msg.msg += 'Я не смог найти ответ'
             else:
                 out_msg.msg += self.dialog.output_message
+
+        if self.dialog.search_result is not None:
+            if not self.dialog.search_result:
+                out_msg.msg += 'Ничего не найдено'
+            else:
+                filtered = filter_search_result(self.user, self.dialog)
+                if filtered:
+                    out_msg.msg += generate_recommendations_message(self.user, filtered)
+                    out_msg.msg += get_after_search_message()
+                else:
+                    out_msg.msg += 'Не найдено результатов, подходящих под фильтры'
 
         self.dialog.reset_output()
 
