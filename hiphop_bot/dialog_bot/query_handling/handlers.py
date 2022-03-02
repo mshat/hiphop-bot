@@ -201,7 +201,7 @@ class FilterByMembersCountHandler(QueryHandler):
 class RemoveFiltersHandler(QueryHandler):
     def __init__(self):
         super().__init__()
-        self.conditions = [And('exclude'), And('all'), AndMulti([Or('filter'), Or('restrict')])]
+        self.conditions = [And('exclude'), AndMulti([Or('filter'), Or('restrict')])]
         self.debug_msg = 'Удалить все фильтры'
 
     def handle(self, query: Query, user: User, dialog: Dialog, show=True):
