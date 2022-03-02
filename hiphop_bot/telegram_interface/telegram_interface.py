@@ -2,7 +2,6 @@ import telebot
 from hiphop_bot.dialog_bot.sentence_analyzer.sentence_parser import SentenceParser
 from hiphop_bot.dialog_bot.query_solving.query_solver import QuerySolver, SOLVED, UNSOLVED
 from hiphop_bot.dialog_bot.query_solving.user import User
-from hiphop_bot.dialog_bot.data.const import LINE_LEN
 from hiphop_bot.telegram_interface.view import AnswerGenerator
 
 TOKEN = '5168804721:AAGBSsgGVMV5JQ258fnm6O6N96EXKwwkL3I'
@@ -28,11 +27,9 @@ def get_text_messages(message):
 
 
 def start_answer():
-    msg = (f'{"=" * LINE_LEN}\n'
-           'Вас приветствует разговорный бот.\n'
+    msg = ('Вас приветствует разговорный бот.\n'
            'Я кое-что знаю о русском хип-хопе и готов ответить на ваши вопросы по этой теме.\n'
            'Вы можете узнать о моих возможностях, спросив меня об этом.\n'
-           f'{"=" * LINE_LEN}'
            )
     return msg
 
@@ -55,5 +52,6 @@ def solve_message(sentence: str) -> str:
         return 'Я вас не понял :('
     else:
         raise Exception('Unknown query_solver result')
+
 
 bot.polling(none_stop=True, interval=0)

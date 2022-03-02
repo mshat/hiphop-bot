@@ -1,10 +1,10 @@
 from typing import Iterable, List
-from hiphop_bot.dialog_bot.query_solving.dialog import Dialog
+from hiphop_bot.dialog_bot.query_solving.dialog import Dialog, DialogState
 from hiphop_bot.dialog_bot.query_solving.user import User
 from hiphop_bot.dialog_bot.recommender_system import filter
 from hiphop_bot.dialog_bot.config import DEBUG, ENABLE_FILTERS
-from hiphop_bot.dialog_bot.data.const import LINE_LEN
 from hiphop_bot.telegram_interface.output_message import OutputMessage
+from hiphop_bot.dialog_bot.recommender_system.tree.genre_node import GenreVisualNode
 
 
 def trunc_output(output: Iterable, output_len=None) -> List:
@@ -16,18 +16,16 @@ def trunc_output(output: Iterable, output_len=None) -> List:
 
 def get_after_search_message():
     if ENABLE_FILTERS:
-        msg = (f'{"=" * LINE_LEN}\n'
-               f'Вы находитесь в режиме ФИЛЬТРАЦИИ. Вы можете добавить фильтры к полученному результату поиска.\n'
+        msg = (f'Вы находитесь в режиме ФИЛЬТРАЦИИ. Вы можете добавить фильтры к полученному результату поиска.\n'
                'Чтобы задать новый вопрос, скажите мне начать сначала\n'
-               f'{"=" * LINE_LEN}'
                )
         return msg
     return ''
 
 
-def filter_search_result(user: User, dialog: Dialog):
+def filter_search_result(user: User, dialog: Dialog) -> List[GenreVisualNode]:
     if dialog.search_result:
-        return filter.filter_recommendations(
+        return filter.filter_artists(
             dialog.search_result,
             group_type=user.group_type_filter.value,
             sex=user.sex_filter.value,
@@ -36,30 +34,34 @@ def filter_search_result(user: User, dialog: Dialog):
         )
 
 
-def generate_recommendations_message(user: User, recommended_artists: List) -> str:
+def generate_used_filters_str(user: User):
     out_msg = ''
-
-    if recommended_artists:
-        if user.dislikes:
-            out_msg += f'Список дизлайков: {", ".join(user.dislikes)}\n'
-        if user.str_filters != '':
-            out_msg += f'Установлены фильтры: {user.str_filters}\n'
-
-        recommended_artists = trunc_output(recommended_artists, user.output_len)
-
-        for artist_name in recommended_artists:
-            if DEBUG:
-                out_msg += f'{artist_name} {recommended_artists[artist_name]}\n'
-            else:
-                out_msg += f'{artist_name}\n'
+    if user.dislikes:
+        out_msg += f'Список дизлайков: {", ".join(user.dislikes)}\n'
+    if user.str_filters != '':
+        out_msg += f'Установлены фильтры: {user.str_filters}\n'
     return out_msg
 
 
-def generate_artists_message(user: User, dialog: Dialog) -> str:
+def generate_recommendations_message(user: User, recommended_artists: List[GenreVisualNode]) -> str:
     out_msg = ''
-    artists = dialog.output_artists
+
+    recommended_artists = trunc_output(recommended_artists, user.output_len)
+    if recommended_artists:
+        out_msg += generate_used_filters_str(user)
+
+        for artist in recommended_artists:
+            out_msg += f'{artist.name}\n'
+    return out_msg
+
+
+def generate_artists_message(user: User, artists: List[GenreVisualNode]) -> str:
+    out_msg = ''
+
     artists = trunc_output(artists, user.output_len)
     if artists:
+        out_msg += generate_used_filters_str(user)
+
         for i, artist in enumerate(artists):
             if DEBUG:
                 out_msg += f'{artist.name} {artist.genre}\n'
@@ -116,12 +118,6 @@ class AnswerGenerator:
                 else:
                     out_msg.msg += 'Не найдено результатов, подходящих под фильтры'
 
-        if self.dialog.output_artists is not None:
-            if not self.dialog.output_artists:
-                out_msg.msg += 'Ничего не найдено'
-            else:
-                out_msg.msg += generate_artists_message(self.user, self.dialog)
-
         if self.dialog.output_genres is not None:
             if not self.dialog.output_genres:
                 out_msg.msg += 'Ничего не найдено'
@@ -136,7 +132,7 @@ class AnswerGenerator:
 
         self.dialog.reset_output()
 
-        if out_msg.msg[-1] == '\n':
+        if len(out_msg.msg) > 1 and out_msg.msg[-1] == '\n':
             out_msg.msg = out_msg.msg[:-1]
 
         return out_msg.msg

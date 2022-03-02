@@ -4,6 +4,7 @@ from hiphop_bot.dialog_bot.query_solving.user import User
 from hiphop_bot.dialog_bot.recommender_system import filter
 from hiphop_bot.dialog_bot.config import DEBUG, ENABLE_FILTERS
 from hiphop_bot.dialog_bot.data.const import LINE_LEN
+from hiphop_bot.dialog_bot.recommender_system.tree.genre_node import GenreVisualNode
 
 
 def trunc_output(output: Iterable, output_len=None) -> List:
@@ -22,9 +23,9 @@ def print_after_search_message():
               )
 
 
-def filter_search_result(user: User, dialog: Dialog):
+def filter_search_result(user: User, dialog: Dialog) -> List[GenreVisualNode]:
     if dialog.search_result:
-        return filter.filter_recommendations(
+        return filter.filter_artists(
             dialog.search_result,
             group_type=user.group_type_filter.value,
             sex=user.sex_filter.value,
@@ -33,26 +34,18 @@ def filter_search_result(user: User, dialog: Dialog):
         )
 
 
-def print_recommendations(user: User, recommended_artists: List):
-    if recommended_artists:
-        if user.dislikes:
-            print(f'Список дизлайков: {", ".join(user.dislikes)}')
-        if user.str_filters != '':
-            print(f'Установлены фильтры: {user.str_filters}')
-
-        recommended_artists = trunc_output(recommended_artists, user.output_len)
-
-        for artist_name in recommended_artists:
-            if DEBUG:
-                print(artist_name, recommended_artists[artist_name])
-            else:
-                print(artist_name)
+def print_used_filters(user: User):
+    if user.dislikes:
+        print(f'Список дизлайков: {", ".join(user.dislikes)}')
+    if user.str_filters != '':
+        print(f'Установлены фильтры: {user.str_filters}')
 
 
-def print_artists(user: User, dialog: Dialog):
-    artists = dialog.output_artists
+def print_artists(user: User, artists: List[GenreVisualNode]):
     artists = trunc_output(artists, user.output_len)
     if artists:
+        print_used_filters(user)
+
         for i, artist in enumerate(artists):
             if DEBUG:
                 print(artist.name, artist.genre)
@@ -100,17 +93,11 @@ class ConsolePrinter:
             else:
                 filtered = filter_search_result(self.user, self.dialog)
                 if filtered:
-                    print_recommendations(self.user, filtered)
+                    print_artists(self.user, filtered)
                     print_after_search_message()
                 else:
                     print('Не найдено результатов, подходящих под фильтры')
                     return
-
-        if self.dialog.output_artists is not None:
-            if not self.dialog.output_artists:
-                print('Ничего не найдено')
-            else:
-                print_artists(self.user, self.dialog)
 
         if self.dialog.output_genres is not None:
             if not self.dialog.output_genres:

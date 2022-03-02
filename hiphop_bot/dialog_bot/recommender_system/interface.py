@@ -36,7 +36,7 @@ def split_artists(artists: str):
     return res
 
 
-def recommend_by_seed(seed_artist: str, disliked_artists: [str], debug=False):
+def recommend_by_seed(seed_artist: str, disliked_artists: [str], debug=False) -> dict:
     seed = find_artist(seed_artist)
 
     recommendations = get_recommendations(seed, ARTIST_PAIRS_PROXIMITY)
@@ -80,7 +80,7 @@ def recommend_by_liked(liked_artist_names: List[str] = None):
 def recommend_by_liked_with_disliked(
         disliked_artists_list: List[str] = None,
         liked_artists_list: List[str] = None,
-        debug=False):
+        debug=False) -> dict:
     recommendations_by_liked = recommend_by_liked(liked_artists_list)
     for dislike in disliked_artists_list:
         if dislike in recommendations_by_liked:

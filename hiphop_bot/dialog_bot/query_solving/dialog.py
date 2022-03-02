@@ -16,7 +16,6 @@ class Dialog:
     _state: DialogState
     search_result: List | None
     output_message: str | None
-    output_artists: List | None
     output_genres: List | None
     debug_message: str | None
 
@@ -25,7 +24,6 @@ class Dialog:
         self.search_result = None
         self.output_message = None
         self.output_genres = None
-        self.output_artists = None
         self.debug_message = None
 
     def reset_search_result(self):
@@ -36,7 +34,6 @@ class Dialog:
             self.search_result = None
         self.output_message = None
         self.output_genres = None
-        self.output_artists = None
         self.debug_message = None
 
     @property
