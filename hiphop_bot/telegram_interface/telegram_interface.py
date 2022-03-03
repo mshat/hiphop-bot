@@ -1,21 +1,23 @@
 import telebot
-from hiphop_bot.dialog_bot.sentence_analyzer.sentence_parser import SentenceParser
-from hiphop_bot.dialog_bot.query_solving.query_solver import QuerySolver, SOLVED, UNSOLVED
-from hiphop_bot.dialog_bot.query_solving.user import User
-from hiphop_bot.telegram_interface.view import AnswerGenerator
+from hiphop_bot.dialog_bot.query_solving.query_solver import QuerySolvingState
+from hiphop_bot.base_user_interface.view import AnswerGenerator
+from hiphop_bot.base_user_interface.user_interface import UserInterface
+from hiphop_bot.dialog_bot.config import DEBUG
+
 
 TOKEN = '5168804721:AAGBSsgGVMV5JQ258fnm6O6N96EXKwwkL3I'
 
 bot = telebot.TeleBot(TOKEN)
 
-user = User()
-query_solver = QuerySolver(user)
+interface = UserInterface()
 answer_generator = AnswerGenerator()
 
 
 @bot.message_handler(content_types=['text'])
 def get_text_messages(message):
     print(f'[USER MESSAGE] {message.text}')
+    if DEBUG: print('[CURRENT STATE]', interface.state)
+
     if message.text == "/start":
         bot.send_message(message.from_user.id, start_answer())
     elif message.text == '':
@@ -27,29 +29,23 @@ def get_text_messages(message):
 
 
 def start_answer():
-    msg = ('Вас приветствует разговорный бот.\n'
-           'Я кое-что знаю о русском хип-хопе и готов ответить на ваши вопросы по этой теме.\n'
-           'Вы можете узнать о моих возможностях, спросив меня об этом.\n'
-           )
+    msg = interface.hello_message
     return msg
 
 
 def blank_answer():
-    msg = 'Вы что-то хотели?..'
+    msg = interface.blank_query_answer
     return msg
 
 
 def solve_message(sentence: str) -> str:
-    query = SentenceParser(sentence).parse(query_solver.state)
-    res = query_solver.solve(query)
-
-    if res == SOLVED:
-        answer_generator.user = query_solver.user
-        answer_generator.dialog = query_solver.dialog
-
+    res = interface.solve_query(sentence)
+    if res == QuerySolvingState.solved:
+        answer_generator.user = interface.user
+        answer_generator.dialog = interface.dialog
         return answer_generator.generate_answer()
-    elif res == UNSOLVED:
-        return 'Я вас не понял :('
+    elif res == QuerySolvingState.unsolved:
+        return interface.unresolved_answer
     else:
         raise Exception('Unknown query_solver result')
 

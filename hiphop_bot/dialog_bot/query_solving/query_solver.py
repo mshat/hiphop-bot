@@ -1,4 +1,5 @@
 from typing import List, Tuple
+from enum import Enum
 from hiphop_bot.dialog_bot.query_handling import handlers
 from hiphop_bot.dialog_bot.sentence_analyzer.query import Query
 from hiphop_bot.dialog_bot.query_solving.dialog import Dialog, DialogState
@@ -6,7 +7,10 @@ from hiphop_bot.dialog_bot.config import DEBUG, ENABLE_FILTERS
 from hiphop_bot.dialog_bot.query_handling.query_handler import QueryHandler
 from hiphop_bot.dialog_bot.query_solving.user import User
 
-SOLVED, UNSOLVED = 1, 2
+
+class QuerySolvingState(Enum):
+    solved = 1
+    unsolved = 2
 
 
 class QuerySolver:
@@ -35,7 +39,7 @@ class QuerySolver:
     def unknown(self, query: Query):
         if DEBUG:
             print(f'[UNRECOGNIZED SENTENCE] {query.arguments} {query.keywords} {query.words}')
-        return UNSOLVED
+        return QuerySolvingState.unsolved
 
     def match_patterns(self, handlers_: List[QueryHandler], query: Query) -> DialogState | None:
         for handler in handlers_:
@@ -120,42 +124,42 @@ class QuerySolver:
         next_state = self.match_restart_patterns(query)
         if next_state:
             self.state = next_state
-            return SOLVED
+            return QuerySolvingState.solved
 
         # filters
         if self.state in (DialogState.search, DialogState.filter):
             next_state = self.match_filter_patterns(query)
             if next_state:
                 self.state = next_state
-                return SOLVED
+                return QuerySolvingState.solved
 
         # like/dislike, number query, search, info
         if self.state in (DialogState.start, DialogState.number, DialogState.like, DialogState.dislike, DialogState.info):
             next_state = self.match_like_dislike_patterns(query)
             if next_state:
                 self.state = next_state
-                return SOLVED
+                return QuerySolvingState.solved
 
             next_state = self.match_number_query_patterns(query)
             if next_state:
                 self.state = next_state
-                return SOLVED
+                return QuerySolvingState.solved
 
             next_state = self.match_search_patterns(query)
             if next_state:
                 self.state = next_state
-                return SOLVED
+                return QuerySolvingState.solved
 
             # set output len
             next_state = self.match_patterns([handlers.SetOutputLenHandler()], query)
             if next_state:
                 self.state = next_state
-                return SOLVED
+                return QuerySolvingState.solved
 
             next_state = self.match_info_patterns(query)
             if next_state:
                 self.state = next_state
-                return SOLVED
+                return QuerySolvingState.solved
 
         return self.unknown(query)
 

@@ -1,10 +1,11 @@
 from typing import Iterable, List
-from hiphop_bot.dialog_bot.query_solving.dialog import Dialog, DialogState
-from hiphop_bot.dialog_bot.query_solving.user import User
 from hiphop_bot.dialog_bot.recommender_system import filter
-from hiphop_bot.dialog_bot.config import DEBUG, ENABLE_FILTERS
-from hiphop_bot.telegram_interface.output_message import OutputMessage
+from hiphop_bot.dialog_bot.config import ENABLE_FILTERS
 from hiphop_bot.dialog_bot.recommender_system.tree.genre_node import GenreVisualNode
+from hiphop_bot.dialog_bot.query_solving.dialog import Dialog
+from hiphop_bot.dialog_bot.query_solving.user import User
+from hiphop_bot.dialog_bot.config import DEBUG
+from hiphop_bot.base_user_interface.output_message import OutputMessage
 
 
 def trunc_output(output: Iterable, output_len=None) -> List:
@@ -52,21 +53,6 @@ def generate_recommendations_message(user: User, recommended_artists: List[Genre
 
         for artist in recommended_artists:
             out_msg += f'{artist.name}\n'
-    return out_msg
-
-
-def generate_artists_message(user: User, artists: List[GenreVisualNode]) -> str:
-    out_msg = ''
-
-    artists = trunc_output(artists, user.output_len)
-    if artists:
-        out_msg += generate_used_filters_str(user)
-
-        for i, artist in enumerate(artists):
-            if DEBUG:
-                out_msg += f'{artist.name} {artist.genre}\n'
-            else:
-                out_msg += f'{artist.name}\n'
     return out_msg
 
 
