@@ -5,7 +5,7 @@ from hiphop_bot.dialog_bot.recommender_system.tree.genre_node import GenreVisual
 from hiphop_bot.dialog_bot.query_solving.dialog import Dialog
 from hiphop_bot.dialog_bot.query_solving.user import User
 from hiphop_bot.dialog_bot.config import DEBUG
-from hiphop_bot.base_user_interface.output_message import OutputMessage
+from hiphop_bot.controller.output_message import OutputMessage
 
 
 def trunc_output(output: Iterable, output_len=None) -> List:

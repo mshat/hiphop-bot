@@ -3,10 +3,9 @@ from hiphop_bot.dialog_bot.query_solving.query_solver import QuerySolver, QueryS
 from hiphop_bot.dialog_bot.query_solving.user import User
 
 
-class UserInterface:
+class UserInterfaceController:
     _user: User
     _query_solver: QuerySolver
-    # _view:
     hello_message = (
         "Вас приветствует разговорный бот.\n"
         "Я кое-что знаю о русском хип-хопе и готов ответить на ваши вопросы по этой теме.\n"
