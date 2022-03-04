@@ -1,6 +1,7 @@
 import unittest
 from unittest.mock import Mock
-from hiphop_bot.dialog_bot.query_handling.tag_condition import (AndMultiTagCondition, AndTagCondition, OrTagCondition, PatternMatcher)
+from hiphop_bot.dialog_bot.query_handling.tag_condition import AndTagCondition, OrTagCondition, AndMultiTagCondition
+from hiphop_bot.dialog_bot.query_handling.pattern_matcher import PatternMatcher
 
 
 class TestTagSimpleCondition(unittest.TestCase):

@@ -1,10 +1,10 @@
 from __future__ import annotations
 from typing import List
 from hiphop_bot.dialog_bot.query_handling.query_handler import QueryHandler
-from hiphop_bot.dialog_bot.query_handling.tag_condition import (AndMultiTagCondition as AndMulti,
-                                                                OrMultiTagCondition as OrMulti,
-                                                                AndTagCondition as And, OrTagCondition as Or,
-                                                                AndNotTagCondition as AndNot)
+from hiphop_bot.dialog_bot.query_handling.tag_condition import (AndTagCondition as And, OrTagCondition as Or,
+                                                                AndNotTagCondition as AndNot,
+                                                                AndMultiTagCondition as AndMulti,
+                                                                OrMultiTagCondition as OrMulti)
 from hiphop_bot.dialog_bot.query_handling.query_pattern import ALL
 from hiphop_bot.dialog_bot.query_solving.dialog import Dialog, DialogState
 from hiphop_bot.dialog_bot.query_solving.user import User
