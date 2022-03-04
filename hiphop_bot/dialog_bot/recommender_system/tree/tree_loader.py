@@ -13,7 +13,7 @@ def load_tree_dict(filename='genres.json'):
 
 
 def get_artists(genre):
-    with open(f'{dir_path}\\..\\data\\artists.json', 'r', encoding='utf-8') as file:
+    with open(f'{dir_path}//..//data//artists.json', 'r', encoding='utf-8') as file:
         genres_with_artists = json.load(file)
     artists = genres_with_artists[genre] if genre in genres_with_artists.keys() else None
     return artists
