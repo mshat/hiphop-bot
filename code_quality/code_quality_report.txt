@@ -1,0 +1,228 @@
+************* Module hiphop-bot.hiphop_bot.controller.answer_generator
+D:\git\hiphop-bot\hiphop_bot\controller\answer_generator.py:91:4: R0912: Too many branches (13/12) (too-many-branches)
+************* Module hiphop-bot.hiphop_bot.dialog_bot.query_handling.tag_condition
+D:\git\hiphop-bot\hiphop_bot\dialog_bot\query_handling\tag_condition.py:40:16: C0321: More than one statement on a single line (multiple-statements)
+D:\git\hiphop-bot\hiphop_bot\dialog_bot\query_handling\tag_condition.py:43:15: C0321: More than one statement on a single line (multiple-statements)
+D:\git\hiphop-bot\hiphop_bot\dialog_bot\query_handling\tag_condition.py:102:8: C0415: Import outside toplevel (hiphop_bot.dialog_bot.query_handling.pattern_matcher.PatternMatcher) (import-outside-toplevel)
+************* Module hiphop-bot.hiphop_bot.dialog_bot.query_solving.query_solver
+D:\git\hiphop-bot\hiphop_bot\dialog_bot\query_solving\query_solver.py:118:4: R0911: Too many return statements (8/6) (too-many-return-statements)
+************* Module hiphop-bot.hiphop_bot.dialog_bot.query_solving.user
+D:\git\hiphop-bot\hiphop_bot\dialog_bot\query_solving\user.py:7:0: R0902: Too many instance attributes (8/7) (too-many-instance-attributes)
+************* Module hiphop-bot.hiphop_bot.dialog_bot.recommender_system.interface
+D:\git\hiphop-bot\hiphop_bot\dialog_bot\recommender_system\interface.py:25:29: C0321: More than one statement on a single line (multiple-statements)
+D:\git\hiphop-bot\hiphop_bot\dialog_bot\recommender_system\interface.py:26:32: C0321: More than one statement on a single line (multiple-statements)
+************* Module hiphop-bot.hiphop_bot.dialog_bot.recommender_system.pow_distance
+D:\git\hiphop-bot\hiphop_bot\dialog_bot\recommender_system\pow_distance.py:3:4: C0200: Consider using enumerate instead of iterating with range and len (consider-using-enumerate)
+************* Module hiphop-bot.hiphop_bot.dialog_bot.recommender_system.recommendation_list
+D:\git\hiphop-bot\hiphop_bot\dialog_bot\recommender_system\recommendation_list.py:16:9: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)
+D:\git\hiphop-bot\hiphop_bot\dialog_bot\recommender_system\recommendation_list.py:21:9: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)
+************* Module hiphop-bot.hiphop_bot.dialog_bot.recommender_system.tree.genre_node
+D:\git\hiphop-bot\hiphop_bot\dialog_bot\recommender_system\tree\genre_node.py:6:4: W1113: Keyword argument before variable positional arguments list in the definition of __init__ function (keyword-arg-before-vararg)
+************* Module hiphop-bot.hiphop_bot.dialog_bot.recommender_system.tree.node
+D:\git\hiphop-bot\hiphop_bot\dialog_bot\recommender_system\tree\node.py:14:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+************* Module hiphop-bot.hiphop_bot.dialog_bot.recommender_system.tree.tree_loader
+D:\git\hiphop-bot\hiphop_bot\dialog_bot\recommender_system\tree\tree_loader.py:10:9: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)
+D:\git\hiphop-bot\hiphop_bot\dialog_bot\recommender_system\tree\tree_loader.py:25:8: R1705: Unnecessary "else" after "return" (no-else-return)
+************* Module hiphop-bot.hiphop_bot.dialog_bot.recommender_system.tree.tree_tools
+D:\git\hiphop-bot\hiphop_bot\dialog_bot\recommender_system\tree\tree_tools.py:5:0: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+D:\git\hiphop-bot\hiphop_bot\dialog_bot\recommender_system\tree\tree_tools.py:23:4: R1705: Unnecessary "else" after "return" (no-else-return)
+D:\git\hiphop-bot\hiphop_bot\dialog_bot\recommender_system\tree\tree_tools.py:71:0: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+************* Module hiphop-bot.hiphop_bot.dialog_bot.sentence_analyzer.argument
+D:\git\hiphop-bot\hiphop_bot\dialog_bot\sentence_analyzer\argument.py:4:32: C0321: More than one statement on a single line (multiple-statements)
+D:\git\hiphop-bot\hiphop_bot\dialog_bot\sentence_analyzer\argument.py:5:42: C0321: More than one statement on a single line (multiple-statements)
+D:\git\hiphop-bot\hiphop_bot\dialog_bot\sentence_analyzer\argument.py:6:41: C0321: More than one statement on a single line (multiple-statements)
+D:\git\hiphop-bot\hiphop_bot\dialog_bot\sentence_analyzer\argument.py:28:4: W0235: Useless super delegation in method '__init__' (useless-super-delegation)
+************* Module hiphop-bot.hiphop_bot.dialog_bot.sentence_analyzer.keywords
+D:\git\hiphop-bot\hiphop_bot\dialog_bot\sentence_analyzer\keywords.py:18:0: C0305: Trailing newlines (trailing-newlines)
+************* Module hiphop-bot.hiphop_bot.dialog_bot.sentence_analyzer.query
+D:\git\hiphop-bot\hiphop_bot\dialog_bot\sentence_analyzer\query.py:21:9: W0511: else:  # TODO вложенные мультиусловия пытаются несколько раз удалить одно и то же ключевое слово (fixme)
+************* Module hiphop-bot.hiphop_bot.dialog_bot.sentence_analyzer.sentence_parser
+D:\git\hiphop-bot\hiphop_bot\dialog_bot\sentence_analyzer\sentence_parser.py:13:39: C0321: More than one statement on a single line (multiple-statements)
+************* Module hiphop-bot.hiphop_bot.dialog_bot.sentence_analyzer.word_parser
+D:\git\hiphop-bot\hiphop_bot\dialog_bot\sentence_analyzer\word_parser.py:24:0: C0304: Final newline missing (missing-final-newline)
+D:\git\hiphop-bot\hiphop_bot\dialog_bot\sentence_analyzer\word_parser.py:18:59: W0511: TODO не обязательно первый вариант правильный (fixme)
+D:\git\hiphop-bot\hiphop_bot\dialog_bot\sentence_analyzer\word_parser.py:6:35: C0321: More than one statement on a single line (multiple-statements)
+************* Module hiphop-bot.hiphop_bot.dialog_bot.tests.test_conditions
+D:\git\hiphop-bot\hiphop_bot\dialog_bot\tests\test_conditions.py:144:0: C0304: Final newline missing (missing-final-newline)
+D:\git\hiphop-bot\hiphop_bot\dialog_bot\tests\test_conditions.py:28:4: C0103: Method name "test_one_AND_condition" doesn't conform to snake_case naming style (invalid-name)
+D:\git\hiphop-bot\hiphop_bot\dialog_bot\tests\test_conditions.py:36:4: C0103: Method name "test_one_OR_condition" doesn't conform to snake_case naming style (invalid-name)
+D:\git\hiphop-bot\hiphop_bot\dialog_bot\tests\test_conditions.py:44:4: C0103: Method name "test_two_AND_conditions_pos" doesn't conform to snake_case naming style (invalid-name)
+D:\git\hiphop-bot\hiphop_bot\dialog_bot\tests\test_conditions.py:54:4: C0103: Method name "test_two_AND_conditions_neg_no_tag_artist_in_query" doesn't conform to snake_case naming style (invalid-name)
+D:\git\hiphop-bot\hiphop_bot\dialog_bot\tests\test_conditions.py:65:4: C0103: Method name "test_two_AND_conditions_neg_empty_query" doesn't conform to snake_case naming style (invalid-name)
+D:\git\hiphop-bot\hiphop_bot\dialog_bot\tests\test_conditions.py:76:4: C0103: Method name "test_AND_and_OR_conditions_pos" doesn't conform to snake_case naming style (invalid-name)
+D:\git\hiphop-bot\hiphop_bot\dialog_bot\tests\test_conditions.py:87:4: C0103: Method name "test_two_OR_conditions_pos" doesn't conform to snake_case naming style (invalid-name)
+D:\git\hiphop-bot\hiphop_bot\dialog_bot\tests\test_conditions.py:98:4: C0103: Method name "test_two_OR_conditions_neg" doesn't conform to snake_case naming style (invalid-name)
+D:\git\hiphop-bot\hiphop_bot\dialog_bot\tests\test_conditions.py:133:4: C0103: Method name "test_two_AND_multiconditions_pos" doesn't conform to snake_case naming style (invalid-name)
+************* Module hiphop-bot.hiphop_bot.dialog_bot.tests.test_patterns
+D:\git\hiphop-bot\hiphop_bot\dialog_bot\tests\test_patterns.py:393:0: C0305: Trailing newlines (trailing-newlines)
+************* Module hiphop-bot.hiphop_bot.telegram_interface.telegram_view
+D:\git\hiphop-bot\hiphop_bot\telegram_interface\telegram_view.py:19:14: C0321: More than one statement on a single line (multiple-statements)
+D:\git\hiphop-bot\hiphop_bot\telegram_interface\telegram_view.py:43:4: R1705: Unnecessary "elif" after "return" (no-else-return)
+
+
+Report
+======
+1877 statements analysed.
+
+Statistics by type
+------------------
+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |55     |55         |=          |25.45       |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|class    |85     |85         |=          |10.59       |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|method   |233    |233        |=          |63.52       |3.86     |
++---------+-------+-----------+-----------+------------+---------+
+|function |56     |56         |=          |5.36        |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+
+
+
+External dependencies
+---------------------
+::
+
+    graphviz (hiphop-bot.hiphop_bot.dialog_bot.recommender_system.tree.visual_node)
+    hiphop_bot 
+      \-controller 
+      | \-answer_generator (hiphop-bot.hiphop_bot.console_interface.console_view,hiphop-bot.hiphop_bot.telegram_interface.telegram_view)
+      | \-controller (hiphop-bot.hiphop_bot.console_interface.console_view,hiphop-bot.hiphop_bot.telegram_interface.telegram_view)
+      | \-output_message (hiphop-bot.hiphop_bot.controller.answer_generator)
+      \-dialog_bot 
+        \-config (hiphop-bot.hiphop_bot.console_interface.console_view,hiphop-bot.hiphop_bot.controller.answer_generator,hiphop-bot.hiphop_bot.dialog_bot.query_handling.handlers,hiphop-bot.hiphop_bot.dialog_bot.query_handling.query_handler,hiphop-bot.hiphop_bot.dialog_bot.query_solving.query_solver,hiphop-bot.hiphop_bot.dialog_bot.tools.debug_print,hiphop-bot.hiphop_bot.telegram_interface.telegram_view)
+        \-data 
+        | \-const (hiphop-bot.hiphop_bot.console_interface.console_view,hiphop-bot.hiphop_bot.dialog_bot.data.data,hiphop-bot.hiphop_bot.dialog_bot.query_handling.handlers,hiphop-bot.hiphop_bot.dialog_bot.query_solving.user)
+        | \-data (hiphop-bot.hiphop_bot.dialog_bot.query_handling.handlers,hiphop-bot.hiphop_bot.dialog_bot.query_handling.tag_condition,hiphop-bot.hiphop_bot.dialog_bot.sentence_analyzer.argument,hiphop-bot.hiphop_bot.dialog_bot.sentence_analyzer.keywords,hiphop-bot.hiphop_bot.dialog_bot.sentence_analyzer.sentence_parser)
+        \-query_handling 
+        | \-handlers (hiphop-bot.hiphop_bot.dialog_bot.main,hiphop-bot.hiphop_bot.dialog_bot.query_solving.query_solver)
+        | \-pattern_matcher (hiphop-bot.hiphop_bot.dialog_bot.query_handling.query_pattern,hiphop-bot.hiphop_bot.dialog_bot.query_handling.tag_condition,hiphop-bot.hiphop_bot.dialog_bot.tests.test_conditions)
+        | \-query_handler (hiphop-bot.hiphop_bot.dialog_bot.query_handling.handlers,hiphop-bot.hiphop_bot.dialog_bot.query_solving.query_solver)
+        | \-query_pattern (hiphop-bot.hiphop_bot.dialog_bot.query_handling.handlers,hiphop-bot.hiphop_bot.dialog_bot.query_handling.query_handler)
+        | \-tag_condition (hiphop-bot.hiphop_bot.dialog_bot.query_handling.handlers,hiphop-bot.hiphop_bot.dialog_bot.query_handling.pattern_matcher,hiphop-bot.hiphop_bot.dialog_bot.query_handling.query_handler,hiphop-bot.hiphop_bot.dialog_bot.query_handling.query_pattern,hiphop-bot.hiphop_bot.dialog_bot.tests.test_conditions)
+        \-query_solving 
+        | \-dialog (hiphop-bot.hiphop_bot.console_interface.console_view,hiphop-bot.hiphop_bot.controller.answer_generator,hiphop-bot.hiphop_bot.dialog_bot.query_handling.handlers,hiphop-bot.hiphop_bot.dialog_bot.query_handling.query_handler,hiphop-bot.hiphop_bot.dialog_bot.query_solving.query_solver,hiphop-bot.hiphop_bot.dialog_bot.tests.test_patterns)
+        | \-query_solver (hiphop-bot.hiphop_bot.console_interface.console_view,hiphop-bot.hiphop_bot.controller.controller,hiphop-bot.hiphop_bot.dialog_bot.tests.test_patterns,hiphop-bot.hiphop_bot.telegram_interface.telegram_view)
+        | \-user (hiphop-bot.hiphop_bot.controller.answer_generator,hiphop-bot.hiphop_bot.controller.controller,hiphop-bot.hiphop_bot.dialog_bot.query_handling.handlers,hiphop-bot.hiphop_bot.dialog_bot.query_handling.query_handler,hiphop-bot.hiphop_bot.dialog_bot.query_solving.query_solver,hiphop-bot.hiphop_bot.dialog_bot.tests.test_patterns)
+        \-recommender_system 
+        | \-artist_filterer (hiphop-bot.hiphop_bot.controller.answer_generator,hiphop-bot.hiphop_bot.dialog_bot.query_handling.handlers)
+        | \-config (hiphop-bot.hiphop_bot.dialog_bot.recommender_system.recommendation_list)
+        | \-data 
+        | | \-artists (hiphop-bot.hiphop_bot.dialog_bot.recommender_system.tree.genre_node)
+        | \-interface (hiphop-bot.hiphop_bot.dialog_bot.query_handling.handlers,hiphop-bot.hiphop_bot.dialog_bot.recommender_system.artist_filterer)
+        | \-pow_distance (hiphop-bot.hiphop_bot.dialog_bot.recommender_system.proximity_measures)
+        | \-proximity_measures (hiphop-bot.hiphop_bot.dialog_bot.recommender_system.interface,hiphop-bot.hiphop_bot.dialog_bot.recommender_system.recommendation_list)
+        | \-recommendation_list (hiphop-bot.hiphop_bot.dialog_bot.recommender_system.interface)
+        | \-tools (hiphop-bot.hiphop_bot.dialog_bot.recommender_system.recommendation_list)
+        | \-tree 
+        |   \-genre_node (hiphop-bot.hiphop_bot.controller.answer_generator,hiphop-bot.hiphop_bot.dialog_bot.recommender_system.artist_filterer,hiphop-bot.hiphop_bot.dialog_bot.recommender_system.interface,hiphop-bot.hiphop_bot.dialog_bot.recommender_system.proximity_measures,hiphop-bot.hiphop_bot.dialog_bot.recommender_system.recommendation_list,hiphop-bot.hiphop_bot.dialog_bot.recommender_system.tree.tree_tools)
+        |   \-node (hiphop-bot.hiphop_bot.dialog_bot.recommender_system.interface,hiphop-bot.hiphop_bot.dialog_bot.recommender_system.proximity_measures,hiphop-bot.hiphop_bot.dialog_bot.recommender_system.tree.tree_tools)
+        |   \-tree_loader (hiphop-bot.hiphop_bot.dialog_bot.recommender_system.interface)
+        |   \-tree_tools (hiphop-bot.hiphop_bot.dialog_bot.recommender_system.interface,hiphop-bot.hiphop_bot.dialog_bot.recommender_system.proximity_measures)
+        |   \-visual_node (hiphop-bot.hiphop_bot.dialog_bot.recommender_system.tree.genre_node)
+        \-sentence_analyzer 
+          \-argument (hiphop-bot.hiphop_bot.dialog_bot.query_handling.handlers,hiphop-bot.hiphop_bot.dialog_bot.query_handling.query_pattern,hiphop-bot.hiphop_bot.dialog_bot.sentence_analyzer.query,hiphop-bot.hiphop_bot.dialog_bot.sentence_analyzer.sentence_parser)
+          \-keywords (hiphop-bot.hiphop_bot.dialog_bot.sentence_analyzer.word_classifier)
+          \-morph_analyzer (hiphop-bot.hiphop_bot.dialog_bot.sentence_analyzer.word_parser)
+          \-query (hiphop-bot.hiphop_bot.dialog_bot.query_handling.handlers,hiphop-bot.hiphop_bot.dialog_bot.query_handling.query_handler,hiphop-bot.hiphop_bot.dialog_bot.query_handling.query_pattern,hiphop-bot.hiphop_bot.dialog_bot.query_solving.query_solver,hiphop-bot.hiphop_bot.dialog_bot.sentence_analyzer.sentence_parser)
+          \-sentence_parser (hiphop-bot.hiphop_bot.controller.controller,hiphop-bot.hiphop_bot.dialog_bot.tests.test_patterns)
+          \-word (hiphop-bot.hiphop_bot.dialog_bot.query_handling.pattern_matcher,hiphop-bot.hiphop_bot.dialog_bot.query_handling.query_pattern,hiphop-bot.hiphop_bot.dialog_bot.query_handling.tag_condition,hiphop-bot.hiphop_bot.dialog_bot.sentence_analyzer.query,hiphop-bot.hiphop_bot.dialog_bot.sentence_analyzer.sentence_parser,hiphop-bot.hiphop_bot.dialog_bot.sentence_analyzer.word_parser)
+          \-word_classifier (hiphop-bot.hiphop_bot.dialog_bot.sentence_analyzer.word_parser)
+          \-word_parser (hiphop-bot.hiphop_bot.dialog_bot.sentence_analyzer.sentence_parser)
+    pymorphy2 (hiphop-bot.hiphop_bot.dialog_bot.sentence_analyzer.morph_analyzer)
+    telebot (hiphop-bot.hiphop_bot.telegram_interface.telegram_view)
+
+
+
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |2281   |64.33 |2281     |=          |
++----------+-------+------+---------+-----------+
+|docstring |613    |17.29 |613      |=          |
++----------+-------+------+---------+-----------+
+|comment   |11     |0.31  |11       |=          |
++----------+-------+------+---------+-----------+
+|empty     |641    |18.08 |641      |=          |
++----------+-------+------+---------+-----------+
+
+
+
+Duplication
+-----------
+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |0        |0          |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |0.000    |=          |
++-------------------------+------+---------+-----------+
+
+
+
+Messages by category
+--------------------
+
++-----------+-------+---------+-----------+
+|type       |number |previous |difference |
++===========+=======+=========+===========+
+|convention |25     |25       |25         |
++-----------+-------+---------+-----------+
+|refactor   |9      |12       |12         |
++-----------+-------+---------+-----------+
+|warning    |7      |7        |7          |
++-----------+-------+---------+-----------+
+|error      |0      |0        |0          |
++-----------+-------+---------+-----------+
+
+
+
+Messages
+--------
+
++-------------------------------+------------+
+|message id                     |occurrences |
++===============================+============+
+|multiple-statements            |10          |
++-------------------------------+------------+
+|invalid-name                   |9           |
++-------------------------------+------------+
+|unspecified-encoding           |3           |
++-------------------------------+------------+
+|no-else-return                 |3           |
++-------------------------------+------------+
+|inconsistent-return-statements |3           |
++-------------------------------+------------+
+|trailing-newlines              |2           |
++-------------------------------+------------+
+|missing-final-newline          |2           |
++-------------------------------+------------+
+|fixme                          |2           |
++-------------------------------+------------+
+|useless-super-delegation       |1           |
++-------------------------------+------------+
+|too-many-return-statements     |1           |
++-------------------------------+------------+
+|too-many-instance-attributes   |1           |
++-------------------------------+------------+
+|too-many-branches              |1           |
++-------------------------------+------------+
+|keyword-arg-before-vararg      |1           |
++-------------------------------+------------+
+|import-outside-toplevel        |1           |
++-------------------------------+------------+
+|consider-using-enumerate       |1           |
++-------------------------------+------------+
+
+
+
+
+------------------------------------------------------------------
+Your code has been rated at 9.78/10 (previous run: 9.77/10, +0.02)
+
