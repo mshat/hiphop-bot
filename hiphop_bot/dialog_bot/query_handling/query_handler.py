@@ -30,7 +30,7 @@ class QueryHandler(ABC):
         return QueryPattern(self.conditions, self.required_argument_type, self.required_arguments)
 
     @abstractmethod
-    def handle(self, query: Query, user: User, dialog: Dialog):
+    def handle(self, query: Query, user: User, dialog: Dialog) -> DialogState:
         pass
 
     def match_pattern(self, query: Query):

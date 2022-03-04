@@ -18,18 +18,18 @@ class User:
         self._name = name
         self._likes = []
         self._dislikes = []
-        self._group_type_filter = GroupTypeFilter.any
+        self._group_type_filter = GroupTypeFilter.ANY
         self._younger_filter = None
         self._older_filter = None
-        self._sex_filter = SexFilter.any
+        self._sex_filter = SexFilter.ANY
         self.output_len = ALL
 
     @property
     def str_filters(self):
         res = ''
-        if self.group_type_filter != GroupTypeFilter.any:
+        if self.group_type_filter != GroupTypeFilter.ANY:
             res += f'по количеству исполнителей {self.group_type_filter.value} | '
-        if self.sex_filter != SexFilter.any:
+        if self.sex_filter != SexFilter.ANY:
             res += f'по полу {self.sex_filter.value} | '
         if self._older_filter:
             res += f'старше {self._older_filter} | '
@@ -81,10 +81,10 @@ class User:
         return self._sex_filter
 
     def set_all_filters_to_default(self):
-        self._group_type_filter = GroupTypeFilter.any
+        self._group_type_filter = GroupTypeFilter.ANY
         self._younger_filter = None
         self._older_filter = None
-        self._sex_filter = SexFilter.any
+        self._sex_filter = SexFilter.ANY
         self.output_len = ALL
 
     def add_sex_filter(self, sex: SexFilter):

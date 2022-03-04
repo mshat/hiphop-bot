@@ -33,7 +33,8 @@ def main():
         else:
             raise Exception('Unknown query_solver result')
 
-        if DEBUG: print('[CURRENT STATE]', controller.state)
+        if DEBUG:
+            print('[CURRENT STATE]', controller.state)
         print()
 
 

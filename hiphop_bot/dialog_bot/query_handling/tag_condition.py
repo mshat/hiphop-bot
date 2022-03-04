@@ -133,7 +133,7 @@ class MultiTagCondition(ABC):
     Результатом вызова метода solve будет результат вычисления условий self.conditions
     """
 
-    def __init__(self, conditions: List[AndTagCondition | OrTagCondition | AndNotTagCondition | OrNotTagCondition]):
+    def __init__(self, conditions: List[TagCondition | NotTagCondition | MultiTagCondition]):
         self.pattern_matcher = PatternMatcher(conditions)
         self.conditions = conditions
 

@@ -14,7 +14,10 @@ keywords = {
     'recommend': ('посоветовать', 'порекомендовать', 'рекомендация'),
     'show': ('показывать', 'показать', 'выводить', 'вывести'),
     'include': ('оставить', 'оставлять', 'добавить', 'включить', 'прибавить', 'выбрать'),
-    'exclude': ('убрать', 'исключать', 'исключить', 'отмести', 'отметать', 'выкинуть', 'выкидывать', 'отсеить', 'отсеивать', 'удалять', 'удалить', 'удаль', 'отфильтровать',),
+    'exclude': (
+        'убрать', 'исключать', 'исключить', 'отмести', 'отметать', 'выкинуть', 'выкидывать', 'отсеить', 'отсеивать',
+        'удалять', 'удалить', 'удаль', 'отфильтровать',
+    ),
     'all': ('весь', 'всё'),
     'year': ('год',),
     'older': ('старший', 'большой', 'за', 'от'),
@@ -54,14 +57,14 @@ for tag1, aliases1 in keywords.items():
                 print(tag1, tag2, set(aliases1) & set(aliases2))
 
 GENDERS = {
-    'мужcкой': SexFilter.male,
-    'мужского': SexFilter.male,
-    'мужчин': SexFilter.male,
-    'мужчина': SexFilter.male,
-    'женский': SexFilter.female,
-    'женского': SexFilter.female,
-    'женщин': SexFilter.female,
-    'женщина': SexFilter.female,
+    'мужcкой': SexFilter.MALE,
+    'мужского': SexFilter.MALE,
+    'мужчин': SexFilter.MALE,
+    'мужчина': SexFilter.MALE,
+    'женский': SexFilter.FEMALE,
+    'женского': SexFilter.FEMALE,
+    'женщин': SexFilter.FEMALE,
+    'женщина': SexFilter.FEMALE,
 }
 
 ARTISTS = {
@@ -393,5 +396,3 @@ GENRES = {
     'спорт': 'workout',
     'спорта': 'workout',
 }
-
-

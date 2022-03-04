@@ -7,7 +7,7 @@
 Запрос: Фильтр по возрасту "исключить"                 | Паттерн: Аргументы: NumArgument: 1       | Условие: exclude AND (older OR younger)
 Запрос: Фильтр по количеству выводимых результатов     | Паттерн: Аргументы: NumArgument: 1       | Условие: (show OR restrict) OR (po AND (result OR artist OR line))
 Запрос: Фильтр по количеству участников коллектива     | Паттерн: Аргументы:                      | Условие: group OR solo OR duet
-Запрос: Удалить все фильтры                            | Паттерн: Аргументы:                      | Условие: exclude AND all AND (filter OR restrict)
+Запрос: Удалить все фильтры                            | Паттерн: Аргументы:                      | Условие: exclude AND (filter OR restrict)
 Запрос: Удалить ограничение количества выводимых строк | Паттерн: Аргументы:                      | Условие: (exclude AND number) OR ((show OR include) AND all)
 Запрос: Лайк                                           | Паттерн: Аргументы: ArtistArgument: ALL  | Условие: dislike AND exclude
 Запрос: Дизлайк                                        | Паттерн: Аргументы: ArtistArgument: ALL  | Условие: like AND exclude

@@ -108,8 +108,9 @@ class QuerySolver:
             handlers.FilterByAgeIncludeHandler(),
             handlers.FilterByMembersCountHandler(),
             handlers.FilterOutputLenHandler(),
-            handlers.RemoveFiltersHandler(),
+
             handlers.RemoveResultLenFilterHandler(),
+            handlers.RemoveFiltersHandler(),
         ]
         return self.match_patterns(filter_handlers, query)
 

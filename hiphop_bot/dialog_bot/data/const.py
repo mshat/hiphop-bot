@@ -4,13 +4,13 @@ LINE_LEN = 120
 
 
 class SexFilter(enum.Enum):
-    any = 'anysex'
-    female = 'female'
-    male = 'male'
+    ANY = 'anysex'
+    FEMALE = 'female'
+    MALE = 'male'
 
 
 class GroupTypeFilter(enum.Enum):
-    any = 'any'
-    solo = 'solo'
-    duet = 'duet'
-    group = 'group'
+    ANY = 'any'
+    SOLO = 'solo'
+    DUET = 'duet'
+    GROUP = 'group'

@@ -1,5 +1,5 @@
 from typing import Iterable, List
-from hiphop_bot.dialog_bot.recommender_system import filter
+from hiphop_bot.dialog_bot.recommender_system import artist_filterer
 from hiphop_bot.dialog_bot.config import ENABLE_FILTERS
 from hiphop_bot.dialog_bot.recommender_system.tree.genre_node import GenreVisualNode
 from hiphop_bot.dialog_bot.query_solving.dialog import Dialog
@@ -17,22 +17,22 @@ def trunc_output(output: Iterable, output_len=None) -> List:
 
 def get_after_search_message():
     if ENABLE_FILTERS:
-        msg = (f'Вы находитесь в режиме ФИЛЬТРАЦИИ. Вы можете добавить фильтры к полученному результату поиска.\n'
-               'Чтобы задать новый вопрос, скажите мне начать сначала\n'
-               )
+        msg = (
+            'Вы находитесь в режиме ФИЛЬТРАЦИИ. Вы можете добавить фильтры к полученному результату поиска.\n'
+            'Чтобы задать новый вопрос, скажите мне начать сначала\n'
+        )
         return msg
     return ''
 
 
 def filter_search_result(user: User, dialog: Dialog) -> List[GenreVisualNode]:
-    if dialog.search_result:
-        return filter.filter_artists(
-            dialog.search_result,
-            group_type=user.group_type_filter.value,
-            sex=user.sex_filter.value,
-            younger=user.younger_filter,
-            older=user.older_filter,
-        )
+    return artist_filterer.filter_artists(
+        dialog.search_result,
+        group_type=user.group_type_filter.value,
+        sex=user.sex_filter.value,
+        younger=user.younger_filter,
+        older=user.older_filter,
+    )
 
 
 def generate_used_filters_str(user: User):
