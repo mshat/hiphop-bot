@@ -3,11 +3,12 @@ from hiphop_bot.dialog_bot.query_solving.query_solver import QuerySolvingState
 from hiphop_bot.controller.answer_generator import AnswerGenerator
 from hiphop_bot.controller.controller import UserInterfaceController
 from hiphop_bot.dialog_bot.config import DEBUG
+from dotenv import dotenv_values
 
 
-TOKEN = '5168804721:AAGBSsgGVMV5JQ258fnm6O6N96EXKwwkL3I'
+ENV = dotenv_values(r"..\.env")
 
-bot = telebot.TeleBot(TOKEN)
+bot = telebot.TeleBot(ENV['TG_TOKEN'])
 
 controller = UserInterfaceController()
 answer_generator = AnswerGenerator()
