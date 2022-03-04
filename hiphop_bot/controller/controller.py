@@ -31,6 +31,6 @@ class UserInterfaceController:
         return self._query_solver.state
 
     def solve_query(self, sentence: str) -> QuerySolvingState:
-        query = SentenceParser(sentence).parse(self._query_solver.state)
+        query = SentenceParser(sentence).parse()
         res = self._query_solver.solve(query)
         return res

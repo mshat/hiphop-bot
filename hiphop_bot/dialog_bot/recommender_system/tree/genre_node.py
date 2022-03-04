@@ -1,6 +1,4 @@
-from .visual_node import VisualNode
-import sys
-sys.path.append("../..")
+from hiphop_bot.dialog_bot.recommender_system.tree.visual_node import VisualNode
 from hiphop_bot.dialog_bot.recommender_system.data.artists import ARTISTS, THEMES
 
 
@@ -22,19 +20,18 @@ class GenreVisualNode(VisualNode):
     def sex(self):
         if self.male_or_female == 1:
             return 'male'
-        else:
-            return 'female'
+        return 'female'
 
     @property
     def solo_duet_group(self) -> str:  # категорийный
         if self.group_members_number == 1:
             return 'solo'
-        elif self.group_members_number == 2:
+        if self.group_members_number == 2:
             return 'duet'
-        elif self.group_members_number > 2:
+        if self.group_members_number > 2:
             return 'group'
-        else:
-            raise ValueError('Group_members_number must be > 0')
+
+        raise ValueError('Group_members_number must be > 0')
 
     @property
     def values_str(self):

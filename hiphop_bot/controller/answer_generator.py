@@ -47,7 +47,7 @@ def generate_used_filters_str(user: User):
 def generate_recommendations_message(user: User, recommended_artists: List[GenreVisualNode]) -> str:
     out_msg = ''
 
-    recommended_artists = trunc_output(recommended_artists, user.output_len)
+    recommended_artists = trunc_output(recommended_artists, user.max_output_len)
     if recommended_artists:
         out_msg += generate_used_filters_str(user)
 
@@ -59,7 +59,7 @@ def generate_recommendations_message(user: User, recommended_artists: List[Genre
 def generate_genres_message(user: User, dialog: Dialog) -> str:
     out_msg = ''
     genres = dialog.output_genres
-    genres = trunc_output(genres, user.output_len)
+    genres = trunc_output(genres, user.max_output_len)
     if genres:
         for genre in genres:
             out_msg += f'{genre}\n'

@@ -2,7 +2,8 @@ import re
 from typing import List, Dict, Union
 from hiphop_bot.dialog_bot.sentence_analyzer.word import BaseWord, Placeholder, Word
 from hiphop_bot.dialog_bot.sentence_analyzer.query import Query
-from hiphop_bot.dialog_bot.sentence_analyzer.argument import ArtistArgument, SexArgument, GenreArgument, NumArgument, ARTISTS, GENRES
+from hiphop_bot.dialog_bot.sentence_analyzer.argument import (ArtistArgument, SexArgument, GenreArgument, NumArgument,
+                                                              ARTISTS, GENRES)
 from hiphop_bot.dialog_bot.data.data import GENDERS
 from hiphop_bot.dialog_bot.sentence_analyzer.word_parser import WordParser
 
@@ -27,10 +28,7 @@ class SentenceParser:
         self._sentence = self._sentence.replace('  ', ' ')
 
     def _check_is_it_question(self):
-        if self._sentence[-1] == '?':
-            return True
-        else:
-            return False
+        return bool(self._sentence[-1] == '?')
 
     def find_arguments(self, possible_arguments: Dict, placeholder='') -> List[str]:
         """ Находит в предложении все вхождения ключей словаря possible_arguments и
@@ -63,7 +61,7 @@ class SentenceParser:
             i += 1
         return words
 
-    def parse(self, dialog_state) -> Query:
+    def parse(self) -> Query:
         artist_args = [ArtistArgument(arg) for arg in self.find_arguments(ARTISTS, PLACEHOLDERS['artist'])]
         genre_args = [GenreArgument(arg) for arg in self.find_arguments(GENRES, PLACEHOLDERS['genre'])]
         gender_args = [SexArgument(arg) for arg in self.find_arguments(GENDERS, PLACEHOLDERS['gender'])]

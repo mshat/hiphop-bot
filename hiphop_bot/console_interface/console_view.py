@@ -13,7 +13,7 @@ def main():
     print(f'{"="*LINE_LEN}\n{controller.hello_message} \n{"="*LINE_LEN}')
 
     while True:
-        input_prompt = 'ФИЛЬТР -> ' if controller.state in (DialogState.search, DialogState.filter) else 'ЗАПРОС -> '
+        input_prompt = 'ФИЛЬТР -> ' if controller.state in (DialogState.SEARCH, DialogState.FILTER) else 'ЗАПРОС -> '
 
         sentence = input(input_prompt)
 
@@ -23,12 +23,12 @@ def main():
 
         query_solving_res = controller.solve_query(sentence)
 
-        if query_solving_res == QuerySolvingState.solved:
+        if query_solving_res == QuerySolvingState.SOLVED:
             answer_generator.dialog = controller.dialog
             answer_generator.user = controller.user
             answer = answer_generator.generate_answer()
             print(answer)
-        elif query_solving_res == QuerySolvingState.unsolved:
+        elif query_solving_res == QuerySolvingState.UNSOLVED:
             print(controller.unresolved_answer)
         else:
             raise Exception('Unknown query_solver result')

@@ -50,7 +50,7 @@ class RestartHandler(QueryHandler):
 
     def handle(self, query: Query, user: User, dialog: Dialog):
         dialog.output_message = 'Готово!'
-        return DialogState.start
+        return DialogState.START
 
 
 class SetOutputLenHandler(QueryHandler):
@@ -67,10 +67,10 @@ class SetOutputLenHandler(QueryHandler):
     def handle(self, query: Query, user: User, dialog: Dialog):
         output_len = get_arguments_by_type(query, 'NumArgument')[-1]
 
-        user.output_len = int(output_len.value)
+        user.max_output_len = int(output_len.value)
 
         dialog.output_message = f'Буду выводить по {output_len.value} строк'
-        return DialogState.start
+        return DialogState.START
 
 
 class FilterBySexIncludeHandler(QueryHandler):
@@ -86,7 +86,7 @@ class FilterBySexIncludeHandler(QueryHandler):
 
         user.add_sex_filter(sex.value)
 
-        return DialogState.filter
+        return DialogState.FILTER
 
 
 class FilterBySexExcludeHandler(QueryHandler):
@@ -103,7 +103,7 @@ class FilterBySexExcludeHandler(QueryHandler):
         sex = SexFilter.MALE if sex_arg.value == SexFilter.FEMALE else SexFilter.FEMALE
         user.add_sex_filter(sex)
 
-        return DialogState.filter
+        return DialogState.FILTER
 
 
 class FilterByAgeRangeHandler(QueryHandler):
@@ -122,8 +122,8 @@ class FilterByAgeRangeHandler(QueryHandler):
             user.older_filter = from_age
             user.younger_filter = to_age
         else:
-            return DialogState.filter
-        return DialogState.filter
+            return DialogState.FILTER
+        return DialogState.FILTER
 
 
 class FilterByAgeIncludeHandler(QueryHandler):
@@ -143,9 +143,9 @@ class FilterByAgeIncludeHandler(QueryHandler):
             dialog.debug_message = f'фильтр от {age} лет'
             user.older_filter = age
         else:
-            return DialogState.filter
+            return DialogState.FILTER
 
-        return DialogState.filter
+        return DialogState.FILTER
 
 
 class FilterByAgeExcludeHandler(QueryHandler):
@@ -165,9 +165,9 @@ class FilterByAgeExcludeHandler(QueryHandler):
             dialog.debug_message = f'фильтр до {age} лет'
             user.younger_filter = age
         else:
-            return DialogState.filter
+            return DialogState.FILTER
 
-        return DialogState.filter
+        return DialogState.FILTER
 
 
 class FilterOutputLenHandler(SetOutputLenHandler):
@@ -196,10 +196,10 @@ class FilterByMembersCountHandler(QueryHandler):
         elif 'duet' in tags:
             user.group_type_filter = GroupTypeFilter.DUET
         else:
-            return DialogState.filter
+            return DialogState.FILTER
 
         dialog.debug_message = f'оставить {user.group_type_filter}'
-        return DialogState.filter
+        return DialogState.FILTER
 
 
 class RemoveResultLenFilterHandler(QueryHandler):
@@ -212,9 +212,9 @@ class RemoveResultLenFilterHandler(QueryHandler):
         self.debug_msg = 'Удалить ограничение количества выводимых строк'
 
     def handle(self, query: Query, user: User, dialog: Dialog):
-        user.output_len = 1000
+        user.max_output_len = 1000
 
-        return DialogState.filter
+        return DialogState.FILTER
 
 
 class RemoveFiltersHandler(QueryHandler):
@@ -226,7 +226,7 @@ class RemoveFiltersHandler(QueryHandler):
     def handle(self, query: Query, user: User, dialog: Dialog):
         user.set_all_filters_to_default()
 
-        return DialogState.filter
+        return DialogState.FILTER
 
 
 class ExcludeDislikeHandler(QueryHandler):
@@ -242,7 +242,7 @@ class ExcludeDislikeHandler(QueryHandler):
         for artist in liked_artists:
             user.add_like(artist)
         dialog.output_message = f'Поставлен лайк: {", ".join(liked_artists)}'
-        return DialogState.like
+        return DialogState.LIKE
 
 
 class LikeHandler(ExcludeDislikeHandler):
@@ -266,7 +266,7 @@ class ExcludeLikeHandler(QueryHandler):
         for artist in disliked_artists:
             user.add_dislike(artist)
         dialog.output_message = f'Поставлен дизлайк: {", ".join(disliked_artists)}'
-        return DialogState.dislike
+        return DialogState.DISLIKE
 
 
 class DislikeHandler(ExcludeLikeHandler):
@@ -292,7 +292,7 @@ class NumberWithSexHandler(QueryHandler):
             dialog.output_message = f'В базе {len(artists)} исполнителя мужского пола'
         else:
             dialog.output_message = f'В базе {len(artists)} исполнитель женского пола'
-        return DialogState.number
+        return DialogState.NUMBER
 
 
 class NumberWithAgeRangeHandler(QueryHandler):
@@ -317,7 +317,7 @@ class NumberWithAgeRangeHandler(QueryHandler):
             dialog.output_message = f'Количество исполнителей от {from_age} до {to_age} лет: {len(artists)}'
         else:
             return dialog.state
-        return DialogState.number
+        return DialogState.NUMBER
 
 
 class NumberWithAgeHandler(QueryHandler):
@@ -339,7 +339,7 @@ class NumberWithAgeHandler(QueryHandler):
         elif 'older' in query.query_tag_structure:
             artists = artist_filterer.filter_artists(artists, older=age)
             dialog.output_message = f'Количество артистов от {age} лет: {len(artists)}'
-        return DialogState.number
+        return DialogState.NUMBER
 
 
 class NumberHandler(QueryHandler):
@@ -351,7 +351,7 @@ class NumberHandler(QueryHandler):
     def handle(self, query: Query, user: User, dialog: Dialog):
         artists = interface.get_all_artists()
         dialog.output_message = f'В базе {len(artists)} исполнителя'
-        return DialogState.number
+        return DialogState.NUMBER
 
 
 class SearchBySexHandler(QueryHandler):
@@ -366,7 +366,7 @@ class SearchBySexHandler(QueryHandler):
         artists = interface.get_all_artists()
         artists = artist_filterer.filter_artists(artists, sex=sex.value.value)
         dialog.search_result = artists
-        return DialogState.search
+        return DialogState.SEARCH
 
 
 class SearchByAgeRangeHandler(QueryHandler):
@@ -389,8 +389,8 @@ class SearchByAgeRangeHandler(QueryHandler):
             artists = artist_filterer.filter_artists(artists, older=from_age, younger=to_age)
             dialog.search_result = artists
         else:
-            return DialogState.start
-        return DialogState.search
+            return DialogState.START
+        return DialogState.SEARCH
 
 
 class SearchByAgeHandler(QueryHandler):
@@ -417,7 +417,7 @@ class SearchByAgeHandler(QueryHandler):
             artists = artist_filterer.filter_artists(artists, older=age)
 
         dialog.search_result = artists
-        return DialogState.search
+        return DialogState.SEARCH
 
 
 class SearchByGenreHandler(QueryHandler):
@@ -431,7 +431,7 @@ class SearchByGenreHandler(QueryHandler):
         genre = get_arguments_by_type(query, 'GenreArgument')[0]
         artists = interface.get_artists_by_genre(genre.value)
         dialog.search_result = artists
-        return DialogState.search
+        return DialogState.SEARCH
 
 
 class SearchByArtistHandler(QueryHandler):
@@ -445,7 +445,7 @@ class SearchByArtistHandler(QueryHandler):
         artist = get_arguments_by_type(query, 'ArtistArgument')[0]
         artists = interface.recommend_by_seed(artist.value, disliked_artists=user.dislikes)
         dialog.search_result = artists.keys()
-        return DialogState.search
+        return DialogState.SEARCH
 
 
 class RecommendationHandler(QueryHandler):
@@ -461,11 +461,11 @@ class RecommendationHandler(QueryHandler):
     def handle(self, query: Query, user: User, dialog: Dialog):
         if len(user.likes) == 0:
             dialog.output_message = 'Для начала расскажите, какие музыканты или группы вам нравятся?'
-            return DialogState.start
+            return DialogState.START
         dialog.search_result = interface.recommend_by_liked_with_disliked(user.dislikes, user.likes, DEBUG).keys()
 
         dialog.output_message = f'Список лайков: {", ".join(user.likes)}'
-        return DialogState.search
+        return DialogState.SEARCH
 
 
 class ShowAllArtistsHandler(QueryHandler):
@@ -483,7 +483,7 @@ class ShowAllArtistsHandler(QueryHandler):
         dialog.search_result = artists
         dialog.output_message += '\nКстати, в запросах вы можете указывать имя артиста или ' \
                                  'группы на русском языке, даже если тут он записан на английском'
-        return DialogState.search
+        return DialogState.SEARCH
 
 
 class ShowAllGenresHandler(QueryHandler):
@@ -496,7 +496,7 @@ class ShowAllGenresHandler(QueryHandler):
         genres = set(GENRES.values())
         dialog.output_genres = genres
         dialog.output_message = 'Кстати, в фильтрах вы можете указывать название жанра на русском языке'
-        return DialogState.start
+        return DialogState.START
 
 
 class InfoHandler(QueryHandler):
@@ -527,7 +527,7 @@ class InfoHandler(QueryHandler):
                 dialog.output_message = f'Возраст: {artist.age}\n'
                 dialog.output_message += f'Пол: {sex}'
 
-        return DialogState.info
+        return DialogState.INFO
 
 
 class InfoAboutBotHandler(QueryHandler):
@@ -539,7 +539,7 @@ class InfoAboutBotHandler(QueryHandler):
     def handle(self, query: Query, user: User, dialog: Dialog):
         dialog.debug_message = 'Информация о боте'
         dialog.output_message = 'Я - ваш помощник в мире русского хипхопа. Меня сделал Шатохин Максим, ИУ7-12М'
-        return DialogState.info
+        return DialogState.INFO
 
 
 class InfoAboutBotOpportunitiesHandler(QueryHandler):
@@ -580,7 +580,7 @@ class InfoAboutBotOpportunitiesHandler(QueryHandler):
 25. Вывести информацию о возможностях бота                
 26. Вывести информацию об устройстве бота                 
 27. Вернуться к начальному состоянию"""
-        return DialogState.info
+        return DialogState.INFO
 
 
 class InfoAboutBotAlgorithmHandler(QueryHandler):
@@ -614,4 +614,4 @@ class InfoAboutBotAlgorithmHandler(QueryHandler):
 Отдельно можно сказать о запросе рекомендации артистов, похожих на указанного. В данном сценарии вы 
 можете указывать и сам запрос, и фильтры к нему в одном предложении.
 """
-        return DialogState.info
+        return DialogState.INFO

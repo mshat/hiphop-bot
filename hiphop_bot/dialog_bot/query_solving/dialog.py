@@ -3,13 +3,13 @@ from typing import List
 
 
 class DialogState(enum.Enum):
-    start = 1
-    search = 2
-    filter = 3
-    number = 5
-    like = 6
-    dislike = 7
-    info = 8
+    START = 1
+    SEARCH = 2
+    FILTER = 3
+    NUMBER = 5
+    LIKE = 6
+    DISLIKE = 7
+    INFO = 8
 
 
 class Dialog:
@@ -20,7 +20,7 @@ class Dialog:
     debug_message: str | None
 
     def __init__(self):
-        self._state = DialogState.start
+        self._state = DialogState.START
         self.search_result = None
         self.output_message = None
         self.output_genres = None
@@ -30,7 +30,7 @@ class Dialog:
         self.search_result = None
 
     def reset_output(self):
-        if self.state not in (DialogState.search, DialogState.filter):
+        if self.state not in (DialogState.SEARCH, DialogState.FILTER):
             self.search_result = None
         self.output_message = None
         self.output_genres = None

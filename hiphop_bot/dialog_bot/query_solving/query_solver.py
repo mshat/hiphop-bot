@@ -1,4 +1,4 @@
-from typing import List, Tuple
+from typing import List
 from enum import Enum
 from hiphop_bot.dialog_bot.query_handling import handlers
 from hiphop_bot.dialog_bot.sentence_analyzer.query import Query
@@ -9,8 +9,8 @@ from hiphop_bot.dialog_bot.query_solving.user import User
 
 
 class QuerySolvingState(Enum):
-    solved = 1
-    unsolved = 2
+    SOLVED = 1
+    UNSOLVED = 2
 
 
 class QuerySolver:
@@ -27,19 +27,14 @@ class QuerySolver:
     @state.setter
     def state(self, val):
         self.dialog.state = val
-        if val == DialogState.start:
+        if val == DialogState.START:
             self.dialog.reset_search_result()
-        if val in (DialogState.search, DialogState.filter) and not ENABLE_FILTERS:
-            self.dialog.state = DialogState.start
+        if val in (DialogState.SEARCH, DialogState.FILTER) and not ENABLE_FILTERS:
+            self.dialog.state = DialogState.START
 
     @property
     def user(self):
         return self._user
-
-    def unknown(self, query: Query):
-        if DEBUG:
-            print(f'[UNRECOGNIZED SENTENCE] {query.arguments} {query.keywords} {query.words}')
-        return QuerySolvingState.unsolved
 
     def match_patterns(self, handlers_: List[QueryHandler], query: Query) -> DialogState | None:
         for handler in handlers_:
@@ -125,46 +120,45 @@ class QuerySolver:
         next_state = self.match_restart_patterns(query)
         if next_state:
             self.state = next_state
-            return QuerySolvingState.solved
+            return QuerySolvingState.SOLVED
 
         # filters
-        if self.state in (DialogState.search, DialogState.filter):
+        if self.state in (DialogState.SEARCH, DialogState.FILTER):
             next_state = self.match_filter_patterns(query)
             if next_state:
                 self.state = next_state
-                return QuerySolvingState.solved
+                return QuerySolvingState.SOLVED
 
         # like/dislike, number query, search, info
-        if self.state in (DialogState.start, DialogState.number, DialogState.like, DialogState.dislike, DialogState.info):
+        if self.state in (
+                DialogState.START, DialogState.NUMBER, DialogState.LIKE, DialogState.DISLIKE, DialogState.INFO
+        ):
             next_state = self.match_like_dislike_patterns(query)
             if next_state:
                 self.state = next_state
-                return QuerySolvingState.solved
+                return QuerySolvingState.SOLVED
 
             next_state = self.match_number_query_patterns(query)
             if next_state:
                 self.state = next_state
-                return QuerySolvingState.solved
+                return QuerySolvingState.SOLVED
 
             next_state = self.match_search_patterns(query)
             if next_state:
                 self.state = next_state
-                return QuerySolvingState.solved
+                return QuerySolvingState.SOLVED
 
             # set output len
             next_state = self.match_patterns([handlers.SetOutputLenHandler()], query)
             if next_state:
                 self.state = next_state
-                return QuerySolvingState.solved
+                return QuerySolvingState.SOLVED
 
             next_state = self.match_info_patterns(query)
             if next_state:
                 self.state = next_state
-                return QuerySolvingState.solved
+                return QuerySolvingState.SOLVED
 
-        return self.unknown(query)
-
-
-
-
-
+        if DEBUG:
+            print(f'[UNRECOGNIZED SENTENCE] {query.arguments} {query.keywords} {query.words}')
+        return QuerySolvingState.UNSOLVED

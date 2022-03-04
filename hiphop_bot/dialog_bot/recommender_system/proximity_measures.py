@@ -1,22 +1,20 @@
 from hiphop_bot.dialog_bot.recommender_system.pow_distance import calc_distance_in_pow
 from hiphop_bot.dialog_bot.recommender_system.tree.genre_node import GenreVisualNode
 from hiphop_bot.dialog_bot.recommender_system.tree.node import Node
-from hiphop_bot.dialog_bot.recommender_system.tree.tree_tools import calc_distance_between_nodes, get_leafs_values, calc_max_distance_between_nodes_optimized
+from hiphop_bot.dialog_bot.recommender_system.tree.tree_tools import (
+    calc_distance_between_nodes, get_leafs_values, calc_max_distance_between_nodes_optimized)
 from hiphop_bot.dialog_bot.recommender_system.tree.tree_tools import calc_distance_between_all_nodes
 
 
 def calc_euclidean_measure(leaf_1: GenreVisualNode, leaf_2: GenreVisualNode):
     attributes1 = [val for name, val in leaf_1.countable_attributes.items() if name not in ('name', 'theme')]
     attributes2 = [val for name, val in leaf_2.countable_attributes.items() if name not in ('name', 'theme')]
-    #print(leaf_1.name, leaf_2.name, attributes1, attributes2)
     return calc_distance_in_pow(attributes1, attributes2, 2)
 
 
 def calc_manhattan_measure(leaf_1: GenreVisualNode, leaf_2: GenreVisualNode):
     attributes1 = [val for name, val in leaf_1.countable_attributes.items() if name in ('name', 'theme')]
     attributes2 = [val for name, val in leaf_2.countable_attributes.items() if name in ('name', 'theme')]
-    # attributes1 = [val for name, val in leaf_1.countable_attributes.items()]
-    # attributes2 = [val for name, val in leaf_2.countable_attributes.items()]
     return calc_distance_in_pow(attributes1, attributes2, 1)
 
 
@@ -29,18 +27,9 @@ def calc_tree_distance_measure(
     return calc_distance_between_nodes(tree, leaf_1.name, leaf_2.name) / max_distance_between_nodes
 
 
-def calc_max_general_proximity2(node_pairs_proximity: dict) -> float:
-    max_proximity = 0
-    for artist1_name, pair_artists in node_pairs_proximity.items():
-        for pair_name, pair_proximity in pair_artists.items():
-            if pair_proximity > max_proximity:
-                max_proximity = pair_proximity
-    return max_proximity
-
-
 def get_extremum(node_pairs_proximity: dict, func) -> float:
     local_extr_values = []
-    for artist1_name, pair_artists in node_pairs_proximity.items():
+    for pair_artists in node_pairs_proximity.values():
         local_extr_values.append(func(pair_artists.values()))
     return func(local_extr_values)
 
@@ -81,7 +70,7 @@ def normalize_value(value, min_value: float, max_value: float) -> float:
 
 def normalize_proximities(leafs_pairs_proximity: dict, min_proximity: float, max_proximity: float):
     for artist1_name, pair_artists in leafs_pairs_proximity.items():
-        for pair_name, pair_proximity in pair_artists.items():
+        for pair_name in pair_artists.keys():
             leafs_pairs_proximity[artist1_name][pair_name] = normalize_value(
                 leafs_pairs_proximity[artist1_name][pair_name],
                 min_proximity,

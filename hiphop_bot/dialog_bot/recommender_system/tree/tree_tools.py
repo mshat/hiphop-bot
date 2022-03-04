@@ -1,5 +1,3 @@
-import sys
-sys.path.append("../..")
 from hiphop_bot.dialog_bot.recommender_system.tree.node import Node
 from hiphop_bot.dialog_bot.recommender_system.tree.genre_node import GenreVisualNode
 
@@ -56,7 +54,7 @@ def calc_max_distance_between_nodes(tree: Node):
     get_leafs_values(tree, leafs)
     distances_between_nodes = calc_distance_between_all_nodes(tree, leafs)
     max_distance = 0
-    for pair_name, pair_data in distances_between_nodes.items():
+    for pair_data in distances_between_nodes.values():
         if pair_data['distance'] > max_distance:
             max_distance = pair_data['distance']
     return max_distance
@@ -64,7 +62,7 @@ def calc_max_distance_between_nodes(tree: Node):
 
 def calc_max_distance_between_nodes_optimized(distances_between_nodes: dict):
     max_distance = 0
-    for pair_name, pair_data in distances_between_nodes.items():
+    for pair_data in distances_between_nodes.values():
         if pair_data['distance'] > max_distance:
             max_distance = pair_data['distance']
     return max_distance

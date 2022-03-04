@@ -31,6 +31,3 @@ class Node:
 
     def __str__(self):
         return f'node {self.value}'
-
-
-

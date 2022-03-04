@@ -40,11 +40,11 @@ def blank_answer():
 
 def solve_message(sentence: str) -> str:
     res = controller.solve_query(sentence)
-    if res == QuerySolvingState.solved:
+    if res == QuerySolvingState.SOLVED:
         answer_generator.user = controller.user
         answer_generator.dialog = controller.dialog
         return answer_generator.generate_answer()
-    elif res == QuerySolvingState.unsolved:
+    elif res == QuerySolvingState.UNSOLVED:
         return controller.unresolved_answer
     else:
         raise Exception('Unknown query_solver result')

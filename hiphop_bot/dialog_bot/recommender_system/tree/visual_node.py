@@ -1,5 +1,5 @@
-import graphviz
 import string
+import graphviz
 from .node import Node
 
 
@@ -32,6 +32,5 @@ class VisualNode(Node):
         self.dot.render(directory='doctest-output')
 
     def add_child(self, node):
-        super(VisualNode, self).add_child(node)
+        super().add_child(node)
         self._add_edge(node)
-

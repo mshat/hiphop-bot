@@ -12,7 +12,7 @@ class User:
     _younger_filter: int | None
     _older_filter: int | None
     _sex_filter: SexFilter
-    output_len: int
+    max_output_len: int
 
     def __init__(self, name: str = None):
         self._name = name
@@ -22,7 +22,7 @@ class User:
         self._younger_filter = None
         self._older_filter = None
         self._sex_filter = SexFilter.ANY
-        self.output_len = ALL
+        self.max_output_len = ALL
 
     @property
     def str_filters(self):
@@ -35,9 +35,10 @@ class User:
             res += f'старше {self._older_filter} | '
         if self._younger_filter:
             res += f'моложе {self._younger_filter} | '
-        if self.output_len != ALL:
-            res += f'максимальная длина вывода {self.output_len}'
-        if len(res) > 2 and res[-2] == '|': res = res[:-2]
+        if self.max_output_len != ALL:
+            res += f'максимальная длина вывода {self.max_output_len}'
+        if len(res) > 2 and res[-2] == '|':
+            res = res[:-2]
         return res
 
     @property
@@ -85,7 +86,7 @@ class User:
         self._younger_filter = None
         self._older_filter = None
         self._sex_filter = SexFilter.ANY
-        self.output_len = ALL
+        self.max_output_len = ALL
 
     def add_sex_filter(self, sex: SexFilter):
         self._sex_filter = sex

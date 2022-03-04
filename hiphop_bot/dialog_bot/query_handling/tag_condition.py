@@ -18,8 +18,7 @@ class TagCondition(ABC):
     def solve(self, query_tag_structure: Dict) -> Tuple[bool, List[Word]]:
         if self.tag in query_tag_structure:
             return True, query_tag_structure[self.tag]
-        else:
-            return False, []
+        return False, []
 
 
 class NotTagCondition(ABC):
@@ -35,14 +34,13 @@ class NotTagCondition(ABC):
     def solve(self, query_tag_structure: Dict) -> Tuple[bool, List[Word]]:
         if self.tag not in query_tag_structure:
             return True, []
-        else:
-            return False, []
+        return False, []
 
 
-class And: pass
+class And(ABC): pass
 
 
-class Or: pass
+class Or(ABC): pass
 
 
 class AndTagCondition(And, TagCondition):
@@ -122,7 +120,7 @@ class AndMultiTagCondition(And, MultiTagCondition):
     Такое условие должно обязательно выполняться для запроса, чтобы паттерн подошел к нему
     """
     def __str__(self):
-        conditions = super(AndMultiTagCondition, self).__str__()
+        conditions = super().__str__()
         return f'AND ({conditions})'
 
     def __repr__(self):
@@ -135,7 +133,7 @@ class OrMultiTagCondition(Or, MultiTagCondition):
     Результат проверки такого условия будет учитываться как логическое СЛОЖЕНИЕ при сопоставлении паттерна с запросом
     """
     def __str__(self):
-        conditions = super(OrMultiTagCondition, self).__str__()
+        conditions = super().__str__()
         return f'OR ({conditions})'
 
     def __repr__(self):

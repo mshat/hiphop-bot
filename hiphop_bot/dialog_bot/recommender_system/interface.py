@@ -2,11 +2,16 @@ import os
 from typing import List
 from collections import OrderedDict
 from hiphop_bot.dialog_bot.recommender_system.recommendation_list import get_recommendations
-from hiphop_bot.dialog_bot.recommender_system.recommendation_list import (
-    Node, create_tree_from_json, load_artist_pairs_proximity_json, calc_max_general_proximity,
-    calc_min_general_proximity, normalize_proximities)
+from hiphop_bot.dialog_bot.recommender_system.tree.node import Node
+from hiphop_bot.dialog_bot.recommender_system.tree.tree_loader import create_tree_from_json
+from hiphop_bot.dialog_bot.recommender_system.recommendation_list import load_artist_pairs_proximity_json
+from hiphop_bot.dialog_bot.recommender_system.proximity_measures import (
+    calc_max_general_proximity,
+    calc_min_general_proximity,
+    normalize_proximities
+)
 from hiphop_bot.dialog_bot.recommender_system.tree.tree_tools import calc_max_distance_between_nodes, get_leafs_values
-from hiphop_bot.dialog_bot.recommender_system.tree.genre_node import GenreVisualNode, VisualNode
+from hiphop_bot.dialog_bot.recommender_system.tree.genre_node import GenreVisualNode
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 TREE = create_tree_from_json(f'{dir_path}/data/genres.json')
@@ -58,8 +63,7 @@ def recommend_by_liked(liked_artist_names: List[str] = None):
             artist,
             ARTIST_PAIRS_PROXIMITY
         )
-        artist_recommendations[artist.name] = \
-            [(artist_name, proximity) for artist_name, proximity in recommendations.items()]
+        artist_recommendations[artist.name] = list(recommendations.items())
 
     final_recommendations = {}
     max_recommendation_len = max(map(len, artist_recommendations.values()))
@@ -112,7 +116,7 @@ def get_artists_by_genre(genre: str):
         if artist.genre == genre:
             artists.append(artist)
 
-    if artists is None: artists = []
+    if artists is None:
+        artists = []
     artists = list(set(artists))
     return artists
-

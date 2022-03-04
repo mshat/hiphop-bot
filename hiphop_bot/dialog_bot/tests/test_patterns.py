@@ -168,40 +168,40 @@ class TestQuerySolving(unittest.TestCase):
                         f'hiphop_bot.dialog_bot.query_handling.handlers.{expected_handler}.handle'
                 ) as patched_handle_method:
                     self.query_solver.state = state
-                    query = SentenceParser(sentence).parse(self.query_solver.state)
+                    query = SentenceParser(sentence).parse()
                     self.query_solver.solve(query)
 
                     patched_handle_method.assert_called()
 
     def test_search_by_name(self):
-        self._test_sentences(DialogState.start, DataForTests.search_by_name)
+        self._test_sentences(DialogState.START, DataForTests.search_by_name)
 
     def test_recommend(self):
-        self._test_sentences(DialogState.start, DataForTests.recommendation)
+        self._test_sentences(DialogState.START, DataForTests.recommendation)
 
     def test_search_by_genre(self):
-        self._test_sentences(DialogState.start, DataForTests.search_by_genre)
+        self._test_sentences(DialogState.START, DataForTests.search_by_genre)
 
     def test_search_by_sex(self):
-        self._test_sentences(DialogState.start, DataForTests.search_by_sex)
+        self._test_sentences(DialogState.START, DataForTests.search_by_sex)
 
     def test_search_by_age(self):
-        self._test_sentences(DialogState.start, DataForTests.search_by_age)
+        self._test_sentences(DialogState.START, DataForTests.search_by_age)
 
     def test_search_show_all(self):
-        self._test_sentences(DialogState.start, DataForTests.search_show_all)
+        self._test_sentences(DialogState.START, DataForTests.search_show_all)
 
     def test_filter(self):
-        self._test_sentences(DialogState.search, DataForTests.test_filter)
+        self._test_sentences(DialogState.SEARCH, DataForTests.test_filter)
 
     def test_like_dislike(self):
-        self._test_sentences(DialogState.start, DataForTests.like_dislike)
+        self._test_sentences(DialogState.START, DataForTests.like_dislike)
 
     def test_number_queries(self):
-        self._test_sentences(DialogState.start, DataForTests.number_queries)
+        self._test_sentences(DialogState.START, DataForTests.number_queries)
 
     def test_info(self):
-        self._test_sentences(DialogState.start, DataForTests.test_info)
+        self._test_sentences(DialogState.START, DataForTests.test_info)
 
 
 class TestIntegrationStates(unittest.TestCase):
@@ -225,7 +225,7 @@ class TestIntegrationStates(unittest.TestCase):
                     with unittest.mock.patch(
                             f'hiphop_bot.dialog_bot.query_handling.handlers.{expected_handler}.handle'
                     ) as patched_handle_method:
-                        query = SentenceParser(sentence).parse(query_solver.state)
+                        query = SentenceParser(sentence).parse()
                         query_solver.solve(query)
 
                         if allowed_disallowed == 'allowed':
@@ -245,7 +245,7 @@ class TestIntegrationStates(unittest.TestCase):
             "оставь исполнителей мужского пола",
         ]
 
-        self.check_next_states(DialogState.start, allowed, disallowed)
+        self.check_next_states(DialogState.START, allowed, disallowed)
 
     def test_next_states_search(self):
         """ Проверяет в какие состояния можно перейти из состояния search"""
@@ -259,7 +259,7 @@ class TestIntegrationStates(unittest.TestCase):
             "артисты мужчины",
         ]
 
-        self.check_next_states(DialogState.search, allowed, disallowed)
+        self.check_next_states(DialogState.SEARCH, allowed, disallowed)
 
     def test_next_states_filter(self):
         """ Проверяет в какие состояния можно перейти из состояния filter"""
@@ -273,7 +273,7 @@ class TestIntegrationStates(unittest.TestCase):
             "артисты мужчины",
         ]
 
-        self.check_next_states(DialogState.filter, allowed, disallowed)
+        self.check_next_states(DialogState.FILTER, allowed, disallowed)
 
     def test_next_states_like(self):
         """ Проверяет в какие состояния можно перейти из состояния like"""
@@ -287,7 +287,7 @@ class TestIntegrationStates(unittest.TestCase):
             "оставь исполнителей мужского пола",
         ]
 
-        self.check_next_states(DialogState.like, allowed, disallowed)
+        self.check_next_states(DialogState.LIKE, allowed, disallowed)
 
     def test_next_states_dislike(self):
         """ Проверяет в какие состояния можно перейти из состояния dislike"""
@@ -301,7 +301,7 @@ class TestIntegrationStates(unittest.TestCase):
             "оставь исполнителей мужского пола",
         ]
 
-        self.check_next_states(DialogState.dislike, allowed, disallowed)
+        self.check_next_states(DialogState.DISLIKE, allowed, disallowed)
 
     def test_next_states_number(self):
         """ Проверяет в какие состояния можно перейти из состояния number"""
@@ -315,7 +315,7 @@ class TestIntegrationStates(unittest.TestCase):
             "оставь исполнителей мужского пола",
         ]
 
-        self.check_next_states(DialogState.number, allowed, disallowed)
+        self.check_next_states(DialogState.NUMBER, allowed, disallowed)
 
     def test_next_states_info(self):
         """ Проверяет в какие состояния можно перейти из состояния info"""
@@ -329,7 +329,7 @@ class TestIntegrationStates(unittest.TestCase):
             "оставь исполнителей мужского пола",
         ]
 
-        self.check_next_states(DialogState.info, allowed, disallowed)
+        self.check_next_states(DialogState.INFO, allowed, disallowed)
 
     @unittest.skip('.solve больще не возвращает дебаг значения')
     def test_repeat_states(self):
@@ -356,7 +356,7 @@ class TestIntegrationStates(unittest.TestCase):
         for sentence in sentences:
             expected_handler = TEST_DATA.get_handler_class(sentence)
             with self.subTest(i=expected_handler):
-                query = SentenceParser(sentence).parse(query_solver.state)
+                query = SentenceParser(sentence).parse()
                 res = query_solver.solve(query)
                 self.assertEqual(res, expected_handler)
 
@@ -386,8 +386,6 @@ class TestIntegrationStates(unittest.TestCase):
         for sentence in sentences:
             expected_handler = TEST_DATA.get_handler_class(sentence)
             with self.subTest(i=expected_handler):
-                query = SentenceParser(sentence).parse(query_solver.state)
+                query = SentenceParser(sentence).parse()
                 res = query_solver.solve(query)
                 self.assertEqual(res, expected_handler)
-
-

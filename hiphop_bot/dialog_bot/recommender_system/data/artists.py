@@ -1,5 +1,3 @@
-import json
-
 THEMES = ['hard-gangsta', 'workout', 'soft-gangsta', 'feelings', 'fun', 'art', 'conscious']
 
 # сначала старые, неагрессивные, непопулярные сейчас
@@ -27,11 +25,11 @@ ARTISTS = [
 
 ARTISTS = list(map(str.lower, ARTISTS))
 
-GENRES = ['hiphop', 'battlerap', 'freestyle', 'regular', 'hiphopmusic', 'newschool', 'alternative', 'emo', 'raprock', 'electronichiphop', 'cloud', 'club', 'drill', 'electronicvocal', 'grime', 'mumble', 'phonk', 'hardcore', 'horrorcore', 'rapcore', 'underground', 'popular', 'hookah', 'pop', 'oldschool', 'oldschoolhardcore', 'gangsta', 'workout', 'russianrap', 'classic', 'soft']
+GENRES = ['hiphop', 'battlerap', 'freestyle', 'regular', 'hiphopmusic', 'newschool', 'alternative', 'emo', 'raprock',
+          'electronichiphop', 'cloud', 'club', 'drill', 'electronicvocal', 'grime', 'mumble', 'phonk', 'hardcore',
+          'horrorcore', 'rapcore', 'underground', 'popular', 'hookah', 'pop', 'oldschool', 'oldschoolhardcore',
+          'gangsta', 'workout', 'russianrap', 'classic', 'soft']
 
-leafs = ['Freestyle', 'Regular', 'Emo', 'RapRock', 'Cloud', 'Club', 'Drill', 'ElectronicVocal', 'Grime', 'Mumble', 'Phonk', 'Hardcore', 'Horrorcore', 'Underground', 'Hookah', 'Pop', 'Gangsta', 'WorkOut', 'Classic', 'Soft']
+leafs = ['Freestyle', 'Regular', 'Emo', 'RapRock', 'Cloud', 'Club', 'Drill', 'ElectronicVocal', 'Grime', 'Mumble',
+         'Phonk', 'Hardcore', 'Horrorcore', 'Underground', 'Hookah', 'Pop', 'Gangsta', 'WorkOut', 'Classic', 'Soft']
 leafs = list(map(str.lower, leafs))
-
-
-
-
