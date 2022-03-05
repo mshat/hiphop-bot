@@ -1,3 +1,4 @@
+import os
 import telebot
 from hiphop_bot.dialog_bot.query_solving.query_solver import QuerySolvingState
 from hiphop_bot.controller.answer_generator import AnswerGenerator
@@ -5,8 +6,8 @@ from hiphop_bot.controller.controller import UserInterfaceController
 from hiphop_bot.dialog_bot.config import DEBUG
 from dotenv import dotenv_values
 
-
-ENV = dotenv_values(r"..\.env")
+current_dir = os.path.dirname(os.path.realpath(__file__))
+ENV = dotenv_values(f"{current_dir}/../env")
 
 bot = telebot.TeleBot(ENV['TG_TOKEN'])
 
