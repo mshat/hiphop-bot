@@ -1,4 +1,4 @@
-DEBUG = False
-DEBUG_PRINT = False
+DEBUG = True
+DEBUG_PRINT = True
 
 ENABLE_FILTERS = True

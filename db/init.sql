@@ -92,5 +92,3 @@ on conflict (id) do update
   set first_artist_id = excluded.first_artist_id,
   second_artist_id = excluded.second_artist_id,
   proximity = excluded.proximity;
-
-select * from artist_pairs_proximity;

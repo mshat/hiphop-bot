@@ -1,9 +1,7 @@
 version: "3"
 services:
   postgres:
-#    image: postgres:13
     image: postgres:13-alpine
-#    image: library/postgres:13
     container_name: postgres
     restart: on-failure
     environment:
@@ -26,6 +24,11 @@ services:
     build: .
     environment:
       MODE: "dev"
+      DB_USER: "program"
+      DB_PASSWORD: "test"
+      DB_HOST: "postgres"
+      DB_PORT: "5432"
+      DB_NAME: "hiphop_bot"
     depends_on:
       postgres:
         condition: service_healthy
