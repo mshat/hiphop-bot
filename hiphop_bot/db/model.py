@@ -1,5 +1,6 @@
+from typing import Tuple, List
 from abc import ABC, abstractmethod
-from hiphop_bot.db.connection_pool import Connection, ConnectionPoolError, CONNECTION_POOL
+from hiphop_bot.db.connection_pool import Connection, CONNECTION_POOL
 
 
 class ModelError(Exception): pass
@@ -37,5 +38,15 @@ class Model(ABC):
         return result
 
     @abstractmethod
-    def get_all(self) -> list:
+    def get_all_raw(self) -> List[Tuple]:
+        """
+        Возвращает все записи из таблицы в виде списка кортежей
+        """
+        pass
+
+    @abstractmethod
+    def get_all(self) -> List:
+        """
+        Возвращает все записи из таблицы в виде списка объектов
+        """
         pass
