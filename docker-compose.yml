@@ -23,12 +23,13 @@ services:
   hip-hop-bot-service:
     build: .
     environment:
-      MODE: "dev"
+      MODE: "prod"
       DB_USER: "program"
       DB_PASSWORD: "test"
       DB_HOST: "postgres"
       DB_PORT: "5432"
       DB_NAME: "hiphop_bot"
+    command: /bin/sh -c "python -m unittest"
     depends_on:
       postgres:
         condition: service_healthy

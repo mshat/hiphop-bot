@@ -2,6 +2,8 @@ import os
 import json
 from hiphop_bot.dialog_bot.recommender_system.tree.visual_node import VisualNode
 from hiphop_bot.dialog_bot.recommender_system.tree.artist_node import ArtistVisualNode
+from hiphop_bot.dialog_bot.recommender_system.models.artist import ArtistModel
+from hiphop_bot.dialog_bot.recommender_system.models.genre import GenreModel
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
@@ -13,9 +15,8 @@ def load_tree_dict(filename='genres.json'):
 
 
 def get_artists(genre):
-    with open(f'{dir_path}//..//data//artists.json', 'r', encoding='utf-8') as file:
-        genres_with_artists = json.load(file)
-    artists = genres_with_artists[genre] if genre in genres_with_artists.keys() else None
+    artist_model = ArtistModel()
+    artists = artist_model.get_by_genre(genre)
     return artists
 
 
@@ -24,15 +25,16 @@ def create_node(node_name, children_dict):
         artists = get_artists(node_name.lower())
         if artists:
             leafs = []
-            for artist, attributes in artists.items():
+            for artist in artists:
                 leafs.append(
                     ArtistVisualNode(
-                        node_name,
-                        artist,
-                        attributes['year_of_birth'],
-                        attributes['group_members_num'],
-                        attributes['theme'],
-                        attributes['is_male']))
+                        genre=node_name,
+                        name=artist.name,
+                        year_of_birth=artist.year_of_birth,
+                        group_members_num=artist.group_members_num,
+                        theme=artist.theme,
+                        is_male=1 if artist.gender == 'male' else 0,)
+                )
             return leafs
         else:
             node = VisualNode(val=node_name)
@@ -52,4 +54,3 @@ def create_node(node_name, children_dict):
 def create_tree_from_json(filename='genres.json') -> VisualNode:
     tree_dict = load_tree_dict(filename)
     return create_node('hiphop', tree_dict['hiphop'])
-
