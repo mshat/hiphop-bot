@@ -1,5 +1,4 @@
 from typing import List, Tuple
-
 from hiphop_bot.db.model import Model
 from hiphop_bot.dialog_bot.recommender_system.models.theme import Theme
 from hiphop_bot.dialog_bot.recommender_system.models.gender import Gender
@@ -7,21 +6,25 @@ from hiphop_bot.dialog_bot.recommender_system.models.genre import Genre
 
 
 class Artist:
+    theme: Theme
+    gender: Gender
+    genre: Genre
+
     def __init__(
             self,
             name: str,
             year_of_birth: int,
-            group_members_num: int,
-            theme: Theme,
-            gender: Gender,
-            genre: Genre,
+            group_members_number: int,
+            theme: Theme | str,
+            gender: Gender | str,
+            genre: Genre | str,
     ):
         self.name = name
         self.year_of_birth = year_of_birth
-        self.group_members_num = group_members_num
-        self._theme = theme
-        self._gender = gender
-        self._genre = genre
+        self.group_members_number = group_members_number
+        self._theme = theme if isinstance(theme, Theme) else Theme(theme)
+        self._gender = gender if isinstance(gender, Gender) else Gender(gender)
+        self._genre = genre if isinstance(genre, Genre) else Genre(genre)
 
     @property
     def theme(self):
@@ -36,7 +39,8 @@ class Artist:
         return self._genre.name
 
     def __str__(self):
-        return f'{self.name} {self.year_of_birth} {self.group_members_num} {self._theme} {self._gender} {self._genre}'
+        return f'{self.name} {self.year_of_birth} {self.group_members_number} {self._theme} {self._gender} ' \
+               f'{self._genre}'
 
     def __repr__(self):
         return f'Artist: "{self.__str__()}"'
