@@ -9,6 +9,12 @@ class ArtistPairsProximity:
         self.second_artist = second_artist
         self.proximity = proximity
 
+    def __str__(self):
+        return f'{self.first_artist} {self.second_artist} {self.proximity}'
+
+    def __repr__(self):
+        return f'ArtistPairsProximity: "{self.__str__()}"'
+
 
 class ArtistPairsProximityModel(Model):
     def __init__(self):
