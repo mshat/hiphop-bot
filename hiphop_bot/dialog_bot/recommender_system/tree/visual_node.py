@@ -16,7 +16,7 @@ DOT = graphviz.Graph(format='png')
 
 
 class VisualNode(Node):
-    def __init__(self, val: int = 0, children: list = None):
+    def __init__(self, val: int | str = 0, children: list = None):
         super().__init__(val, children)
         self.dot = DOT
         self.dot_name = next(NAME_GEN)
