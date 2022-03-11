@@ -1,7 +1,7 @@
 import os
 import json
 from collections import OrderedDict
-from hiphop_bot.dialog_bot.recommender_system.tree.genre_node import GenreVisualNode
+from hiphop_bot.dialog_bot.recommender_system.tree.artist_node import ArtistVisualNode
 from hiphop_bot.dialog_bot.recommender_system.proximity_measures import \
     calc_generalizing_proximity_measure_for_all_leafs
 from hiphop_bot.dialog_bot.recommender_system.tools import format_print
@@ -29,7 +29,7 @@ def print_all_artist_pairs_proximity(artist_pairs_proximity: dict):
 
 
 def get_recommendations(
-        seed_object: GenreVisualNode,
+        seed_object: ArtistVisualNode,
         artist_pairs_proximity: dict) -> OrderedDict:
     artist_pairs = artist_pairs_proximity[seed_object.name]
     artist_pairs_sorted_by_proximity = OrderedDict(sorted(artist_pairs.items(), key=lambda item: item[1]))
@@ -43,7 +43,7 @@ def get_recommendations(
 
 
 def show_recommendations(
-        seed_object: GenreVisualNode,
+        seed_object: ArtistVisualNode,
         artist_pairs_proximity: dict,
         show_proximity=False) -> None:
     recommendations = get_recommendations(seed_object, artist_pairs_proximity)

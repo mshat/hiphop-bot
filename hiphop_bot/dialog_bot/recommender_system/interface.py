@@ -11,7 +11,7 @@ from hiphop_bot.dialog_bot.recommender_system.proximity_measures import (
     normalize_proximities
 )
 from hiphop_bot.dialog_bot.recommender_system.tree.tree_tools import calc_max_distance_between_nodes, get_leafs_values
-from hiphop_bot.dialog_bot.recommender_system.tree.genre_node import GenreVisualNode
+from hiphop_bot.dialog_bot.recommender_system.tree.artist_node import ArtistVisualNode
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 TREE = create_tree_from_json(f'{dir_path}/data/genres.json')
@@ -26,7 +26,7 @@ class ParseError(Exception): pass
 class ArgumentError(Exception): pass
 
 
-def find_artist(name: str) -> GenreVisualNode:
+def find_artist(name: str) -> ArtistVisualNode:
     artist = Node.get_child_by_name(TREE, name)
     if not artist:
         raise ArgumentError(f'Артиста "{name}" нет в базе')
@@ -94,18 +94,18 @@ def recommend_by_liked_with_disliked(
     return recommendations_by_liked
 
 
-def get_artist_by_name(name: str) -> GenreVisualNode:
+def get_artist_by_name(name: str) -> ArtistVisualNode:
     artist = Node.get_child_by_name(TREE, name)
     return artist
 
 
-def get_all_artists() -> GenreVisualNode:
+def get_all_artists() -> ArtistVisualNode:
     artists = []
     get_leafs_values(TREE, artists)
     return artists
 
 
-def get_artists_by_genre(genre: str) -> GenreVisualNode:
+def get_artists_by_genre(genre: str) -> ArtistVisualNode:
     artists = []
     genre_node = Node.get_child_by_name(TREE, genre)
     if genre_node:

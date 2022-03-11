@@ -1,7 +1,7 @@
 import os
 import json
-from .visual_node import VisualNode
-from .genre_node import GenreVisualNode
+from hiphop_bot.dialog_bot.recommender_system.tree.visual_node import VisualNode
+from hiphop_bot.dialog_bot.recommender_system.tree.artist_node import ArtistVisualNode
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
@@ -26,7 +26,7 @@ def create_node(node_name, children_dict):
             leafs = []
             for artist, attributes in artists.items():
                 leafs.append(
-                    GenreVisualNode(
+                    ArtistVisualNode(
                         node_name,
                         artist,
                         attributes['year_of_birth'],
@@ -52,3 +52,4 @@ def create_node(node_name, children_dict):
 def create_tree_from_json(filename='genres.json') -> VisualNode:
     tree_dict = load_tree_dict(filename)
     return create_node('hiphop', tree_dict['hiphop'])
+

@@ -3,7 +3,7 @@ from hiphop_bot.dialog_bot.recommender_system.tree.visual_node import VisualNode
 from hiphop_bot.dialog_bot.recommender_system.data.artists import ARTISTS, THEMES
 
 
-class GenreVisualNode(VisualNode):
+class ArtistVisualNode(VisualNode):
     def __init__(self, genre, name, year_of_birth, group_members_num, theme, is_male=True, *args, **kwargs):
         self.genre = genre
         self.male_or_female = 1 if is_male else 0

@@ -1,17 +1,17 @@
 from typing import List
-from hiphop_bot.dialog_bot.recommender_system.tree.genre_node import GenreVisualNode
+from hiphop_bot.dialog_bot.recommender_system.tree.artist_node import ArtistVisualNode
 from hiphop_bot.dialog_bot.recommender_system.interface import find_artist
 
 EXCLUDE = ['sex', 'group_type', 'older', 'younger']
 
 
 def filter_artists(
-        artists: List[str] | List[GenreVisualNode],
+        artists: List[str] | List[ArtistVisualNode],
         group_type: str = 'any',
         sex: str = 'anysex',
         younger: int = None,
         older: int = None,
-        exclude=None) -> List[GenreVisualNode]:
+        exclude=None) -> List[ArtistVisualNode]:
     exclude = exclude if exclude else []
     filtered = []
     for artist in artists:

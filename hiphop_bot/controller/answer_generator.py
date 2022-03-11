@@ -1,7 +1,7 @@
 from typing import Iterable, List
 from hiphop_bot.dialog_bot.recommender_system import artist_filterer
 from hiphop_bot.dialog_bot.config import ENABLE_FILTERS
-from hiphop_bot.dialog_bot.recommender_system.tree.genre_node import GenreVisualNode
+from hiphop_bot.dialog_bot.recommender_system.tree.artist_node import ArtistVisualNode
 from hiphop_bot.dialog_bot.query_solving.dialog import Dialog
 from hiphop_bot.dialog_bot.query_solving.user import User
 from hiphop_bot.dialog_bot.config import DEBUG
@@ -25,7 +25,7 @@ def get_after_search_message():
     return ''
 
 
-def filter_search_result(user: User, dialog: Dialog) -> List[GenreVisualNode]:
+def filter_search_result(user: User, dialog: Dialog) -> List[ArtistVisualNode]:
     return artist_filterer.filter_artists(
         dialog.search_result,
         group_type=user.group_type_filter.value,
@@ -44,7 +44,7 @@ def generate_used_filters_str(user: User):
     return out_msg
 
 
-def generate_recommendations_message(user: User, recommended_artists: List[GenreVisualNode]) -> str:
+def generate_recommendations_message(user: User, recommended_artists: List[ArtistVisualNode]) -> str:
     out_msg = ''
 
     recommended_artists = trunc_output(recommended_artists, user.max_output_len)

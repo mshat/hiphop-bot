@@ -1,5 +1,5 @@
 from hiphop_bot.dialog_bot.recommender_system.tree.node import Node
-from hiphop_bot.dialog_bot.recommender_system.tree.genre_node import GenreVisualNode
+from hiphop_bot.dialog_bot.recommender_system.tree.artist_node import ArtistVisualNode
 
 
 def find_path_to_node(root: Node, path: list, node_name: str):
@@ -73,5 +73,5 @@ def get_leafs_values(root: Node, leafs: list):
         return root
     for child in root.children:
         res = get_leafs_values(child, leafs)
-        if res and isinstance(res, GenreVisualNode):
+        if res and isinstance(res, ArtistVisualNode):
             leafs.append(res)
