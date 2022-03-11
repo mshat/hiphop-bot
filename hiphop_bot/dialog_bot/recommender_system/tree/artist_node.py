@@ -1,17 +1,48 @@
 from datetime import datetime
 from hiphop_bot.dialog_bot.recommender_system.tree.visual_node import VisualNode
+from hiphop_bot.dialog_bot.recommender_system.models.artist import Artist
 from hiphop_bot.dialog_bot.recommender_system.data.artists import ARTISTS, THEMES
+from hiphop_bot.dialog_bot.recommender_system.models.theme import Theme
+from hiphop_bot.dialog_bot.recommender_system.models.gender import Gender
+from hiphop_bot.dialog_bot.recommender_system.models.genre import Genre
 
 
 class ArtistVisualNode(VisualNode):
-    def __init__(self, genre, name, year_of_birth, group_members_num, theme, is_male=True, *args, **kwargs):
-        self.genre = genre
-        self.male_or_female = 1 if is_male else 0
-        self.name = name
-        self.theme = theme
-        self.year_of_birth = year_of_birth
-        self.group_members_number = group_members_num
-        super().__init__(val=name, *args, **kwargs)
+    def __init__(
+            self,
+            genre: Genre,
+            name: str,
+            year_of_birth: int,
+            group_members_number: int,
+            theme: Theme,
+            gender: Gender
+    ):
+        self._artist = Artist(name, year_of_birth, group_members_number, theme, gender, genre)
+        super().__init__(val=name)
+
+    @property
+    def name(self):
+        return self._artist.name
+
+    @property
+    def year_of_birth(self):
+        return self._artist.year_of_birth
+
+    @property
+    def group_members_number(self):
+        return self._artist.group_members_number
+
+    @property
+    def theme(self):
+        return self._artist.theme
+
+    @property
+    def gender(self):
+        return self._artist.gender
+
+    @property
+    def genre(self):
+        return self._artist.genre
 
     @property
     def age(self):
@@ -19,13 +50,7 @@ class ArtistVisualNode(VisualNode):
         return current_year - self.year_of_birth
 
     @property
-    def sex(self):
-        if self.male_or_female == 1:
-            return 'male'
-        return 'female'
-
-    @property
-    def solo_duet_group(self) -> str:  # категорийный
+    def solo_duet_group(self) -> str:
         if self.group_members_number == 1:
             return 'solo'
         if self.group_members_number == 2:
@@ -39,7 +64,7 @@ class ArtistVisualNode(VisualNode):
     def values_str(self):
         attributes = []
         attributes.append(self.genre.upper())
-        male_female = 'male' if self.male_or_female == 1 else 'female'
+        male_female = self.gender
         attributes.append(male_female)
         attributes.append(self.name)
         attributes.append(self.theme)
@@ -50,7 +75,7 @@ class ArtistVisualNode(VisualNode):
     @property
     def countable_attributes(self) -> dict:
         attributes = {}
-        male_female = (self.male_or_female + 1) / 2
+        male_female = (1 if self.gender == 'male' else 2) / 2
         attributes.update({'male_female': male_female})
         if self.name not in ARTISTS:
             print(self.name)
@@ -70,3 +95,9 @@ class ArtistVisualNode(VisualNode):
         solo_duet_group = solo_duet_group / 3
         attributes.update({'solo_duet_group': solo_duet_group})
         return attributes
+
+    def __str__(self):
+        return f'ArtistVisualNode: NodeVal={self.value} Artist={self._artist.__str__()}'
+
+    def __repr__(self):
+        return self.__str__()
