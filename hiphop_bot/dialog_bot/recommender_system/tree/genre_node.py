@@ -1,3 +1,4 @@
+from datetime import datetime
 from hiphop_bot.dialog_bot.recommender_system.tree.visual_node import VisualNode
 from hiphop_bot.dialog_bot.recommender_system.data.artists import ARTISTS, THEMES
 
@@ -14,7 +15,8 @@ class GenreVisualNode(VisualNode):
 
     @property
     def age(self):
-        return 2020 - self.year_of_birth
+        current_year = datetime.now().year
+        return current_year - self.year_of_birth
 
     @property
     def sex(self):
