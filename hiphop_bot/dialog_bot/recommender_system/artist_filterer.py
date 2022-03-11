@@ -19,7 +19,7 @@ def filter_artists(
             artist = find_artist(artist)
         if group_type != 'any' and artist.solo_duet_group != group_type and 'group_type' not in exclude:
             continue
-        if sex != 'anysex' and artist.sex != sex and 'sex' not in exclude:
+        if sex != 'anysex' and artist.gender != sex and 'sex' not in exclude:
             continue
         if not (older is None) and artist.age < older and 'older' not in exclude:
             continue
