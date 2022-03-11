@@ -19,12 +19,24 @@ class Artist:
         self.name = name
         self.year_of_birth = year_of_birth
         self.group_members_num = group_members_num
-        self.theme = theme
-        self.gender = gender
-        self.genre = genre
+        self._theme = theme
+        self._gender = gender
+        self._genre = genre
+
+    @property
+    def theme(self):
+        return self._theme.name
+
+    @property
+    def gender(self):
+        return self._gender.name
+
+    @property
+    def genre(self):
+        return self._genre.name
 
     def __str__(self):
-        return f'{self.name} {self.year_of_birth} {self.group_members_num} {self.theme} {self.gender} {self.genre}'
+        return f'{self.name} {self.year_of_birth} {self.group_members_num} {self._theme} {self._gender} {self._genre}'
 
     def __repr__(self):
         return f'Artist: "{self.__str__()}"'
