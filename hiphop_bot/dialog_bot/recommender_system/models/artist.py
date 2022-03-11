@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Tuple
 
 from hiphop_bot.db.model import Model
 from hiphop_bot.dialog_bot.recommender_system.models.theme import Theme
@@ -32,22 +32,26 @@ class Artist:
 
 class ArtistModel(Model):
     def __init__(self):
-        super().__init__('artist')
+        super().__init__('artist', Artist)
 
-    def get_all(self) -> List[Artist]:
-        raw_artists = self.get_all_raw()
-        artists = []
-        for raw_artist in raw_artists:
-            artists.append(Artist(*raw_artist))
-        return artists
-
-    def get_all_raw(self):
-        query = (
+        self._get_all_query = (
             "SELECT artist.name, year_of_birth, group_members_num, theme.name, gender.name, genre.name "
             f"from {self._table_name} "
             "inner join theme on artist.theme_id = theme.id "
-            "inner join gender on artist.gender_id=gender.id "
-            "inner join genre on artist.genre_id = genre.id"
+            "inner join gender on artist.gender_id = gender.id "
+            "inner join genre on artist.genre_id = genre.id "
         )
+
+    def get_all(self) -> List[Artist]:
+        artists = self._select(self._get_all_query)
+        return artists
+
+    def get_all_raw(self) -> List[Tuple]:
+        artists = self._raw_select(self._get_all_query)
+        return artists
+
+    def get_by_genre(self, genre) -> List[Artist] | List:
+        query = self._get_all_query + \
+                f"where genre.name = '{genre}'"
         artists = self._select(query)
         return artists

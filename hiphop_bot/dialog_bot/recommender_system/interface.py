@@ -94,18 +94,18 @@ def recommend_by_liked_with_disliked(
     return recommendations_by_liked
 
 
-def get_artist_by_name(name: str):
+def get_artist_by_name(name: str) -> GenreVisualNode:
     artist = Node.get_child_by_name(TREE, name)
     return artist
 
 
-def get_all_artists():
+def get_all_artists() -> GenreVisualNode:
     artists = []
     get_leafs_values(TREE, artists)
     return artists
 
 
-def get_artists_by_genre(genre: str):
+def get_artists_by_genre(genre: str) -> GenreVisualNode:
     artists = []
     genre_node = Node.get_child_by_name(TREE, genre)
     if genre_node:

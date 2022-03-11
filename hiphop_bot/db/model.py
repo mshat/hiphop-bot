@@ -1,15 +1,18 @@
-from typing import Tuple, List
+from typing import Tuple, List, Callable
 from abc import ABC, abstractmethod
+from psycopg2 import errors
 from hiphop_bot.db.connection_pool import Connection, CONNECTION_POOL
+from hiphop_bot.dialog_bot.tools.debug_print import debug_print
 
 
 class ModelError(Exception): pass
 
 
 class Model(ABC):
-    def __init__(self, table_name):
+    def __init__(self, table_name, model_class: Callable):
         self._table_name = table_name
         self._check_if_table_exists()
+        self._model_class = model_class
 
     def _check_if_table_exists(self):
         test_conn = self._get_connection()
@@ -28,14 +31,26 @@ class Model(ABC):
         connection = CONNECTION_POOL.get_connection()
         return connection
 
-    def _select(self, query):
-        connection = self._get_connection()
-        cursor = connection.cursor()
-        cursor.execute(query)
-        result = cursor.fetchall()
-        cursor.close()
-        connection.put_connection()
-        return result
+    def _raw_select(self, query) -> List[Tuple] | List:
+        try:
+            connection = self._get_connection()
+            cursor = connection.cursor()
+            cursor.execute(query)
+            result = cursor.fetchall()
+            cursor.close()
+            connection.put_connection()
+            return result
+        except errors.UndefinedColumn as e:
+            debug_print(f'[db error] {e}')
+            return []
+        except Exception as e:
+            debug_print(f'[db unknown error] {e}')
+            return []
+
+    def _select(self, query) -> List:
+        raw_data = self._raw_select(query)
+        objects = self._convert_to_objects(raw_data)
+        return objects
 
     @abstractmethod
     def get_all_raw(self) -> List[Tuple]:
@@ -50,3 +65,17 @@ class Model(ABC):
         Возвращает все записи из таблицы в виде списка объектов
         """
         pass
+
+    def _convert_to_objects(self, raw_data: List[Tuple]) -> List:
+        """
+        Преобразует список кортежей в объекты классов, соответствующих модели
+        """
+        try:
+            objects = []
+            for raw_artist in raw_data:
+                objects.append(self._model_class(*raw_artist))
+            return objects
+        except TypeError as e:
+            raise ModelError(f'Conversion type error: {e}')
+        except Exception as e:
+            raise ModelError(f'Unknown conversion error: {e}')

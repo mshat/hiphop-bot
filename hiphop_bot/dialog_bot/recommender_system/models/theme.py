@@ -4,31 +4,24 @@ from typing import List
 from hiphop_bot.db.model import Model
 
 
-class Theme(enum.Enum):
-    hard_gangsta = 'hard-gangsta'
-    workout = 'workout'
-    soft_gangsta = 'soft-gangsta'
-    feelings = 'feelings'
-    fun = 'fun'
-    art = 'art'
-    conscious = 'conscious'
+class Theme:
+    def __init__(self, name: str):
+        self.name = name
 
 
 class ThemeModel(Model):
     def __init__(self):
-        super().__init__('theme')
+        super().__init__('theme', Theme)
 
-    def get_all(self) -> List[Theme]:
-        raw_data = self.get_all_raw()
-        themes = []
-        for raw_artist in raw_data:
-            themes.append(Theme(*raw_artist))
-        return themes
-
-    def get_all_raw(self):
-        query = (
+        self._get_all_query = (
             "SELECT name "
             f"from {self._table_name}"
         )
-        genres = self._select(query)
+
+    def get_all(self) -> List[Theme]:
+        genres = self._select(self._get_all_query)
+        return genres
+
+    def get_all_raw(self):
+        genres = self._raw_select(self._get_all_query)
         return genres

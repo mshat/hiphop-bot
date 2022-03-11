@@ -12,21 +12,19 @@ class ArtistPairsProximity:
 
 class ArtistPairsProximityModel(Model):
     def __init__(self):
-        super().__init__('artist_pairs_proximity')
+        super().__init__('artist_pairs_proximity', ArtistPairsProximity)
 
-    def get_all(self) -> List[ArtistPairsProximity]:
-        raw_data = self.get_all_raw()
-        artists_pairs_proximity = []
-        for raw_artist in raw_data:
-            artists_pairs_proximity.append(ArtistPairsProximity(*raw_artist))
-        return artists_pairs_proximity
-
-    def get_all_raw(self):
-        query = (
+        self._get_all_query = (
             "SELECT art1.name, art2.name, proximity "
             f"from {self._table_name} "
             f"inner join artist as art1 on {self._table_name}.first_artist_id = art1.id "
             f"inner join artist as art2 on {self._table_name}.second_artist_id = art2.id "
         )
-        genres = self._select(query)
+
+    def get_all(self) -> List[ArtistPairsProximity]:
+        genres = self._select(self._get_all_query)
+        return genres
+
+    def get_all_raw(self):
+        genres = self._raw_select(self._get_all_query)
         return genres

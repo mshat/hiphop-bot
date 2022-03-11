@@ -1,29 +1,25 @@
-import enum
 from typing import List
-
 from hiphop_bot.db.model import Model
 
 
-class Gender(enum.Enum):
-    male = 'male'
-    female = 'female'
+class Gender:
+    def __init__(self, name: str):
+        self.name = name
 
 
 class GenderModel(Model):
     def __init__(self):
-        super().__init__('gender')
+        super().__init__('gender', Gender)
 
-    def get_all(self) -> List[Gender]:
-        raw_data = self.get_all_raw()
-        genders = []
-        for raw_artist in raw_data:
-            genders.append(Gender(*raw_artist))
-        return genders
-
-    def get_all_raw(self):
-        query = (
+        self._get_all_query = (
             "SELECT name "
             f"from {self._table_name}"
         )
-        genres = self._select(query)
+
+    def get_all(self) -> List[Gender]:
+        genres = self._select(self._get_all_query)
+        return genres
+
+    def get_all_raw(self):
+        genres = self._raw_select(self._get_all_query)
         return genres
