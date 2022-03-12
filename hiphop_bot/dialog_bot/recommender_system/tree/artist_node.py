@@ -12,18 +12,9 @@ ARTISTS = ArtistModel().get_artist_names()
 
 
 class ArtistVisualNode(VisualNode):
-    def __init__(
-            self,
-            genre: Genre,
-            name: str,
-            year_of_birth: int,
-            group_members_number: int,
-            theme: Theme,
-            gender: Gender
-    ):
-        # TODO в аргумент передавать готовый объект артиста, а не его параметры
-        self._artist = Artist(name, year_of_birth, group_members_number, theme, gender, genre)
-        super().__init__(val=name)
+    def __init__(self, artist: Artist):
+        self._artist = artist
+        super().__init__(val=self._artist.name)
 
     @property
     def name(self):

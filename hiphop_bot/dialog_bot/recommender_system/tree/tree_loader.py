@@ -24,15 +24,7 @@ def create_node(node_name, children_dict):
         if artists:
             leafs = []
             for artist in artists:
-                leafs.append(
-                    ArtistVisualNode(
-                        genre=node_name,
-                        name=artist.name,
-                        year_of_birth=artist.year_of_birth,
-                        group_members_number=artist.group_members_number,
-                        theme=artist.theme,
-                        gender=artist.gender)
-                )
+                leafs.append(ArtistVisualNode(artist))
             return leafs
         else:
             node = VisualNode(val=node_name)
