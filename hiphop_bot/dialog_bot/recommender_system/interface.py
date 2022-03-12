@@ -1,4 +1,3 @@
-import os
 from typing import List
 from collections import OrderedDict
 from hiphop_bot.dialog_bot.recommender_system.recommendation_list import get_recommendations
@@ -13,8 +12,7 @@ from hiphop_bot.dialog_bot.recommender_system.proximity_measures import (
 from hiphop_bot.dialog_bot.recommender_system.tree.tree_tools import calc_max_distance_between_nodes, get_leafs_values
 from hiphop_bot.dialog_bot.recommender_system.tree.artist_node import ArtistVisualNode
 
-dir_path = os.path.dirname(os.path.realpath(__file__))
-TREE = load_tree(f'{dir_path}/data/genres.json')
+TREE = load_tree()
 ARTIST_PAIRS_PROXIMITY = load_artist_pairs_proximity_json()
 max_proximity = calc_max_general_proximity(ARTIST_PAIRS_PROXIMITY)
 min_proximity = calc_min_general_proximity(ARTIST_PAIRS_PROXIMITY)
@@ -99,13 +97,13 @@ def get_artist_by_name(name: str) -> ArtistVisualNode:
     return artist
 
 
-def get_all_artists() -> ArtistVisualNode:
+def get_all_artists() -> List[ArtistVisualNode]:  # TODO проверить
     artists = []
     get_leafs_values(TREE, artists)
     return artists
 
 
-def get_artists_by_genre(genre: str) -> ArtistVisualNode:
+def get_artists_by_genre(genre: str) -> List[ArtistVisualNode]: # TODO проверить
     artists = []
     genre_node = Node.get_child_by_name(TREE, genre)
     if genre_node:

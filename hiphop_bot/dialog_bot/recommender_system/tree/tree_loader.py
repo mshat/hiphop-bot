@@ -1,20 +1,18 @@
-import os
-import json
+from typing import Dict
 from hiphop_bot.dialog_bot.recommender_system.tree.visual_node import VisualNode
 from hiphop_bot.dialog_bot.recommender_system.tree.artist_node import ArtistVisualNode
 from hiphop_bot.dialog_bot.recommender_system.models.artist import ArtistModel
-from hiphop_bot.dialog_bot.recommender_system.models.genre import GenreModel
-
-dir_path = os.path.dirname(os.path.realpath(__file__))
+from hiphop_bot.dialog_bot.recommender_system.models.genre_tree import GenreTreeModel
 
 
-def load_tree_dict(filename='genres.json'):
-    with open(filename, 'r') as file:
-        genres = json.load(file)
-    return genres
+def load_genre_tree():
+    genre_tree_model = GenreTreeModel()
+    genre_tree = genre_tree_model.get_all()
+
+    return genre_tree.tree_dict
 
 
-def get_artists(genre):
+def load_artists(genre):
     artist_model = ArtistModel()
     artists = artist_model.get_by_genre(genre)
     return artists
@@ -22,7 +20,7 @@ def get_artists(genre):
 
 def create_node(node_name, children_dict):
     if not children_dict:  # this node is leaf
-        artists = get_artists(node_name.lower())
+        artists = load_artists(node_name.lower())
         if artists:
             leafs = []
             for artist in artists:
@@ -31,9 +29,9 @@ def create_node(node_name, children_dict):
                         genre=node_name,
                         name=artist.name,
                         year_of_birth=artist.year_of_birth,
-                        group_members_num=artist.group_members_num,
+                        group_members_number=artist.group_members_number,
                         theme=artist.theme,
-                        is_male=1 if artist.gender == 'male' else 0,)
+                        gender=artist.gender)
                 )
             return leafs
         else:
@@ -51,6 +49,6 @@ def create_node(node_name, children_dict):
     return node
 
 
-def create_tree_from_json(filename='genres.json') -> VisualNode:
-    tree_dict = load_tree_dict(filename)
-    return create_node('hiphop', tree_dict['hiphop'])
+def load_tree() -> VisualNode:
+    genres_tree: Dict[str, Dict] = load_genre_tree()
+    return create_node('hiphop', genres_tree['hiphop'])
