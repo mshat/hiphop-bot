@@ -1,31 +1,22 @@
-import os
-import json
 from collections import OrderedDict
 from hiphop_bot.dialog_bot.recommender_system.tree.artist_node import ArtistVisualNode
 from hiphop_bot.dialog_bot.recommender_system.proximity_measures import \
     calc_generalizing_proximity_measure_for_all_leafs
 from hiphop_bot.dialog_bot.recommender_system.tools import format_print
 from hiphop_bot.dialog_bot.recommender_system.config import MIN_SIMILARITY_PROXIMITY
+from hiphop_bot.dialog_bot.recommender_system.models.artist_pairs_proximity import ArtistPairsProximityModel
 
-dir_path = os.path.dirname(os.path.realpath(__file__))
 
-
-def create_artist_pairs_proximity_json(tree):
+# TODO дописать метод для записи в бд список близости артистов
+def create_artist_pairs_proximity(tree):
     artist_pairs_proximity = calc_generalizing_proximity_measure_for_all_leafs(tree)
-
-    with open('data/artist_pairs_proximity.json', 'w') as file:
-        json.dump(artist_pairs_proximity, file)
+    pass
 
 
-def load_artist_pairs_proximity_json(filename: str = f'{dir_path}/data/artist_pairs_proximity.json') -> dict:
-    with open(filename, 'r') as file:
-        return json.load(file)
-
-
-def print_all_artist_pairs_proximity(artist_pairs_proximity: dict):
-    for artist1_name, pair_artists in artist_pairs_proximity.items():
-        for pair_name, pair_proximity in pair_artists.items():
-            print(f'{artist1_name} - {pair_name} = {pair_proximity}')
+def load_artist_pairs_proximity() -> dict:
+    artist_pairs_proximity_model = ArtistPairsProximityModel()
+    res = artist_pairs_proximity_model.get_all()
+    return res.artists_proximity
 
 
 def get_recommendations(
@@ -42,6 +33,7 @@ def get_recommendations(
     return recommendations
 
 
+# TODO не используется
 def show_recommendations(
         seed_object: ArtistVisualNode,
         artist_pairs_proximity: dict,
