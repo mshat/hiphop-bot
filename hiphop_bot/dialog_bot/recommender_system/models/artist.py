@@ -66,6 +66,11 @@ class ArtistModel(Model):
         artists = self._raw_select(self._get_all_query)
         return artists
 
+    def get_artist_names(self) -> List[str]:
+        raw_data: List[Tuple] = self.get_all_raw()
+        names = [raw_artist[0] for raw_artist in raw_data]
+        return names
+
     def get_by_genre(self, genre) -> List[Artist] | List:
         query = self._get_all_query + \
                 f"where genre.name = '{genre}'"
