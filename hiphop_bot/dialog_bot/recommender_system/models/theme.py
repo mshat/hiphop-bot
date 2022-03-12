@@ -1,6 +1,4 @@
-import enum
-from typing import List
-
+from typing import List, Tuple
 from hiphop_bot.db.model import Model
 
 
@@ -31,3 +29,8 @@ class ThemeModel(Model):
     def get_all_raw(self):
         genres = self._raw_select(self._get_all_query)
         return genres
+
+    def get_theme_names(self) -> List[str]:
+        raw_data: List[Tuple] = self.get_all_raw()
+        names = [raw_theme[0] for raw_theme in raw_data]
+        return names
