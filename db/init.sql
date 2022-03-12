@@ -92,3 +92,22 @@ on conflict (id) do update
   set first_artist_id = excluded.first_artist_id,
   second_artist_id = excluded.second_artist_id,
   proximity = excluded.proximity;
+
+
+--table Genres_adjacency_table
+CREATE TABLE genres_adjacency_table (
+    id INT NOT NULL PRIMARY KEY,
+    parent_genre_node_id INT REFERENCES genre (id),
+    child_genre_node_id INT REFERENCES genre (id),
+);
+
+CREATE TEMP TABLE new_genres_adjacency_table (info json);
+\copy new_genres_adjacency_table from 'docker-entrypoint-initdb.d/genres_adjacency_table.json'
+
+insert into genres_adjacency_table (id, parent_genre_node_id, child_genre_node_id)
+select p.*
+from new_genres_adjacency_table l
+  cross join lateral json_populate_recordset(null::genres_adjacency_table, info) as p
+on conflict (id) do update
+  set parent_genre_node_id = excluded.parent_genre_node_id,
+  child_genre_node_id = excluded.child_genre_node_id;
