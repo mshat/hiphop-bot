@@ -3,7 +3,7 @@ from collections import OrderedDict
 from hiphop_bot.dialog_bot.recommender_system.recommendation_list import get_recommendations
 from hiphop_bot.dialog_bot.recommender_system.tree.node import Node
 from hiphop_bot.dialog_bot.recommender_system.tree.tree_loader import load_tree
-from hiphop_bot.dialog_bot.recommender_system.recommendation_list import load_artist_pairs_proximity_json
+from hiphop_bot.dialog_bot.recommender_system.recommendation_list import load_artist_pairs_proximity
 from hiphop_bot.dialog_bot.recommender_system.proximity_measures import (
     calc_max_general_proximity,
     calc_min_general_proximity,
@@ -13,7 +13,7 @@ from hiphop_bot.dialog_bot.recommender_system.tree.tree_tools import calc_max_di
 from hiphop_bot.dialog_bot.recommender_system.tree.artist_node import ArtistVisualNode
 
 TREE = load_tree()
-ARTIST_PAIRS_PROXIMITY = load_artist_pairs_proximity_json()
+ARTIST_PAIRS_PROXIMITY = load_artist_pairs_proximity()
 max_proximity = calc_max_general_proximity(ARTIST_PAIRS_PROXIMITY)
 min_proximity = calc_min_general_proximity(ARTIST_PAIRS_PROXIMITY)
 max_distance_between_nodes = calc_max_distance_between_nodes(TREE)
