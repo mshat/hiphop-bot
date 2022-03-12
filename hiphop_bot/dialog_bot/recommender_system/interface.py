@@ -97,13 +97,13 @@ def get_artist_by_name(name: str) -> ArtistVisualNode:
     return artist
 
 
-def get_all_artists() -> List[ArtistVisualNode]:  # TODO проверить
+def get_all_artists() -> List[ArtistVisualNode]:
     artists = []
     get_leafs_values(TREE, artists)
     return artists
 
 
-def get_artists_by_genre(genre: str) -> List[ArtistVisualNode]: # TODO проверить
+def get_artists_by_genre(genre: str) -> List[ArtistVisualNode]:
     artists = []
     genre_node = Node.get_child_by_name(TREE, genre)
     if genre_node:
