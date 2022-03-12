@@ -13,7 +13,6 @@ class QueryHandler(ABC):
     required_argument_type: str | None
     required_arguments: Dict[str, int] | None
     debug_msg: str
-    debug_res: str
 
     @abstractmethod
     def __init__(self):

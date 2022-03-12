@@ -31,14 +31,6 @@ def find_artist(name: str) -> ArtistVisualNode:
     return artist
 
 
-def split_artists(artists: str):
-    artists.strip()
-    artists = artists.replace('  ', ' ')
-    artists = artists.replace('   ', ' ')
-    res = list(map(str.strip, artists.split(',')))
-    return res
-
-
 def recommend_by_seed(seed_artist: str, disliked_artists: [str], debug=False) -> dict:
     seed = find_artist(seed_artist)
 
