@@ -3,7 +3,7 @@ from typing import List
 from collections import OrderedDict
 from hiphop_bot.dialog_bot.recommender_system.recommendation_list import get_recommendations
 from hiphop_bot.dialog_bot.recommender_system.tree.node import Node
-from hiphop_bot.dialog_bot.recommender_system.tree.tree_loader import create_tree_from_json
+from hiphop_bot.dialog_bot.recommender_system.tree.tree_loader import load_tree
 from hiphop_bot.dialog_bot.recommender_system.recommendation_list import load_artist_pairs_proximity_json
 from hiphop_bot.dialog_bot.recommender_system.proximity_measures import (
     calc_max_general_proximity,
@@ -14,7 +14,7 @@ from hiphop_bot.dialog_bot.recommender_system.tree.tree_tools import calc_max_di
 from hiphop_bot.dialog_bot.recommender_system.tree.artist_node import ArtistVisualNode
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
-TREE = create_tree_from_json(f'{dir_path}/data/genres.json')
+TREE = load_tree(f'{dir_path}/data/genres.json')
 ARTIST_PAIRS_PROXIMITY = load_artist_pairs_proximity_json()
 max_proximity = calc_max_general_proximity(ARTIST_PAIRS_PROXIMITY)
 min_proximity = calc_min_general_proximity(ARTIST_PAIRS_PROXIMITY)

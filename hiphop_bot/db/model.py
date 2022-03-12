@@ -72,8 +72,8 @@ class Model(ABC):
         """
         try:
             objects = []
-            for raw_artist in raw_data:
-                objects.append(self._model_class(*raw_artist))
+            for init_arguments in raw_data:
+                objects.append(self._model_class(*init_arguments))
             return objects
         except TypeError as e:
             raise ModelError(f'Conversion type error: {e}')
