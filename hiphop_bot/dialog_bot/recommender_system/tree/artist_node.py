@@ -1,10 +1,14 @@
 from datetime import datetime
 from hiphop_bot.dialog_bot.recommender_system.tree.visual_node import VisualNode
 from hiphop_bot.dialog_bot.recommender_system.models.artist import Artist
-from hiphop_bot.dialog_bot.recommender_system.data.artists import ARTISTS, THEMES
 from hiphop_bot.dialog_bot.recommender_system.models.theme import Theme
 from hiphop_bot.dialog_bot.recommender_system.models.gender import Gender
 from hiphop_bot.dialog_bot.recommender_system.models.genre import Genre
+from hiphop_bot.dialog_bot.recommender_system.models.artist import ArtistModel
+from hiphop_bot.dialog_bot.recommender_system.models.theme import ThemeModel
+
+THEMES = ThemeModel().get_theme_names()
+ARTISTS = ArtistModel().get_artist_names()
 
 
 class ArtistVisualNode(VisualNode):
@@ -17,6 +21,7 @@ class ArtistVisualNode(VisualNode):
             theme: Theme,
             gender: Gender
     ):
+        # TODO в аргумент передавать готовый объект артиста, а не его параметры
         self._artist = Artist(name, year_of_birth, group_members_number, theme, gender, genre)
         super().__init__(val=name)
 
