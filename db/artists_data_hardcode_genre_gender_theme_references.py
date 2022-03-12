@@ -8,7 +8,7 @@ with open('genres.json', 'r', encoding='utf-8') as file:
     genres = json.load(file)
 genres = {genre['name']: genre['id'] for genre in genres}
 
-with open('artists_.json', 'r', encoding='utf-8') as file:
+with open('artists_source.json', 'r', encoding='utf-8') as file:
     artists = json.load(file)
 
 print(genres)
