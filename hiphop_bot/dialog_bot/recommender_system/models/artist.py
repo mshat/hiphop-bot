@@ -1,30 +1,30 @@
 from typing import List, Tuple
 from hiphop_bot.db.model import Model
-from hiphop_bot.dialog_bot.recommender_system.models.theme import Theme
-from hiphop_bot.dialog_bot.recommender_system.models.gender import Gender
-from hiphop_bot.dialog_bot.recommender_system.models.genre import Genre
+from hiphop_bot.dialog_bot.recommender_system.models.theme import _Theme  # импортирутеся для аннотации
+from hiphop_bot.dialog_bot.recommender_system.models.gender import _Gender  # импортирутеся для аннотации
+from hiphop_bot.dialog_bot.recommender_system.models.genre import _Genre  # импортирутеся для аннотации
 
 
-class Artist:
-    theme: Theme
-    gender: Gender
-    genre: Genre
+class _Artist:
+    theme: _Theme
+    gender: _Gender
+    genre: _Genre
 
     def __init__(
             self,
             name: str,
             year_of_birth: int,
             group_members_number: int,
-            theme: Theme | str,
-            gender: Gender | str,
-            genre: Genre | str,
+            theme: _Theme | str,
+            gender: _Gender | str,
+            genre: _Genre | str,
     ):
         self.name = name
         self.year_of_birth = year_of_birth
         self.group_members_number = group_members_number
-        self._theme = theme if isinstance(theme, Theme) else Theme(theme)
-        self._gender = gender if isinstance(gender, Gender) else Gender(gender)
-        self._genre = genre if isinstance(genre, Genre) else Genre(genre)
+        self._theme = theme if isinstance(theme, _Theme) else _Theme(theme)
+        self._gender = gender if isinstance(gender, _Gender) else _Gender(gender)
+        self._genre = genre if isinstance(genre, _Genre) else _Genre(genre)
 
     @property
     def theme(self):
@@ -48,7 +48,7 @@ class Artist:
 
 class ArtistModel(Model):
     def __init__(self):
-        super().__init__('artist', Artist)
+        super().__init__('artist', _Artist)
 
         self._get_all_query = (
             "SELECT artist.name, year_of_birth, group_members_num, theme.name, gender.name, genre.name "
@@ -58,7 +58,7 @@ class ArtistModel(Model):
             "inner join genre on artist.genre_id = genre.id "
         )
 
-    def get_all(self) -> List[Artist]:
+    def get_all(self) -> List[_Artist]:
         artists = self._select(self._get_all_query)
         return artists
 
@@ -71,7 +71,7 @@ class ArtistModel(Model):
         names = [raw_artist[0] for raw_artist in raw_data]
         return names
 
-    def get_by_genre(self, genre) -> List[Artist] | List:
+    def get_by_genre(self, genre) -> List[_Artist] | List:
         query = self._get_all_query + \
                 f"where genre.name = '{genre}'"
         artists = self._select(query)

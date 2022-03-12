@@ -2,7 +2,7 @@ from typing import List
 from hiphop_bot.db.model import Model
 
 
-class Gender:
+class _Gender:
     def __init__(self, name: str):
         self.name = name
 
@@ -15,14 +15,14 @@ class Gender:
 
 class GenderModel(Model):
     def __init__(self):
-        super().__init__('gender', Gender)
+        super().__init__('gender', _Gender)
 
         self._get_all_query = (
             "SELECT name "
             f"from {self._table_name}"
         )
 
-    def get_all(self) -> List[Gender]:
+    def get_all(self) -> List[_Gender]:
         genres = self._select(self._get_all_query)
         return genres
 

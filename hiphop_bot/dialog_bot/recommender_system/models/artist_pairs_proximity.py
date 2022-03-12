@@ -2,7 +2,7 @@ from typing import List, Tuple, Dict
 from hiphop_bot.db.model import Model, ModelError
 
 
-class ArtistPairsProximity:
+class _ArtistPairsProximity:
     artists_proximity: Dict[str, Dict[str, float]]  # {artist1: {artist2: 0.3, artist3: 0.2}, artist2...}
 
     def __init__(self, raw_data: List[Tuple[int, str, str, float]]):
@@ -30,7 +30,7 @@ class ArtistPairsProximity:
 
 class ArtistPairsProximityModel(Model):
     def __init__(self):
-        super().__init__('artist_pairs_proximity', ArtistPairsProximity)
+        super().__init__('artist_pairs_proximity', _ArtistPairsProximity)
 
         self._get_all_query = (
             "SELECT art1.name, art2.name, proximity "
@@ -39,7 +39,7 @@ class ArtistPairsProximityModel(Model):
             f"inner join artist as art2 on {self._table_name}.second_artist_id = art2.id "
         )
 
-    def _convert_to_objects(self, raw_data: List[Tuple]) -> ArtistPairsProximity:
+    def _convert_to_objects(self, raw_data: List[Tuple]) -> _ArtistPairsProximity:
         """
         Преобразует список кортежей в объект класса ArtistPairsProximity
         """
@@ -51,12 +51,12 @@ class ArtistPairsProximityModel(Model):
         except Exception as e:
             raise ModelError(f'Unknown conversion error: {e}')
 
-    def _select(self, query) -> ArtistPairsProximity:
+    def _select(self, query) -> _ArtistPairsProximity:
         raw_data = self._raw_select(query)
         objects = self._convert_to_objects(raw_data)
         return objects
 
-    def get_all(self) -> ArtistPairsProximity:
+    def get_all(self) -> _ArtistPairsProximity:
         genres = self._select(self._get_all_query)
         return genres
 

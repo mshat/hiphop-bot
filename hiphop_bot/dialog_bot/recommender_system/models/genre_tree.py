@@ -3,7 +3,7 @@ from copy import deepcopy
 from hiphop_bot.db.model import Model, ModelError
 
 
-class GenreTreeConverter:
+class _GenreTreeConverter:
     """
     Класс для преобразования таблицы смежности (adjacency_table) в дерево, представленное в виде вложенных словарей
     И для обратного преобразования
@@ -78,7 +78,7 @@ class GenreTreeConverter:
         pass
 
 
-class GenreTree:
+class _GenreTree:
     tree_dict: Dict[str, Dict]
 
     def __init__(self, node_tree_dict: Dict[str, Dict]):
@@ -93,7 +93,7 @@ class GenreTree:
 
 class GenreTreeModel(Model):
     def __init__(self):
-        super().__init__('genres_adjacency_table', GenreTree)
+        super().__init__('genres_adjacency_table', _GenreTree)
 
         self._get_all_query = (
             "SELECT gat.id, g1.name as parent_genre, g2.name as child_genre "
@@ -102,12 +102,12 @@ class GenreTreeModel(Model):
             "inner join genre as g2 on gat.child_genre_node_id = g2.id "
         )
 
-    def _convert_to_objects(self, raw_data: List[Tuple]) -> GenreTree:
+    def _convert_to_objects(self, raw_data: List[Tuple]) -> _GenreTree:
         """
         Преобразует список кортежей в объекты класса GenreTree
         """
         try:
-            converter = GenreTreeConverter(adjacency_table=raw_data)
+            converter = _GenreTreeConverter(adjacency_table=raw_data)
             node_tree = converter.create_tree_from_adjacency_table()
             object_ = self._model_class(node_tree)
             return object_
@@ -116,12 +116,12 @@ class GenreTreeModel(Model):
         except Exception as e:
             raise ModelError(f'Unknown conversion error: {e}')
 
-    def _select(self, query) -> GenreTree:
+    def _select(self, query) -> _GenreTree:
         raw_data = self._raw_select(query)
         object_ = self._convert_to_objects(raw_data)
         return object_
 
-    def get_all(self) -> GenreTree:
+    def get_all(self) -> _GenreTree:
         artists = self._select(self._get_all_query)
         return artists
 

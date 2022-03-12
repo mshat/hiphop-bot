@@ -1,10 +1,8 @@
-import enum
 from typing import List
-
 from hiphop_bot.db.model import Model
 
 
-class Genre:
+class _Genre:
     def __init__(self, name: str):
         self.name = name
 
@@ -17,14 +15,14 @@ class Genre:
 
 class GenreModel(Model):
     def __init__(self):
-        super().__init__('genre', Genre)
+        super().__init__('genre', _Genre)
 
         self._get_all_query = (
             "SELECT name "
             f"from {self._table_name}"
         )
 
-    def get_all(self) -> List[Genre]:
+    def get_all(self) -> List[_Genre]:
         genres = self._select(self._get_all_query)
         return genres
 

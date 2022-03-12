@@ -2,7 +2,7 @@ from typing import List, Tuple
 from hiphop_bot.db.model import Model
 
 
-class Theme:
+class _Theme:
     def __init__(self, name: str):
         self.name = name
 
@@ -15,14 +15,14 @@ class Theme:
 
 class ThemeModel(Model):
     def __init__(self):
-        super().__init__('theme', Theme)
+        super().__init__('theme', _Theme)
 
         self._get_all_query = (
             "SELECT name "
             f"from {self._table_name}"
         )
 
-    def get_all(self) -> List[Theme]:
+    def get_all(self) -> List[_Theme]:
         genres = self._select(self._get_all_query)
         return genres
 

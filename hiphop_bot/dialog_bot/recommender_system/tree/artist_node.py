@@ -1,9 +1,6 @@
 from datetime import datetime
 from hiphop_bot.dialog_bot.recommender_system.tree.visual_node import VisualNode
-from hiphop_bot.dialog_bot.recommender_system.models.artist import Artist
-from hiphop_bot.dialog_bot.recommender_system.models.theme import Theme
-from hiphop_bot.dialog_bot.recommender_system.models.gender import Gender
-from hiphop_bot.dialog_bot.recommender_system.models.genre import Genre
+from hiphop_bot.dialog_bot.recommender_system.models.artist import _Artist  # импортирутеся для аннотации
 from hiphop_bot.dialog_bot.recommender_system.models.artist import ArtistModel
 from hiphop_bot.dialog_bot.recommender_system.models.theme import ThemeModel
 
@@ -12,7 +9,7 @@ ARTISTS = ArtistModel().get_artist_names()
 
 
 class ArtistVisualNode(VisualNode):
-    def __init__(self, artist: Artist):
+    def __init__(self, artist: _Artist):
         self._artist = artist
         super().__init__(val=self._artist.name)
 
