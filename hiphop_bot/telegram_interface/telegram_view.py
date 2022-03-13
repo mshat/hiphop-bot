@@ -1,5 +1,6 @@
 import os
 import telebot
+from typing import Tuple
 from hiphop_bot.dialog_bot.query_solving.query_solver import QuerySolvingState
 from hiphop_bot.controller.answer_generator import AnswerGenerator
 from hiphop_bot.controller.controller import UserInterfaceController
@@ -25,9 +26,11 @@ def get_text_messages(message):
     elif message.text == '':
         bot.send_message(message.from_user.id, blank_answer())
     else:
-        reply = solve_message(message.text)
+        reply, additional_message = solve_message(message.text)
         if reply != '':
             bot.send_message(message.from_user.id, reply)
+        if additional_message != '':
+            bot.send_message(message.from_user.id, additional_message)
 
 
 def start_answer():
@@ -40,12 +43,13 @@ def blank_answer():
     return msg
 
 
-def solve_message(sentence: str) -> str:
+def solve_message(sentence: str) -> Tuple[str, str]:
     res = controller.solve_query(sentence)
     if res == QuerySolvingState.SOLVED:
         answer_generator.user = controller.user
         answer_generator.dialog = controller.dialog
-        return answer_generator.generate_answer()
+        answer, additional_message = answer_generator.generate_answer()
+        return answer, additional_message
     elif res == QuerySolvingState.UNSOLVED:
         return controller.unresolved_answer
     else:
