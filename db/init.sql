@@ -48,6 +48,7 @@ from new_genres l
 on conflict (id) do update
   set name = excluded.name;
 
+
 --table Artist
 CREATE TABLE artist (
     id INT NOT NULL PRIMARY KEY,
@@ -72,6 +73,7 @@ on conflict (id) do update
   theme_id = excluded.theme_id,
   gender_id = excluded.gender_id,
   genre_id = excluded.genre_id;
+
 
 --table Artist_pairs_proximity
 CREATE TABLE artist_pairs_proximity (
@@ -111,3 +113,41 @@ from new_genres_adjacency_table l
 on conflict (id) do update
   set parent_genre_node_id = excluded.parent_genre_node_id,
   child_genre_node_id = excluded.child_genre_node_id;
+
+
+--table streaming_service
+CREATE TABLE streaming_service(
+    id INT NOT NULL PRIMARY KEY,
+    name VARCHAR(40)
+);
+
+CREATE TEMP TABLE new_streaming_service (info json);
+\copy new_streaming_service from 'docker-entrypoint-initdb.d/streaming_services.json'
+
+insert into streaming_service (id, name)
+select p.*
+from new_streaming_service l
+  cross join lateral json_populate_recordset(null::streaming_service, info) as p
+on conflict (id) do update
+  set name = excluded.name;
+
+
+--table streaming_service_link
+CREATE TABLE streaming_service_link(
+    id INT NOT NULL PRIMARY KEY,
+    artist_id INT REFERENCES artist (id),
+    streaming_service_id INT REFERENCES streaming_service (id),
+    link VARCHAR(150)
+);
+
+CREATE TEMP TABLE new_streaming_service_link (info json);
+\copy new_streaming_service_link from 'docker-entrypoint-initdb.d/streaming_service_links.json'
+
+insert into streaming_service_link (id, artist_id, streaming_service_id, link)
+select p.*
+from new_streaming_service_link l
+  cross join lateral json_populate_recordset(null::streaming_service_link, info) as p
+on conflict (id) do update
+  set artist_id = excluded.artist_id,
+  streaming_service_id = excluded.streaming_service_id,
+  link = excluded.link;
