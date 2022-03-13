@@ -481,8 +481,12 @@ class ShowAllArtistsHandler(QueryHandler):
     def handle(self, query: Query, user: User, dialog: Dialog):
         artists = interface.get_all_artists()
         dialog.search_result = artists
-        dialog.output_message += '\nКстати, в запросах вы можете указывать имя артиста или ' \
-                                 'группы на русском языке, даже если тут он записан на английском'
+        by_the_way_msg = '\nКстати, в запросах вы можете указывать имя артиста или ' \
+                         'группы на русском языке, даже если тут он записан на английском'
+        if dialog.output_message:
+            dialog.output_message += by_the_way_msg
+        else:
+            dialog.output_message = by_the_way_msg
         return DialogState.SEARCH
 
 
