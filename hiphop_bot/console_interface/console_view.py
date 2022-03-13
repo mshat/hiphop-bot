@@ -26,8 +26,10 @@ def main():
         if query_solving_res == QuerySolvingState.SOLVED:
             answer_generator.dialog = controller.dialog
             answer_generator.user = controller.user
-            answer = answer_generator.generate_answer()
+            answer, additional_message = answer_generator.generate_answer()
             print(answer)
+            if additional_message:
+                print(additional_message)
         elif query_solving_res == QuerySolvingState.UNSOLVED:
             print(controller.unresolved_answer)
         else:

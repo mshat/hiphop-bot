@@ -1,10 +1,9 @@
-from typing import Iterable, List
+from typing import Iterable, List, Tuple
 from hiphop_bot.dialog_bot.recommender_system import artist_filterer
-from hiphop_bot.dialog_bot.config import ENABLE_FILTERS
+from hiphop_bot.dialog_bot.config import ENABLE_FILTERS, DEBUG
 from hiphop_bot.dialog_bot.recommender_system.tree.artist_node import ArtistVisualNode
 from hiphop_bot.dialog_bot.query_solving.dialog import Dialog
 from hiphop_bot.dialog_bot.query_solving.user import User
-from hiphop_bot.dialog_bot.config import DEBUG
 from hiphop_bot.controller.output_message import OutputMessage
 
 
@@ -88,8 +87,9 @@ class AnswerGenerator:
         assert isinstance(val, User)
         self._user = val
 
-    def generate_answer(self) -> str:
+    def generate_answer(self) -> Tuple[str, str]:
         out_msg = OutputMessage()
+        additional_message = ''
         if DEBUG and self.dialog.debug_message is not None:
             out_msg.msg += f'DEBUG {self.dialog.debug_message}'
 
@@ -112,7 +112,7 @@ class AnswerGenerator:
                 filtered = filter_search_result(self.user, self.dialog)
                 if filtered:
                     out_msg.msg += generate_recommendations_message(self.user, filtered)
-                    out_msg.msg += get_after_search_message()
+                    additional_message += get_after_search_message()
                 else:
                     out_msg.msg += 'Не найдено результатов, подходящих под фильтры'
 
@@ -121,4 +121,4 @@ class AnswerGenerator:
         if len(out_msg.msg) > 1 and out_msg.msg[-1] == '\n':
             out_msg.msg = out_msg.msg[:-1]
 
-        return out_msg.msg
+        return out_msg.msg, additional_message
