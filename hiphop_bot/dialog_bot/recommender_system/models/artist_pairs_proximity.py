@@ -51,13 +51,13 @@ class ArtistPairsProximityModel(Model):
         except Exception as e:
             raise ModelError(f'Unknown conversion error: {e}')
 
-    def _select(self, query) -> _ArtistPairsProximity:
+    def _select_model_objects(self, query) -> _ArtistPairsProximity:
         raw_data = self._raw_select(query)
         objects = self._convert_to_objects(raw_data)
         return objects
 
     def get_all(self) -> _ArtistPairsProximity:
-        genres = self._select(self._get_all_query)
+        genres = self._select_model_objects(self._get_all_query)
         return genres
 
     def get_all_raw(self):

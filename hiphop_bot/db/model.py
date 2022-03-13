@@ -47,7 +47,7 @@ class Model(ABC):
             debug_print(f'[db unknown error] {e}')
             return []
 
-    def _select(self, query) -> List:
+    def _select_model_objects(self, query) -> List:
         raw_data = self._raw_select(query)
         objects = self._convert_to_objects(raw_data)
         return objects
@@ -66,14 +66,16 @@ class Model(ABC):
         """
         pass
 
-    def _convert_to_objects(self, raw_data: List[Tuple]) -> List:
+    def _convert_to_objects(self, raw_data: List[Tuple], model_class: Callable = None) -> List:
         """
         Преобразует список кортежей в объекты классов, соответствующих модели
         """
+        if model_class is None:
+            model_class = self._model_class
         try:
             objects = []
             for init_arguments in raw_data:
-                objects.append(self._model_class(*init_arguments))
+                objects.append(model_class(*init_arguments))
             return objects
         except TypeError as e:
             raise ModelError(f'Conversion type error: {e}')
