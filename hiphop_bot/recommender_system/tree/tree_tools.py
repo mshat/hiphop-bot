@@ -1,5 +1,5 @@
-from hiphop_bot.dialog_bot.recommender_system.tree.node import Node
-from hiphop_bot.dialog_bot.recommender_system.tree.artist_node import ArtistVisualNode
+from hiphop_bot.recommender_system.tree.node import Node
+from hiphop_bot.recommender_system.tree.artist_node import ArtistVisualNode
 
 
 def find_path_to_node(root: Node, path: list, node_name: str):

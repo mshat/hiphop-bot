@@ -1,6 +1,6 @@
 from typing import List, Tuple, Dict
 from hiphop_bot.db.model import Model, ModelError
-from hiphop_bot.dialog_bot.recommender_system.models.streaming_service import StreamingServiceModel
+from hiphop_bot.recommender_system.models.streaming_service import StreamingServiceModel
 
 
 class _StreamingServiceLinks:

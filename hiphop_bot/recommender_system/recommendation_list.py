@@ -1,10 +1,10 @@
 from collections import OrderedDict
-from hiphop_bot.dialog_bot.recommender_system.tree.artist_node import ArtistVisualNode
-from hiphop_bot.dialog_bot.recommender_system.proximity_measures import \
+from hiphop_bot.recommender_system.tree.artist_node import ArtistVisualNode
+from hiphop_bot.recommender_system.proximity_measures import \
     calc_generalizing_proximity_measure_for_all_leafs
-from hiphop_bot.dialog_bot.recommender_system.tools import format_print
-from hiphop_bot.dialog_bot.recommender_system.config import MIN_SIMILARITY_PROXIMITY
-from hiphop_bot.dialog_bot.recommender_system.models.artist_pairs_proximity import ArtistPairsProximityModel
+from hiphop_bot.recommender_system.tools import format_print
+from hiphop_bot.recommender_system.config import MIN_SIMILARITY_PROXIMITY
+from hiphop_bot.recommender_system.models.artist_pairs_proximity import ArtistPairsProximityModel
 
 
 # TODO дописать метод для записи в бд список близости артистов

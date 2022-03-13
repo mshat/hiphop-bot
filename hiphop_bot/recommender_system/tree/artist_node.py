@@ -1,8 +1,8 @@
 from datetime import datetime
-from hiphop_bot.dialog_bot.recommender_system.tree.visual_node import VisualNode
-from hiphop_bot.dialog_bot.recommender_system.models.artist import _Artist  # импортирутеся для аннотации
-from hiphop_bot.dialog_bot.recommender_system.models.artist import ArtistModel
-from hiphop_bot.dialog_bot.recommender_system.models.theme import ThemeModel
+from hiphop_bot.recommender_system.tree.visual_node import VisualNode
+from hiphop_bot.recommender_system.models.artist import _Artist  # импортирутеся для аннотации
+from hiphop_bot.recommender_system.models.artist import ArtistModel
+from hiphop_bot.recommender_system.models.theme import ThemeModel
 
 THEMES = ThemeModel().get_theme_names()
 ARTISTS = ArtistModel().get_artist_names()

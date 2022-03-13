@@ -1,6 +1,6 @@
 from typing import List
-from hiphop_bot.dialog_bot.recommender_system.tree.artist_node import ArtistVisualNode
-from hiphop_bot.dialog_bot.recommender_system.interface import find_artist
+from hiphop_bot.recommender_system.tree.artist_node import ArtistVisualNode
+from hiphop_bot.recommender_system.interface import find_artist
 
 EXCLUDE = ['sex', 'group_type', 'older', 'younger']
 

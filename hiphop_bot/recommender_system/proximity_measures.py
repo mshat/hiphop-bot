@@ -1,9 +1,9 @@
-from hiphop_bot.dialog_bot.recommender_system.pow_distance import calc_distance_in_pow
-from hiphop_bot.dialog_bot.recommender_system.tree.artist_node import ArtistVisualNode
-from hiphop_bot.dialog_bot.recommender_system.tree.node import Node
-from hiphop_bot.dialog_bot.recommender_system.tree.tree_tools import (
+from hiphop_bot.recommender_system.pow_distance import calc_distance_in_pow
+from hiphop_bot.recommender_system.tree.artist_node import ArtistVisualNode
+from hiphop_bot.recommender_system.tree.node import Node
+from hiphop_bot.recommender_system.tree.tree_tools import (
     calc_distance_between_nodes, get_leafs_values, calc_max_distance_between_nodes_optimized)
-from hiphop_bot.dialog_bot.recommender_system.tree.tree_tools import calc_distance_between_all_nodes
+from hiphop_bot.recommender_system.tree.tree_tools import calc_distance_between_all_nodes
 
 
 def calc_euclidean_measure(leaf_1: ArtistVisualNode, leaf_2: ArtistVisualNode):
