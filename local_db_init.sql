@@ -158,3 +158,13 @@ on conflict (id) do update
   set artist_id = excluded.artist_id,
   streaming_service_id = excluded.streaming_service_id,
   link = excluded.link;
+
+
+--table tg_user
+CREATE TABLE tg_user (
+    id SERIAL PRIMARY KEY,
+    user_id INT UNIQUE,
+    first_name VARCHAR(64),
+    last_name VARCHAR(64),
+    username VARCHAR(32)
+);
