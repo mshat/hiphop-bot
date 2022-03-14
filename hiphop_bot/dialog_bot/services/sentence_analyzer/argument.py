@@ -1,4 +1,4 @@
-from hiphop_bot.dialog_bot.model.data import ARTISTS, GENRES, GENDERS
+from hiphop_bot.dialog_bot.models.data import ARTISTS, GENRES, GENDERS
 
 
 class ArgumentError(Exception): pass

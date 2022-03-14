@@ -2,7 +2,7 @@ from typing import Tuple, List, Callable
 from abc import ABC, abstractmethod
 from psycopg2 import errors
 from hiphop_bot.db.connection_pool import Connection, CONNECTION_POOL
-from hiphop_bot.dialog_bot.services.tools import debug_print
+from hiphop_bot.dialog_bot.services.tools.debug_print import debug_print
 
 
 class ModelError(Exception): pass

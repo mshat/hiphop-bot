@@ -1,4 +1,4 @@
-from hiphop_bot.dialog_bot.model.data import keywords as raw_keywords
+from hiphop_bot.dialog_bot.models.data import keywords as raw_keywords
 
 KEYWORDS = raw_keywords
 

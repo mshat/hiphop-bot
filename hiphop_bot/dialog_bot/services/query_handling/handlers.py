@@ -11,8 +11,8 @@ from hiphop_bot.dialog_bot.services.query_solving.user import User
 from hiphop_bot.recommender_system import interface, artist_filterer
 from hiphop_bot.dialog_bot.services.sentence_analyzer.query import Query
 from hiphop_bot.dialog_bot.config import DEBUG
-from hiphop_bot.dialog_bot.model.const import SexFilter, GroupTypeFilter
-from hiphop_bot.dialog_bot.model.data import GENRES
+from hiphop_bot.dialog_bot.models.const import SexFilter, GroupTypeFilter
+from hiphop_bot.dialog_bot.models.data import GENRES
 from hiphop_bot.dialog_bot.services.sentence_analyzer.argument import ArtistArgument, NumArgument, SexArgument, GenreArgument
 
 
