@@ -2,8 +2,8 @@ from hiphop_bot.dialog_bot.query_solving.query_solver import QuerySolvingState
 from hiphop_bot.dialog_bot.query_solving.dialog import DialogState
 from hiphop_bot.dialog_bot.config import DEBUG
 from hiphop_bot.dialog_bot.data.const import LINE_LEN
-from hiphop_bot.controller.answer_generator import AnswerGenerator
-from hiphop_bot.controller.controller import UserInterfaceController
+from hiphop_bot.dialog_bot.controller.answer_generator import AnswerGenerator
+from hiphop_bot.dialog_bot.controller.controller import UserInterfaceController
 
 
 def main():

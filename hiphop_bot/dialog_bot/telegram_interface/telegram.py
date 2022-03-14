@@ -2,8 +2,8 @@ import os
 import telebot
 from typing import Tuple
 from hiphop_bot.dialog_bot.query_solving.query_solver import QuerySolvingState
-from hiphop_bot.controller.answer_generator import AnswerGenerator
-from hiphop_bot.controller.controller import UserInterfaceController
+from hiphop_bot.dialog_bot.controller.answer_generator import AnswerGenerator
+from hiphop_bot.dialog_bot.controller.controller import UserInterfaceController
 from hiphop_bot.dialog_bot.config import DEBUG
 from dotenv import dotenv_values
 
@@ -11,7 +11,7 @@ if 'MODE' in os.environ and os.environ['MODE'] == 'heroku':
     TG_TOKEN = os.environ['TG_TOKEN']
 else:
     current_dir = os.path.dirname(os.path.realpath(__file__))
-    ENV = dotenv_values(f"{current_dir}/../env")
+    ENV = dotenv_values(f"{current_dir}/../../env")
     TG_TOKEN = ENV['TG_TOKEN']
 
 bot = telebot.TeleBot(TG_TOKEN)
