@@ -27,11 +27,11 @@ else:
     current_dir = os.path.dirname(os.path.realpath(__file__))
     ENV = dotenv_values(f"{current_dir}/../env")
 
-    DB_USER = 'postgres'
+    DB_USER = ENV['DB_USER']
     DB_PASSWORD = ENV['DB_PASSWORD']
-    DB_HOST = '127.0.0.1'
-    DB_PORT = '5432'
-    DB_NAME = 'hiphop_bot'
+    DB_HOST = ENV['DB_HOST']
+    DB_PORT = ENV['DB_PORT']
+    DB_NAME = ENV['DB_NAME']
 
 print(f'[DEBUG] db settings: {DB_USER} {DB_NAME} {DB_HOST}')
 
