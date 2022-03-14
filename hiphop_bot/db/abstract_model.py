@@ -70,8 +70,11 @@ class Model(ABC):
 
     def _select_model_objects(self, query) -> List:
         raw_data = self._raw_select(query)
-        objects = self._convert_to_objects(raw_data)
-        return objects
+        if raw_data:
+            objects = self._convert_to_objects(raw_data)
+            return objects
+        else:
+            return []
 
     def get_all_raw(self) -> List[Tuple]:
         """

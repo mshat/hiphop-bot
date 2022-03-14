@@ -1,5 +1,5 @@
-DEBUG = True
-DEBUG_PRINT = True
+DEBUG = False
+DEBUG_PRINT = False
 ERROR_PRINT = True
 
 ENABLE_FILTERS = True

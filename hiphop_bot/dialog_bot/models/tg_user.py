@@ -33,12 +33,13 @@ class TelegramUserModel(Model):
     def get_all(self) -> List[_TelegramUser]:
         return super(TelegramUserModel, self).get_all()
 
-    def get_all_user_ids(self) -> List[int]:
-        raw_tg_users = self.get_all_raw()
-        user_ids = []
-        for raw_tg_user in raw_tg_users:
-            user_ids.append(raw_tg_user[0])
-        return user_ids
+    def get_by_user_id(self, user_id: int) -> _TelegramUser | None:
+        query = self._get_all_query + f' where user_id = {user_id}'
+        res = self._select_model_objects(query)
+        if res:
+            return res[0]
+        else:
+            return None
 
     def add_record(self, user_id: int, first_name: str, last_name: str, username: str):
         query = (

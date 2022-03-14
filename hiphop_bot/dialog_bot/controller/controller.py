@@ -14,8 +14,8 @@ class UserInterfaceController:
     blank_query_answer = 'Вы что-то хотели?..'
     unresolved_answer = 'Я вас не понял :('
 
-    def __init__(self):
-        self._user = User()
+    def __init__(self, username: str = None):
+        self._user = User(username) if username else User()
         self._query_solver = QuerySolver(self.user)
 
     @property
