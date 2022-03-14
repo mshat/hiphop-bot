@@ -3,8 +3,8 @@ from typing import Callable
 import psycopg2
 from abc import ABC
 from psycopg2 import pool
-from hiphop_bot.dialog_bot.tools.randomword import randomword
-from hiphop_bot.dialog_bot.tools.debug_print import debug_message, debug_print
+from hiphop_bot.dialog_bot.services.tools.randomword import randomword
+from hiphop_bot.dialog_bot.services.tools.debug_print import debug_message, debug_print
 from dotenv import dotenv_values
 
 

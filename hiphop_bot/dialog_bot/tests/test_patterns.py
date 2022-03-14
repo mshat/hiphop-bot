@@ -1,10 +1,10 @@
 from typing import Dict
 import unittest
 import unittest.mock
-from hiphop_bot.dialog_bot.query_solving.dialog import Dialog, DialogState
-from hiphop_bot.dialog_bot.query_solving.query_solver import QuerySolver
-from hiphop_bot.dialog_bot.sentence_analyzer.sentence_parser import SentenceParser
-from hiphop_bot.dialog_bot.query_solving.user import User
+from hiphop_bot.dialog_bot.services.query_solving.dialog import Dialog, DialogState
+from hiphop_bot.dialog_bot.services.query_solving.query_solver import QuerySolver
+from hiphop_bot.dialog_bot.services.sentence_analyzer.sentence_parser import SentenceParser
+from hiphop_bot.dialog_bot.services.query_solving.user import User
 
 
 class DataForTests:
@@ -165,7 +165,7 @@ class TestQuerySolving(unittest.TestCase):
         for sentence, expected_handler in sentences.items():
             with self.subTest(i=sentence):
                 with unittest.mock.patch(
-                        f'hiphop_bot.dialog_bot.query_handling.handlers.{expected_handler}.handle'
+                        f'hiphop_bot.dialog_bot.services.query_handling.handlers.{expected_handler}.handle'
                 ) as patched_handle_method:
                     self.query_solver.state = state
                     query = SentenceParser(sentence).parse()
@@ -223,7 +223,7 @@ class TestIntegrationStates(unittest.TestCase):
                 with self.subTest(i=expected_handler):
                     query_solver.state = state
                     with unittest.mock.patch(
-                            f'hiphop_bot.dialog_bot.query_handling.handlers.{expected_handler}.handle'
+                            f'hiphop_bot.dialog_bot.services.query_handling.handlers.{expected_handler}.handle'
                     ) as patched_handle_method:
                         query = SentenceParser(sentence).parse()
                         query_solver.solve(query)

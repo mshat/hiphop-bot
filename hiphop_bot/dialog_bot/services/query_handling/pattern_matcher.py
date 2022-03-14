@@ -1,6 +1,6 @@
 from typing import List, Tuple
-from hiphop_bot.dialog_bot.sentence_analyzer.word import Word
-from hiphop_bot.dialog_bot.query_handling.tag_condition import TagCondition, NotTagCondition, And, Or, MultiTagCondition
+from hiphop_bot.dialog_bot.services.sentence_analyzer.word import Word
+from hiphop_bot.dialog_bot.services.query_handling.tag_condition import TagCondition, NotTagCondition, And, Or, MultiTagCondition
 
 
 class PatternMatcher:

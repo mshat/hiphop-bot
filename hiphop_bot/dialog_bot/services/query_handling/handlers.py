@@ -1,19 +1,19 @@
 from __future__ import annotations
 from typing import List
-from hiphop_bot.dialog_bot.query_handling.query_handler import QueryHandler
-from hiphop_bot.dialog_bot.query_handling.tag_condition import (AndTagCondition as And, OrTagCondition as Or,
-                                                                AndNotTagCondition as AndNot,
-                                                                AndMultiTagCondition as AndMulti,
-                                                                OrMultiTagCondition as OrMulti)
-from hiphop_bot.dialog_bot.query_handling.query_pattern import ALL
-from hiphop_bot.dialog_bot.query_solving.dialog import Dialog, DialogState
-from hiphop_bot.dialog_bot.query_solving.user import User
+from hiphop_bot.dialog_bot.services.query_handling.query_handler import QueryHandler
+from hiphop_bot.dialog_bot.services.query_handling.tag_condition import (AndTagCondition as And, OrTagCondition as Or,
+                                                                         AndNotTagCondition as AndNot,
+                                                                         AndMultiTagCondition as AndMulti,
+                                                                         OrMultiTagCondition as OrMulti)
+from hiphop_bot.dialog_bot.services.query_handling.query_pattern import ALL
+from hiphop_bot.dialog_bot.services.query_solving.dialog import Dialog, DialogState
+from hiphop_bot.dialog_bot.services.query_solving.user import User
 from hiphop_bot.recommender_system import interface, artist_filterer
-from hiphop_bot.dialog_bot.sentence_analyzer.query import Query
+from hiphop_bot.dialog_bot.services.sentence_analyzer.query import Query
 from hiphop_bot.dialog_bot.config import DEBUG
 from hiphop_bot.dialog_bot.model.const import SexFilter, GroupTypeFilter
 from hiphop_bot.dialog_bot.model.data import GENRES
-from hiphop_bot.dialog_bot.sentence_analyzer.argument import ArtistArgument, NumArgument, SexArgument, GenreArgument
+from hiphop_bot.dialog_bot.services.sentence_analyzer.argument import ArtistArgument, NumArgument, SexArgument, GenreArgument
 
 
 def create_query_pattern_table():

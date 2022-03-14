@@ -1,6 +1,6 @@
 from typing import List
-from hiphop_bot.dialog_bot.sentence_analyzer.word import Word, Placeholder
-from hiphop_bot.dialog_bot.sentence_analyzer.argument import Argument
+from hiphop_bot.dialog_bot.services.sentence_analyzer.word import Word, Placeholder
+from hiphop_bot.dialog_bot.services.sentence_analyzer.argument import Argument
 
 
 class Query:

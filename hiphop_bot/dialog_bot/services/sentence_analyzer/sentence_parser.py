@@ -1,11 +1,11 @@
 import re
 from typing import List, Dict, Union
-from hiphop_bot.dialog_bot.sentence_analyzer.word import BaseWord, Placeholder, Word
-from hiphop_bot.dialog_bot.sentence_analyzer.query import Query
-from hiphop_bot.dialog_bot.sentence_analyzer.argument import (ArtistArgument, SexArgument, GenreArgument, NumArgument,
-                                                              ARTISTS, GENRES)
+from hiphop_bot.dialog_bot.services.sentence_analyzer.word import BaseWord, Placeholder, Word
+from hiphop_bot.dialog_bot.services.sentence_analyzer.query import Query
+from hiphop_bot.dialog_bot.services.sentence_analyzer.argument import (ArtistArgument, SexArgument, GenreArgument, NumArgument,
+                                                                       ARTISTS, GENRES)
 from hiphop_bot.dialog_bot.model.data import GENDERS
-from hiphop_bot.dialog_bot.sentence_analyzer.word_parser import WordParser
+from hiphop_bot.dialog_bot.services.sentence_analyzer.word_parser import WordParser
 
 PLACEHOLDERS = {'artist': '*ARTISTNAME*', 'genre': '*GENRENAME*', 'gender': '*GENDER*', 'number': '*NUMBER*'}
 

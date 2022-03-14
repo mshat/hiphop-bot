@@ -1,4 +1,4 @@
-from hiphop_bot.dialog_bot.sentence_analyzer.keywords import KEYWORDS
+from hiphop_bot.dialog_bot.services.sentence_analyzer.keywords import KEYWORDS
 
 
 class WordClassifier:

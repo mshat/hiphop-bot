@@ -1,9 +1,9 @@
 from typing import List, Tuple, Dict
-from hiphop_bot.dialog_bot.sentence_analyzer.word import Word
-from hiphop_bot.dialog_bot.sentence_analyzer.argument import Argument
-from hiphop_bot.dialog_bot.sentence_analyzer.query import Query
-from hiphop_bot.dialog_bot.query_handling.tag_condition import TagCondition, NotTagCondition, MultiTagCondition
-from hiphop_bot.dialog_bot.query_handling.pattern_matcher import PatternMatcher
+from hiphop_bot.dialog_bot.services.sentence_analyzer.word import Word
+from hiphop_bot.dialog_bot.services.sentence_analyzer.argument import Argument
+from hiphop_bot.dialog_bot.services.sentence_analyzer.query import Query
+from hiphop_bot.dialog_bot.services.query_handling.tag_condition import TagCondition, NotTagCondition, MultiTagCondition
+from hiphop_bot.dialog_bot.services.query_handling.pattern_matcher import PatternMatcher
 
 ALL = -1
 

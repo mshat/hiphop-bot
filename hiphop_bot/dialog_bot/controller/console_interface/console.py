@@ -1,5 +1,5 @@
-from hiphop_bot.dialog_bot.query_solving.query_solver import QuerySolvingState
-from hiphop_bot.dialog_bot.query_solving.dialog import DialogState
+from hiphop_bot.dialog_bot.services.query_solving.query_solver import QuerySolvingState
+from hiphop_bot.dialog_bot.services.query_solving.dialog import DialogState
 from hiphop_bot.dialog_bot.config import DEBUG
 from hiphop_bot.dialog_bot.model.data import LINE_LEN
 from hiphop_bot.dialog_bot.view.answer_generator import AnswerGenerator

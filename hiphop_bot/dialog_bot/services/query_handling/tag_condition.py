@@ -2,7 +2,7 @@ from __future__ import annotations
 from abc import ABC
 from typing import List, Dict, Tuple
 from hiphop_bot.dialog_bot.model.data import keywords
-from hiphop_bot.dialog_bot.sentence_analyzer.word import Word
+from hiphop_bot.dialog_bot.services.sentence_analyzer.word import Word
 
 
 class TagCondition(ABC):
@@ -99,7 +99,7 @@ class MultiTagCondition(ABC):
     """
 
     def __init__(self, conditions: List[TagCondition | NotTagCondition | MultiTagCondition]):
-        from hiphop_bot.dialog_bot.query_handling.pattern_matcher import PatternMatcher
+        from hiphop_bot.dialog_bot.services.query_handling.pattern_matcher import PatternMatcher
         self.pattern_matcher = PatternMatcher(conditions)
         self.conditions = conditions
 

@@ -1,11 +1,11 @@
 from typing import List, Dict
 from abc import ABC, abstractmethod
-from hiphop_bot.dialog_bot.query_handling.tag_condition import TagCondition, NotTagCondition, MultiTagCondition
-from hiphop_bot.dialog_bot.sentence_analyzer.query import Query
+from hiphop_bot.dialog_bot.services.query_handling.tag_condition import TagCondition, NotTagCondition, MultiTagCondition
+from hiphop_bot.dialog_bot.services.sentence_analyzer.query import Query
 from hiphop_bot.dialog_bot.config import DEBUG
-from hiphop_bot.dialog_bot.query_handling.query_pattern import QueryPattern
-from hiphop_bot.dialog_bot.query_solving.user import User
-from hiphop_bot.dialog_bot.query_solving.dialog import Dialog, DialogState
+from hiphop_bot.dialog_bot.services.query_handling.query_pattern import QueryPattern
+from hiphop_bot.dialog_bot.services.query_solving.user import User
+from hiphop_bot.dialog_bot.services.query_solving.dialog import Dialog, DialogState
 
 
 class QueryHandler(ABC):

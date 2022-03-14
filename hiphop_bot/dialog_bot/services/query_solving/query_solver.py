@@ -1,11 +1,11 @@
 from typing import List
 from enum import Enum
-from hiphop_bot.dialog_bot.query_handling import handlers
-from hiphop_bot.dialog_bot.sentence_analyzer.query import Query
-from hiphop_bot.dialog_bot.query_solving.dialog import Dialog, DialogState
+from hiphop_bot.dialog_bot.services.query_handling import handlers
+from hiphop_bot.dialog_bot.services.sentence_analyzer.query import Query
+from hiphop_bot.dialog_bot.services.query_solving.dialog import Dialog, DialogState
 from hiphop_bot.dialog_bot.config import DEBUG, ENABLE_FILTERS
-from hiphop_bot.dialog_bot.query_handling.query_handler import QueryHandler
-from hiphop_bot.dialog_bot.query_solving.user import User
+from hiphop_bot.dialog_bot.services.query_handling.query_handler import QueryHandler
+from hiphop_bot.dialog_bot.services.query_solving.user import User
 
 
 class QuerySolvingState(Enum):

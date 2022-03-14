@@ -1,6 +1,6 @@
-from hiphop_bot.dialog_bot.sentence_analyzer.morph_analyzer import MorphAnalyzer
-from hiphop_bot.dialog_bot.sentence_analyzer.word import Word
-from hiphop_bot.dialog_bot.sentence_analyzer.word_classifier import WORD_CLASSIFIER
+from hiphop_bot.dialog_bot.services.sentence_analyzer.morph_analyzer import MorphAnalyzer
+from hiphop_bot.dialog_bot.services.sentence_analyzer.word import Word
+from hiphop_bot.dialog_bot.services.sentence_analyzer.word_classifier import WORD_CLASSIFIER
 
 
 class WordParsingError(Exception): pass

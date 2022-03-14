@@ -1,6 +1,6 @@
-from hiphop_bot.dialog_bot.sentence_analyzer.sentence_parser import SentenceParser
-from hiphop_bot.dialog_bot.query_solving.query_solver import QuerySolver, QuerySolvingState
-from hiphop_bot.dialog_bot.query_solving.user import User
+from hiphop_bot.dialog_bot.services.sentence_analyzer.sentence_parser import SentenceParser
+from hiphop_bot.dialog_bot.services.query_solving.query_solver import QuerySolver, QuerySolvingState
+from hiphop_bot.dialog_bot.services.query_solving.user import User
 
 
 class UserInterfaceController:
