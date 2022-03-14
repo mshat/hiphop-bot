@@ -19,6 +19,6 @@ RUN pip install -e .
 
 # copy project
 COPY . .
-COPY ./hiphop_bot/env .
+# COPY ./hiphop_bot/env .
 
 ENTRYPOINT ["python3", "hiphop_bot/telegram_interface/telegram.py"]
