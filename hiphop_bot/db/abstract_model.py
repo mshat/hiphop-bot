@@ -9,10 +9,11 @@ class ModelError(Exception): pass
 
 
 class Model(ABC):
-    def __init__(self, table_name, model_class: Callable):
+    def __init__(self, table_name, model_class: Callable, get_all_query: str = None):
         self._table_name = table_name
         self._check_if_table_exists()
         self._model_class = model_class
+        self._get_all_query = get_all_query
 
     def _check_if_table_exists(self):
         test_conn = self._get_connection()
@@ -52,19 +53,21 @@ class Model(ABC):
         objects = self._convert_to_objects(raw_data)
         return objects
 
-    @abstractmethod
     def get_all_raw(self) -> List[Tuple]:
         """
         Возвращает все записи из таблицы в виде списка кортежей
         """
-        pass
+        assert self._get_all_query is not None
+        raw_objects = self._raw_select(self._get_all_query)
+        return raw_objects
 
-    @abstractmethod
     def get_all(self) -> List:
         """
         Возвращает все записи из таблицы в виде списка объектов
         """
-        pass
+        assert self._get_all_query is not None
+        objects = self._select_model_objects(self._get_all_query)
+        return objects
 
     def _convert_to_objects(self, raw_data: List[Tuple], model_class: Callable = None) -> List:
         """

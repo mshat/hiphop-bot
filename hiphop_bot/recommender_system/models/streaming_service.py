@@ -29,8 +29,7 @@ class StreamingServiceModel(Model):
         return streaming_services
 
     def get_all_raw(self) -> List[Tuple]:
-        streaming_services = self._raw_select(self._get_all_query)
-        return streaming_services
+        return super(StreamingServiceModel, self).get_all_raw()
 
     def get_streaming_services_names(self) -> List[str]:
         raw_data: List[Tuple] = self.get_all_raw()

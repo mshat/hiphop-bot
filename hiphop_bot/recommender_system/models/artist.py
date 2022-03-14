@@ -87,12 +87,7 @@ class ArtistModel(Model):
         return artists
 
     def get_all(self) -> List[_Artist]:
-        artists = self._select_model_objects(self._get_all_query)
-        return artists
-
-    def get_all_raw(self) -> List[Tuple]:
-        artists = self._raw_select(self._get_all_query)
-        return artists
+        return super(ArtistModel, self).get_all()
 
     def get_artist_names(self) -> List[str]:
         raw_data: List[Tuple] = self.get_all_raw()

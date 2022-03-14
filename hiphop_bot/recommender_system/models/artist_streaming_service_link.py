@@ -63,10 +63,6 @@ class ArtistStreamingServiceLinkModel(Model):
             res.append(_ArtistStreamingServiceLinks(artist_name, streaming_service_links))
         return res
 
-    def get_all_raw(self) -> List[Tuple]:
-        streaming_service_links = self._raw_select(self._get_all_query)
-        return streaming_service_links
-
     def get_artist_links_dict(self) -> Dict[str, _StreamingServiceLinks]:
         artist_links_dict = {}
         streaming_service_links_raw = self._raw_select(self._get_all_query)

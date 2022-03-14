@@ -27,8 +27,7 @@ class ThemeModel(Model):
         return genres
 
     def get_all_raw(self):
-        genres = self._raw_select(self._get_all_query)
-        return genres
+        return super(ThemeModel, self).get_all_raw()
 
     def get_theme_names(self) -> List[str]:
         raw_data: List[Tuple] = self.get_all_raw()

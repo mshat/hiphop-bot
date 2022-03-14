@@ -121,11 +121,9 @@ class GenreTreeModel(Model):
         object_ = self._convert_to_objects(raw_data)
         return object_
 
+    # this method must be overridden because _select_model_objects is overridden
     def get_all(self) -> _GenreTree:
         artists = self._select_model_objects(self._get_all_query)
         return artists
 
-    def get_all_raw(self) -> List[Tuple]:
-        artists = self._raw_select(self._get_all_query)
-        return artists
 

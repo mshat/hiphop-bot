@@ -56,10 +56,8 @@ class ArtistPairsProximityModel(Model):
         objects = self._convert_to_objects(raw_data)
         return objects
 
+    # this method must be overridden because _select_model_objects is overridden
     def get_all(self) -> _ArtistPairsProximity:
         genres = self._select_model_objects(self._get_all_query)
         return genres
 
-    def get_all_raw(self):
-        genres = self._raw_select(self._get_all_query)
-        return genres

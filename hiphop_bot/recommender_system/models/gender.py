@@ -23,9 +23,4 @@ class GenderModel(Model):
         )
 
     def get_all(self) -> List[_Gender]:
-        genres = self._select_model_objects(self._get_all_query)
-        return genres
-
-    def get_all_raw(self):
-        genres = self._raw_select(self._get_all_query)
-        return genres
+        return super(GenderModel, self).get_all()
