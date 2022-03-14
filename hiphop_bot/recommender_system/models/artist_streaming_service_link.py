@@ -1,5 +1,5 @@
 from typing import List, Tuple, Dict
-from hiphop_bot.db.model import Model, ModelError
+from hiphop_bot.db.abstract_model import Model, ModelError
 from hiphop_bot.recommender_system.models.streaming_service import StreamingServiceModel
 
 

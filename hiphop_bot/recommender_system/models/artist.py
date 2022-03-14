@@ -1,5 +1,5 @@
 from typing import List, Tuple
-from hiphop_bot.db.model import Model, ModelError
+from hiphop_bot.db.abstract_model import Model, ModelError
 from hiphop_bot.recommender_system.models.theme import _Theme  # импортирутеся для аннотации
 from hiphop_bot.recommender_system.models.gender import _Gender  # импортирутеся для аннотации
 from hiphop_bot.recommender_system.models.genre import _Genre  # импортирутеся для аннотации

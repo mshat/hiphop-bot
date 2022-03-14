@@ -1,6 +1,6 @@
 import os
-from typing import Callable
 import psycopg2
+from typing import Callable
 from abc import ABC
 from psycopg2 import pool
 from hiphop_bot.dialog_bot.services.tools.randomword import randomword

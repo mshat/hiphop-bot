@@ -1,5 +1,5 @@
 from typing import List
-from hiphop_bot.db.model import Model
+from hiphop_bot.db.abstract_model import Model
 
 
 class _Genre:
