@@ -4,7 +4,7 @@ from hiphop_bot.dialog_bot.config import ENABLE_FILTERS, DEBUG
 from hiphop_bot.recommender_system.tree.artist_node import ArtistVisualNode
 from hiphop_bot.dialog_bot.query_solving.dialog import Dialog
 from hiphop_bot.dialog_bot.query_solving.user import User
-from hiphop_bot.dialog_bot.controller.output_message import OutputMessage
+from hiphop_bot.dialog_bot.view.output_message import OutputMessage
 
 
 def trunc_output(output: Iterable, output_len=None) -> List:

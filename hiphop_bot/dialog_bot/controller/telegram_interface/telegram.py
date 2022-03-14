@@ -2,7 +2,7 @@ import os
 import telebot
 from typing import Tuple
 from hiphop_bot.dialog_bot.query_solving.query_solver import QuerySolvingState
-from hiphop_bot.dialog_bot.controller.answer_generator import AnswerGenerator
+from hiphop_bot.dialog_bot.view.answer_generator import AnswerGenerator
 from hiphop_bot.dialog_bot.controller.controller import UserInterfaceController
 from hiphop_bot.dialog_bot.config import DEBUG
 from dotenv import dotenv_values
