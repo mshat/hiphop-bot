@@ -1,7 +1,7 @@
 from typing import Iterable, List, Tuple
-from hiphop_bot.dialog_bot.recommender_system import artist_filterer
+from hiphop_bot.recommender_system import artist_filterer
 from hiphop_bot.dialog_bot.config import ENABLE_FILTERS, DEBUG
-from hiphop_bot.dialog_bot.recommender_system.tree.artist_node import ArtistVisualNode
+from hiphop_bot.recommender_system.tree.artist_node import ArtistVisualNode
 from hiphop_bot.dialog_bot.query_solving.dialog import Dialog
 from hiphop_bot.dialog_bot.query_solving.user import User
 from hiphop_bot.controller.output_message import OutputMessage
@@ -51,7 +51,8 @@ def generate_recommendations_message(user: User, recommended_artists: List[Artis
         out_msg += generate_used_filters_str(user)
 
         for artist in recommended_artists:
-            out_msg += f'{artist.name}\n'
+            spotify_link = artist._artist.streaming_service_links.get_link_by_streaming_name('spotify')
+            out_msg += f'\n{artist.name}\n{spotify_link}\n'  # TODO костыль со ссылкой
     return out_msg
 
 

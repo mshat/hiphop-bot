@@ -8,8 +8,7 @@ from hiphop_bot.dialog_bot.query_handling.tag_condition import (AndTagCondition 
 from hiphop_bot.dialog_bot.query_handling.query_pattern import ALL
 from hiphop_bot.dialog_bot.query_solving.dialog import Dialog, DialogState
 from hiphop_bot.dialog_bot.query_solving.user import User
-from hiphop_bot.dialog_bot.recommender_system import artist_filterer
-from hiphop_bot.dialog_bot.recommender_system import interface
+from hiphop_bot.recommender_system import interface, artist_filterer
 from hiphop_bot.dialog_bot.sentence_analyzer.query import Query
 from hiphop_bot.dialog_bot.config import DEBUG
 from hiphop_bot.dialog_bot.data.const import SexFilter, GroupTypeFilter
@@ -516,7 +515,7 @@ class InfoHandler(QueryHandler):
         if not artist:
             dialog.output_message = 'Артист не найден :('
         else:
-            sex = "мужской" if artist.male_or_female == 1 else "женский"
+            sex = "мужской" if artist.gender == "male" else "женский"
             if artist.group_members_number == 1:
                 dialog.output_message = f'Артист {artist.name}'
             elif artist.group_members_number == 2:
@@ -555,35 +554,27 @@ class InfoAboutBotOpportunitiesHandler(QueryHandler):
     def handle(self, query: Query, user: User, dialog: Dialog):
         dialog.debug_message = 'Возможности бота'
         dialog.output_message = """Вы можете в свободной форме задавать мне вопросы или поручать команды.
-Я могу выполнять следующие действия:
+        
+Я могу:
 
-1. Рекомендация по артисту                       
-2. Рекомендация по интересам                     
-3. Вывести всех артистов в базе
-4. Вывести все известные боту жанры                  
-5. Вывести всех исполнителей указанного пола          
-6. Вывести всех исполнителей в указанном возрасте     
-7. Вывести всех исполнителей в диапазоне возраста     
-8. Вывести всех артистов в определённом жанре         
-9. Поставить лайк (можно несколько сразу)                                          
-10. Поставить дизлайк (можно несколько сразу)                                                                       
-11. Фильтр по полу                                     
-12. Фильтр по возрасту                           
-13. Фильтр по возрасту в диапазоне                
-14. Фильтр по количеству участников коллектива    
-15. Фильтр по количеству выводимых результатов    
-16. Удалить ограничение количества выводимых строк
-17. Удалить все фильтры                           
-18. Изменить количество выводимых результатов     
-19. Вывести количество артистов в базе                    
-20. Вывести количество артистов указанного пола в базе    
-21. Вывести количество артистов указанного возраста в базе
-22. Вывести количество артистов в указанном диапазоне возраста    
-23. Вывести информацию об артисте                         
-24. Вывести информацию о боте                             
-25. Вывести информацию о возможностях бота                
-26. Вывести информацию об устройстве бота                 
-27. Вернуться к начальному состоянию"""
+1. Подобрать список музкантов, похожих на того, кого вы назовёте
+2. Порекомендовать музыкантов по вашим предпочтениям
+3. Вывести информацию о музыканте
+4. Вывести музкантов в заданном жанре, заданного пола или возраста. 
+
+Я могу отфильтровать результат поиска по количеству участников коллектива.
+Например, оставить только соло артистов, дуэты или группы.
+А так же по полу, возрасту (старше или младше N лет)
+
+Вы можете ограничить количество выводимых результатов, 
+просто попросите меня выводить по N артистов.
+
+Вы можете удалить все наложенные фильтры, попросив меня об этом.
+
+Я могу вывести список всех артистов или жанров, которые знаю.
+
+Чтобы подобрать музкантов по вашим предпочтениям, попросите меня подобрать то, что вам понравится.
+"""
         return DialogState.INFO
 
 

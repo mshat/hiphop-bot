@@ -51,7 +51,7 @@ def solve_message(sentence: str) -> Tuple[str, str]:
         answer, additional_message = answer_generator.generate_answer()
         return answer, additional_message
     elif res == QuerySolvingState.UNSOLVED:
-        return controller.unresolved_answer
+        return controller.unresolved_answer, ''
     else:
         raise Exception('Unknown query_solver result')
 

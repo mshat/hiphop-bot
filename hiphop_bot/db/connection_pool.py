@@ -5,6 +5,12 @@ from abc import ABC
 from psycopg2 import pool
 from hiphop_bot.dialog_bot.tools.randomword import randomword
 from hiphop_bot.dialog_bot.tools.debug_print import debug_message, debug_print
+from dotenv import dotenv_values
+
+
+current_dir = os.path.dirname(os.path.realpath(__file__))
+ENV = dotenv_values(f"{current_dir}/../env")
+
 
 if 'MODE' in os.environ:
     DB_USER = os.environ['DB_USER']
@@ -14,7 +20,7 @@ if 'MODE' in os.environ:
     DB_NAME = os.environ['DB_NAME']
 else:
     DB_USER = 'postgres'
-    DB_PASSWORD = 'Qsd6Kmnv'
+    DB_PASSWORD = ENV['DB_PASSWORD']
     DB_HOST = '127.0.0.1'
     DB_PORT = '5432'
     DB_NAME = 'hiphop_bot'
