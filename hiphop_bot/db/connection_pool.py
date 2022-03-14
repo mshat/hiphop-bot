@@ -13,11 +13,20 @@ ENV = dotenv_values(f"{current_dir}/../env")
 
 
 if 'MODE' in os.environ:
-    DB_USER = os.environ['DB_USER']
-    DB_PASSWORD = os.environ['DB_PASSWORD']
-    DB_HOST = os.environ['DB_HOST']
-    DB_PORT = os.environ['DB_PORT']
-    DB_NAME = os.environ['DB_NAME']
+    if os.environ['MODE'] == 'docker':
+        DB_USER = os.environ['DB_USER']
+        DB_PASSWORD = os.environ['DB_PASSWORD']
+        DB_HOST = os.environ['DB_HOST']
+        DB_PORT = os.environ['DB_PORT']
+        DB_NAME = os.environ['DB_NAME']
+    elif os.environ['MODE'] == 'heroku':
+        DB_USER = os.environ['HEROKU_DB_USER']
+        DB_PASSWORD = os.environ['HEROKU_DB_PASSWORD']
+        DB_HOST = os.environ['HEROKU_DB_HOST']
+        DB_PORT = os.environ['HEROKU_DB_PORT']
+        DB_NAME = os.environ['HEROKU_DB_NAME']
+    else:
+        raise Exception('DB environ values error!')
 else:
     DB_USER = 'postgres'
     DB_PASSWORD = ENV['DB_PASSWORD']

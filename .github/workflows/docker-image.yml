@@ -33,6 +33,7 @@ jobs:
           heroku_email: ${{ secrets.HEROKU_EMAIL }}
           appdir: .
           usedocker: true
+          docker_heroku_process_type: worker
 
       - name: Run tests with pytest
         run: python -m unittest

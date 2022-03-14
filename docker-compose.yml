@@ -23,7 +23,7 @@ services:
   hip-hop-bot-service:
     build: .
     environment:
-      MODE: "prod"
+      MODE: "docker"
       DB_USER: "program"
       DB_PASSWORD: "test"
       DB_HOST: "postgres"
