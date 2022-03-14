@@ -17,6 +17,7 @@ class SentenceParser:
     def __init__(self, sentence: str):
         if sentence == "":
             raise SentenceParsingError('Empty input')
+        sentence = sentence.lower()
         self._raw_sentence = sentence
         self._sentence = sentence
         self._clear_sentence()
