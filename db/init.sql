@@ -100,7 +100,7 @@ on conflict (id) do update
 CREATE TABLE genres_adjacency_table (
     id INT NOT NULL PRIMARY KEY,
     parent_genre_node_id INT REFERENCES genre (id),
-    child_genre_node_id INT REFERENCES genre (id),
+    child_genre_node_id INT REFERENCES genre (id)
 );
 
 CREATE TEMP TABLE new_genres_adjacency_table (info json);
