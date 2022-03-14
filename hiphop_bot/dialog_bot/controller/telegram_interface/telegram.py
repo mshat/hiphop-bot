@@ -11,7 +11,7 @@ if 'MODE' in os.environ and os.environ['MODE'] == 'heroku':
     TG_TOKEN = os.environ['TG_TOKEN']
 else:
     current_dir = os.path.dirname(os.path.realpath(__file__))
-    ENV = dotenv_values(f"{current_dir}/../../env")
+    ENV = dotenv_values(f"{current_dir}/../../../env")
     TG_TOKEN = ENV['TG_TOKEN']
 
 bot = telebot.TeleBot(TG_TOKEN)
