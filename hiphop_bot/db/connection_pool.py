@@ -33,6 +33,8 @@ else:
     DB_PORT = '5432'
     DB_NAME = 'hiphop_bot'
 
+print(f'[DEBUG] db settings: {DB_USER} {DB_NAME} {DB_HOST}')
+
 
 class Connection:
     def __init__(self, conn, pool_):
