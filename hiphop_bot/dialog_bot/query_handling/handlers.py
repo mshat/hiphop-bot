@@ -459,7 +459,10 @@ class RecommendationHandler(QueryHandler):
 
     def handle(self, query: Query, user: User, dialog: Dialog):
         if len(user.likes) == 0:
-            dialog.output_message = 'Для начала расскажите, какие музыканты или группы вам нравятся?'
+            dialog.output_message = 'Я еще не знаю ваших предпочтений!\n' \
+                                    'Чтобы поставить лайк или дизлайк, скажите что-нибудь вроде:\n' \
+                                    'мне нравится нойз мс\n' \
+                                    '(Можете перечислить сразу несколько артистов)'
             return DialogState.START
         dialog.search_result = interface.recommend_by_liked_with_disliked(user.dislikes, user.likes, DEBUG).keys()
 
