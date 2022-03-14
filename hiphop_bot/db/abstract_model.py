@@ -1,11 +1,12 @@
 from typing import Tuple, List, Callable
-from abc import ABC, abstractmethod
+from abc import ABC
 from psycopg2 import errors
 from hiphop_bot.db.connection_pool import Connection, CONNECTION_POOL
-from hiphop_bot.dialog_bot.services.tools.debug_print import debug_print
+from hiphop_bot.dialog_bot.services.tools.debug_print import error_print
 
 
 class ModelError(Exception): pass
+class ModelUniqueViolationError(Exception): pass
 
 
 class Model(ABC):
@@ -42,11 +43,30 @@ class Model(ABC):
             connection.put_connection()
             return result
         except errors.UndefinedColumn as e:
-            debug_print(f'[db error] {e}')
+            error_print(f'[db UndefinedColumn] {e}')
             return []
         except Exception as e:
-            debug_print(f'[db unknown error] {e}')
+            error_print(f'[db unknown error] {e}')
             return []
+
+    def _insert(self, query: str, values: Tuple) -> int:
+        try:
+            connection = self._get_connection()
+            cursor = connection.cursor()
+            cursor.execute(query, values)
+            connection.conn.commit()
+            added_records_number = cursor.rowcount
+            cursor.close()
+            connection.put_connection()
+            return added_records_number
+        except errors.UndefinedColumn as e:
+            error_print(f'[db UndefinedColumn] {e}')
+            return 0
+        except errors.UniqueViolation as e:
+            raise ModelUniqueViolationError(e)
+        except Exception as e:
+            error_print(f'[db unknown error] {e}')
+            return 0
 
     def _select_model_objects(self, query) -> List:
         raw_data = self._raw_select(query)
