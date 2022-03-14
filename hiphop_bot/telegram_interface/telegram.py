@@ -7,10 +7,14 @@ from hiphop_bot.controller.controller import UserInterfaceController
 from hiphop_bot.dialog_bot.config import DEBUG
 from dotenv import dotenv_values
 
-current_dir = os.path.dirname(os.path.realpath(__file__))
-ENV = dotenv_values(f"{current_dir}/../env")
+if 'MODE' in os.environ and os.environ['MODE'] == 'heroku':
+    TG_TOKEN = os.environ['TG_TOKEN']
+else:
+    current_dir = os.path.dirname(os.path.realpath(__file__))
+    ENV = dotenv_values(f"{current_dir}/../env")
+    TG_TOKEN = ENV['TG_TOKEN']
 
-bot = telebot.TeleBot(ENV['TG_TOKEN'])
+bot = telebot.TeleBot(TG_TOKEN)
 
 controller = UserInterfaceController()
 answer_generator = AnswerGenerator()

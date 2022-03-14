@@ -8,10 +8,6 @@ from hiphop_bot.dialog_bot.tools.debug_print import debug_message, debug_print
 from dotenv import dotenv_values
 
 
-current_dir = os.path.dirname(os.path.realpath(__file__))
-ENV = dotenv_values(f"{current_dir}/../env")
-
-
 if 'MODE' in os.environ:
     if os.environ['MODE'] == 'docker':
         DB_USER = os.environ['DB_USER']
@@ -28,6 +24,9 @@ if 'MODE' in os.environ:
     else:
         raise Exception('DB environ values error!')
 else:
+    current_dir = os.path.dirname(os.path.realpath(__file__))
+    ENV = dotenv_values(f"{current_dir}/../env")
+
     DB_USER = 'postgres'
     DB_PASSWORD = ENV['DB_PASSWORD']
     DB_HOST = '127.0.0.1'
