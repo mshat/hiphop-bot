@@ -1,4 +1,4 @@
-from hiphop_bot.dialog_bot.data.const import SexFilter
+from hiphop_bot.dialog_bot.model.const import SexFilter
 
 keywords = {
     'search': ('найти', 'похожий', 'схожий',),

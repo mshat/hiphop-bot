@@ -4,7 +4,7 @@ from hiphop_bot.dialog_bot.sentence_analyzer.word import BaseWord, Placeholder, 
 from hiphop_bot.dialog_bot.sentence_analyzer.query import Query
 from hiphop_bot.dialog_bot.sentence_analyzer.argument import (ArtistArgument, SexArgument, GenreArgument, NumArgument,
                                                               ARTISTS, GENRES)
-from hiphop_bot.dialog_bot.data.data import GENDERS
+from hiphop_bot.dialog_bot.model.data import GENDERS
 from hiphop_bot.dialog_bot.sentence_analyzer.word_parser import WordParser
 
 PLACEHOLDERS = {'artist': '*ARTISTNAME*', 'genre': '*GENRENAME*', 'gender': '*GENDER*', 'number': '*NUMBER*'}

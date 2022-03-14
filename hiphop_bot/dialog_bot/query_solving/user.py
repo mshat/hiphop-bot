@@ -1,5 +1,5 @@
 from typing import List
-from hiphop_bot.dialog_bot.data.const import SexFilter, GroupTypeFilter
+from hiphop_bot.dialog_bot.model.const import SexFilter, GroupTypeFilter
 
 ALL = 1000
 

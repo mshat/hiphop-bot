@@ -1,7 +1,7 @@
 from __future__ import annotations
 from abc import ABC
 from typing import List, Dict, Tuple
-from hiphop_bot.dialog_bot.data.data import keywords
+from hiphop_bot.dialog_bot.model.data import keywords
 from hiphop_bot.dialog_bot.sentence_analyzer.word import Word
 
 
