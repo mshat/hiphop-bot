@@ -1,9 +1,15 @@
-from hiphop_bot.dialog_bot.config import DEBUG_PRINT
+from hiphop_bot.dialog_bot.config import DEBUG_PRINT, ERROR_PRINT
 
 
 def debug_print(*args, **kwargs):
     if DEBUG_PRINT:
         print('[DEBUG] ', end='')
+        print(*args, **kwargs)
+
+
+def error_print(*args, **kwargs):
+    if ERROR_PRINT:
+        print('[ERROR] ', end='')
         print(*args, **kwargs)
 
 
