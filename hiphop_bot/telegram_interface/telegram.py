@@ -23,7 +23,8 @@ answer_generator = AnswerGenerator()
 @bot.message_handler(content_types=['text'])
 def get_text_messages(message):
     print(f'[USER MESSAGE] {message.text}')
-    if DEBUG: print('[CURRENT STATE]', controller.state)
+    if DEBUG:
+        print('[CURRENT STATE]', controller.state)
 
     if message.text == "/start":
         bot.send_message(message.from_user.id, start_answer())
