@@ -2,7 +2,8 @@ from typing import List, Dict
 from abc import ABC, abstractmethod
 from hiphop_bot.dialog_bot.services.query_handling.tag_condition import TagCondition, NotTagCondition, MultiTagCondition
 from hiphop_bot.dialog_bot.services.sentence_analyzer.query import Query
-from hiphop_bot.dialog_bot.config import DEBUG
+from hiphop_bot.dialog_bot.config import DEBUG_QUERY_HANDLER
+from hiphop_bot.dialog_bot.services.tools.debug_print import debug_print
 from hiphop_bot.dialog_bot.services.query_handling.query_pattern import QueryPattern
 from hiphop_bot.dialog_bot.services.query_solving.user import User
 from hiphop_bot.dialog_bot.services.query_solving.dialog import Dialog, DialogState
@@ -35,8 +36,7 @@ class QueryHandler(ABC):
     def match_pattern(self, query: Query):
         res, self.used_keywords, self.used_args = self.pattern.match(query)
         if res:
-            if DEBUG:
-                print(f'Запрос: {self.debug_msg}')
+            debug_print(DEBUG_QUERY_HANDLER, f'[QUERY_HANDLER] распознал запрос: {self.debug_msg}')
         return res
 
     def remove_used_keywords_and_args(self, query: Query):
