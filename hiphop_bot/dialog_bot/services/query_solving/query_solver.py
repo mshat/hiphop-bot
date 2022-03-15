@@ -3,9 +3,10 @@ from enum import Enum
 from hiphop_bot.dialog_bot.services.query_handling import handlers
 from hiphop_bot.dialog_bot.services.sentence_analyzer.query import Query
 from hiphop_bot.dialog_bot.services.query_solving.dialog import Dialog, DialogState
-from hiphop_bot.dialog_bot.config import DEBUG, ENABLE_FILTERS
 from hiphop_bot.dialog_bot.services.query_handling.query_handler import QueryHandler
 from hiphop_bot.dialog_bot.services.query_solving.user import User
+from hiphop_bot.dialog_bot.services.tools.debug_print import debug_print, error_print
+from hiphop_bot.dialog_bot.config import DEBUG_QUERY_HANDLER, DEBUG_QUERY_HANDLER_PATTERN_MATCHING
 
 
 class QuerySolvingState(Enum):
@@ -29,8 +30,11 @@ class QuerySolver:
         self.dialog.state = val
         if val == DialogState.START:
             self.dialog.reset_search_result()
-        if val in (DialogState.SEARCH, DialogState.FILTER) and not ENABLE_FILTERS:
+
+        # Если по запросу поиска ничего не было найдено, состояние диалога сбрасыватся до START, тк фильтровать нечего
+        if val == DialogState.SEARCH and not self.dialog.search_result_found:
             self.dialog.state = DialogState.START
+        debug_print(DEBUG_QUERY_HANDLER, f'[QUERY_HANDLER] new dialog state: {self.dialog.state}')
 
     @property
     def user(self):
@@ -38,7 +42,15 @@ class QuerySolver:
 
     def match_patterns(self, handlers_: List[QueryHandler], query: Query) -> DialogState | None:
         for handler in handlers_:
-            if handler.match_pattern(query):
+            match_res = handler.match_pattern(query)
+
+            debug_print(
+                DEBUG_QUERY_HANDLER_PATTERN_MATCHING,
+                f"MATCH_PATTERN {handler.debug_msg} [{str(handler.pattern).replace('  ', '')}] "
+                f"TO [{query.raw_sentence}] RESULT {match_res}"
+            )
+
+            if match_res:
                 next_state = handler.handle(query, self._user, self.dialog)
                 handler.remove_used_keywords_and_args(query)
                 return next_state
@@ -122,27 +134,27 @@ class QuerySolver:
             self.state = next_state
             return QuerySolvingState.SOLVED
 
-        # filters
-        if self.state in (DialogState.SEARCH, DialogState.FILTER):
+        if self.state in (DialogState.FILTER, DialogState.SEARCH):
+            # filters
             next_state = self.match_filter_patterns(query)
             if next_state:
                 self.state = next_state
                 return QuerySolvingState.SOLVED
 
-        # like/dislike, number query, search, info
-        if self.state in (
-                DialogState.START, DialogState.NUMBER, DialogState.LIKE, DialogState.DISLIKE, DialogState.INFO
-        ):
+        if self.state != DialogState.FILTER:
+            # like / dislike,
             next_state = self.match_like_dislike_patterns(query)
             if next_state:
                 self.state = next_state
                 return QuerySolvingState.SOLVED
 
+            # number query
             next_state = self.match_number_query_patterns(query)
             if next_state:
                 self.state = next_state
                 return QuerySolvingState.SOLVED
 
+            # search
             next_state = self.match_search_patterns(query)
             if next_state:
                 self.state = next_state
@@ -154,11 +166,11 @@ class QuerySolver:
                 self.state = next_state
                 return QuerySolvingState.SOLVED
 
+            # info
             next_state = self.match_info_patterns(query)
             if next_state:
                 self.state = next_state
                 return QuerySolvingState.SOLVED
 
-        if DEBUG:
-            print(f'[UNRECOGNIZED SENTENCE] {query.arguments} {query.keywords} {query.words}')
+        error_print(f'[UNRECOGNIZED SENTENCE] {query.arguments} {query.keywords} {query.words}')
         return QuerySolvingState.UNSOLVED

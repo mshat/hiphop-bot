@@ -133,6 +133,9 @@ class DataForTests:
         'каково твоё устройство?': 'InfoAboutBotAlgorithmHandler',
         'как ты работаешь?': 'InfoAboutBotAlgorithmHandler',
     }
+    restart = {
+        'начало': 'RestartHandler'
+    }
 
     def __init__(self):
         self._sentence_handler_pairs = self.get_sentence_handler_pairs
@@ -143,7 +146,7 @@ class DataForTests:
         test_data_sets = [
             self.search_by_name, self.recommendation, self.search_by_genre, self.search_by_sex,
             self.search_by_age, self.search_show_all, self.test_filter, self.like_dislike, self.number_queries,
-            self.test_info
+            self.test_info, self.restart
         ]
         for test_set in test_data_sets:
             for sentence, handler in test_set.items():
@@ -167,7 +170,12 @@ class TestQuerySolving(unittest.TestCase):
                 with unittest.mock.patch(
                         f'hiphop_bot.dialog_bot.services.query_handling.handlers.{expected_handler}.handle'
                 ) as patched_handle_method:
+                    # сеттер состояния не даст установить состояние SEARCH, если пустой search_result
+                    if state == DialogState.SEARCH:
+                        self.query_solver.dialog.search_result = ['test']
                     self.query_solver.state = state
+                    assert self.query_solver.state == state
+
                     query = SentenceParser(sentence).parse()
                     self.query_solver.solve(query)
 
@@ -209,7 +217,7 @@ class TestIntegrationStates(unittest.TestCase):
         self.user = User()
         self.dialog = Dialog()
 
-    def check_next_states(self, state, allowed_sentences: list, disallowed_sentences: list):
+    def check_next_states(self, state: DialogState, allowed_sentences: list, disallowed_sentences: list):
         query_solver = QuerySolver(self.user)
 
         sentences = {
@@ -221,7 +229,13 @@ class TestIntegrationStates(unittest.TestCase):
             for sentence in sentences_:
                 expected_handler = TEST_DATA.get_handler_class(sentence)
                 with self.subTest(i=expected_handler):
+                    # сеттер состояния не даст установить состояние SEARCH, если пустой search_result
+                    if state == DialogState.SEARCH:
+                        query_solver.dialog.search_result = ['test']
+
                     query_solver.state = state
+                    assert query_solver.state == state
+
                     with unittest.mock.patch(
                             f'hiphop_bot.dialog_bot.services.query_handling.handlers.{expected_handler}.handle'
                     ) as patched_handle_method:
@@ -239,7 +253,8 @@ class TestIntegrationStates(unittest.TestCase):
             "найди похожих исполнителей на крека",
             "убери моргенштерна из списка дизлайков",
             "сколько исполнителей в базе?",
-            "информация о касте"
+            "информация о касте",
+            "начало",
         ]
         disallowed = [
             "оставь исполнителей мужского пола",
@@ -250,14 +265,14 @@ class TestIntegrationStates(unittest.TestCase):
     def test_next_states_search(self):
         """ Проверяет в какие состояния можно перейти из состояния search"""
         allowed = [
-            "оставь исполнителей мужского пола",
-        ]
-        disallowed = [
-            "убери моргенштерна из списка дизлайков",
-            "сколько исполнителей в базе?",
-            "информация о касте",
+            # "оставь исполнителей мужского пола",
+            # "убери моргенштерна из списка дизлайков",
+            # "сколько исполнителей в базе?",
+            # "информация о касте",
             "артисты мужчины",
+            "начало",
         ]
+        disallowed = []
 
         self.check_next_states(DialogState.SEARCH, allowed, disallowed)
 
@@ -265,6 +280,7 @@ class TestIntegrationStates(unittest.TestCase):
         """ Проверяет в какие состояния можно перейти из состояния filter"""
         allowed = [
             "оставь исполнителей мужского пола",
+            "начало"
         ]
         disallowed = [
             "убери моргенштерна из списка дизлайков",
@@ -281,7 +297,8 @@ class TestIntegrationStates(unittest.TestCase):
             "найди похожих исполнителей на крека",
             "убери моргенштерна из списка дизлайков",
             "сколько исполнителей в базе?",
-            "информация о касте"
+            "информация о касте",
+            "начало",
         ]
         disallowed = [
             "оставь исполнителей мужского пола",
@@ -295,7 +312,8 @@ class TestIntegrationStates(unittest.TestCase):
             "найди похожих исполнителей на крека",
             "убери моргенштерна из списка дизлайков",
             "сколько исполнителей в базе?",
-            "информация о касте"
+            "информация о касте",
+            "начало"
         ]
         disallowed = [
             "оставь исполнителей мужского пола",
@@ -309,7 +327,8 @@ class TestIntegrationStates(unittest.TestCase):
             "найди похожих исполнителей на крека",
             "убери моргенштерна из списка дизлайков",
             "сколько исполнителей в базе?",
-            "информация о касте"
+            "информация о касте",
+            "начало",
         ]
         disallowed = [
             "оставь исполнителей мужского пола",
@@ -323,7 +342,8 @@ class TestIntegrationStates(unittest.TestCase):
             "найди похожих исполнителей на крека",
             "убери моргенштерна из списка дизлайков",
             "сколько исполнителей в базе?",
-            "информация о касте"
+            "информация о касте",
+            "начало",
         ]
         disallowed = [
             "оставь исполнителей мужского пола",

@@ -37,6 +37,13 @@ class Dialog:
         self.debug_message = None
 
     @property
+    def search_result_found(self) -> bool:
+        if not (self.search_result is None):
+            return True
+        else:
+            return False
+
+    @property
     def state(self):
         return self._state
 
