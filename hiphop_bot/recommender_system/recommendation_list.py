@@ -5,11 +5,16 @@ from hiphop_bot.recommender_system.proximity_measures import \
 from hiphop_bot.recommender_system.tools import format_print
 from hiphop_bot.recommender_system.config import MIN_SIMILARITY_PROXIMITY
 from hiphop_bot.recommender_system.models.artist_pairs_proximity import ArtistPairsProximityModel
+from hiphop_bot.recommender_system.tree.tree_loader import load_tree
 
 
 # TODO дописать метод для записи в бд список близости артистов
 def create_artist_pairs_proximity(tree):
+    tree = load_tree()
     artist_pairs_proximity = calc_generalizing_proximity_measure_for_all_leafs(tree)
+
+    # with open('data/artist_pairs_proximity.json', 'w') as file:
+    #     json.dump(artist_pairs_proximity, file)
     pass
 
 

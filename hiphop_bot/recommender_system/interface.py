@@ -9,14 +9,13 @@ from hiphop_bot.recommender_system.proximity_measures import (
     calc_min_general_proximity,
     normalize_proximities
 )
-from hiphop_bot.recommender_system.tree.tree_tools import calc_max_distance_between_nodes, get_leafs_values
+from hiphop_bot.recommender_system.tree.tree_tools import get_leafs_values
 from hiphop_bot.recommender_system.tree.artist_node import ArtistVisualNode
 
 TREE = load_tree()
 ARTIST_PAIRS_PROXIMITY = load_artist_pairs_proximity()
 max_proximity = calc_max_general_proximity(ARTIST_PAIRS_PROXIMITY)
 min_proximity = calc_min_general_proximity(ARTIST_PAIRS_PROXIMITY)
-max_distance_between_nodes = calc_max_distance_between_nodes(TREE)
 normalize_proximities(ARTIST_PAIRS_PROXIMITY, min_proximity, max_proximity)
 
 
