@@ -79,8 +79,8 @@ class DataForTests:
         "убери исполнителей старше чем 30": 'FilterByAgeExcludeHandler',
         "оставь исполнителей младше чем 11": 'FilterByAgeIncludeHandler',
         "оставь исполнителей в возрасте от 32 до 43": 'FilterByAgeRangeHandler',
-        "показывай по 10 артистов": 'SetOutputLenHandler',
-        "выводи по 5 артистов": 'SetOutputLenHandler',
+        "показывай по 10 артистов": 'FilterOutputLenHandler',
+        "выводи по 5 артистов": 'FilterOutputLenHandler',
         "удалить все фильтры": 'RemoveFiltersHandler',
         "убери ограничение на количество артистов": 'RemoveResultLenFilterHandler',
         "выводи всех": 'RemoveResultLenFilterHandler',
@@ -132,6 +132,9 @@ class DataForTests:
         'как ты устроен?': 'InfoAboutBotAlgorithmHandler',
         'каково твоё устройство?': 'InfoAboutBotAlgorithmHandler',
         'как ты работаешь?': 'InfoAboutBotAlgorithmHandler',
+
+        "показывай по 10 артистов": 'SetOutputLenHandler',
+        "выводи по 5 артистов": 'SetOutputLenHandler',
     }
     restart = {
         'начало': 'RestartHandler'
@@ -160,6 +163,48 @@ class DataForTests:
 TEST_DATA = DataForTests()
 
 
+handle_method_paths = {
+    "RestartHandler": "hiphop_bot.dialog_bot.services.query_handling.handlers.restart",
+
+    "DislikeHandler": "hiphop_bot.dialog_bot.services.query_handling.handlers.like_dislike",
+    "ExcludeDislikeHandler": "hiphop_bot.dialog_bot.services.query_handling.handlers.like_dislike",
+    "ExcludeLikeHandler": "hiphop_bot.dialog_bot.services.query_handling.handlers.like_dislike",
+    "LikeHandler": "hiphop_bot.dialog_bot.services.query_handling.handlers.like_dislike",
+
+    "NumberHandler": "hiphop_bot.dialog_bot.services.query_handling.handlers.number_question",
+    "NumberWithAgeHandler": "hiphop_bot.dialog_bot.services.query_handling.handlers.number_question",
+    "NumberWithAgeRangeHandler": "hiphop_bot.dialog_bot.services.query_handling.handlers.number_question",
+    "NumberWithSexHandler": "hiphop_bot.dialog_bot.services.query_handling.handlers.number_question",
+
+    "InfoAboutBotAlgorithmHandler": "hiphop_bot.dialog_bot.services.query_handling.handlers.info",
+    "InfoAboutBotHandler": "hiphop_bot.dialog_bot.services.query_handling.handlers.info",
+    "InfoAboutBotOpportunitiesHandler": "hiphop_bot.dialog_bot.services.query_handling.handlers.info",
+    "InfoHandler": "hiphop_bot.dialog_bot.services.query_handling.handlers.info",
+
+    "SetOutputLenHandler": "hiphop_bot.dialog_bot.services.query_handling.handlers.settings",
+
+    "ShowAllGenresHandler": "hiphop_bot.dialog_bot.services.query_handling.handlers.genres",
+
+    "FilterByAgeExcludeHandler": "hiphop_bot.dialog_bot.services.query_handling.handlers.filtration",
+    "FilterByAgeIncludeHandler": "hiphop_bot.dialog_bot.services.query_handling.handlers.filtration",
+    "FilterByAgeRangeHandler": "hiphop_bot.dialog_bot.services.query_handling.handlers.filtration",
+    "FilterByMembersCountHandler": "hiphop_bot.dialog_bot.services.query_handling.handlers.filtration",
+    "FilterBySexExcludeHandler": "hiphop_bot.dialog_bot.services.query_handling.handlers.filtration",
+    "FilterBySexIncludeHandler": "hiphop_bot.dialog_bot.services.query_handling.handlers.filtration",
+    "RemoveFiltersHandler": "hiphop_bot.dialog_bot.services.query_handling.handlers.filtration",
+    "RemoveResultLenFilterHandler": "hiphop_bot.dialog_bot.services.query_handling.handlers.filtration",
+    "FilterOutputLenHandler": "hiphop_bot.dialog_bot.services.query_handling.handlers.filtration",
+
+    "RecommendationHandler": "hiphop_bot.dialog_bot.services.query_handling.handlers.search",
+    "SearchByAgeHandler": "hiphop_bot.dialog_bot.services.query_handling.handlers.search",
+    "SearchByAgeRangeHandler": "hiphop_bot.dialog_bot.services.query_handling.handlers.search",
+    "SearchByArtistHandler": "hiphop_bot.dialog_bot.services.query_handling.handlers.search",
+    "SearchByGenreHandler": "hiphop_bot.dialog_bot.services.query_handling.handlers.search",
+    "SearchBySexHandler": "hiphop_bot.dialog_bot.services.query_handling.handlers.search",
+    "ShowAllArtistsHandler": "hiphop_bot.dialog_bot.services.query_handling.handlers.search",
+}
+
+
 class TestQuerySolving(unittest.TestCase):
     def setUp(self) -> None:
         self.query_solver = QuerySolver(User())
@@ -167,9 +212,8 @@ class TestQuerySolving(unittest.TestCase):
     def _test_sentences(self, state: DialogState, sentences: Dict[str, str]):
         for sentence, expected_handler in sentences.items():
             with self.subTest(i=sentence):
-                with unittest.mock.patch(
-                        f'hiphop_bot.dialog_bot.services.query_handling.handlers.{expected_handler}.handle'
-                ) as patched_handle_method:
+                handler_path = handle_method_paths[expected_handler]
+                with unittest.mock.patch(f'{handler_path}.{expected_handler}.handle') as patched_handle_method:
                     # сеттер состояния не даст установить состояние SEARCH, если пустой search_result
                     if state == DialogState.SEARCH:
                         self.query_solver.dialog.search_result = ['test']
@@ -236,9 +280,8 @@ class TestIntegrationStates(unittest.TestCase):
                     query_solver.state = state
                     assert query_solver.state == state
 
-                    with unittest.mock.patch(
-                            f'hiphop_bot.dialog_bot.services.query_handling.handlers.{expected_handler}.handle'
-                    ) as patched_handle_method:
+                    handler_path = handle_method_paths[expected_handler]
+                    with unittest.mock.patch(f'{handler_path}.{expected_handler}.handle') as patched_handle_method:
                         query = SentenceParser(sentence).parse()
                         query_solver.solve(query)
 

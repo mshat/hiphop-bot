@@ -1,6 +1,13 @@
 from typing import List
 from enum import Enum
-from hiphop_bot.dialog_bot.services.query_handling import handlers
+from hiphop_bot.dialog_bot.services.query_handling.handlers import filtration as filter_handlers
+from hiphop_bot.dialog_bot.services.query_handling.handlers import search as search_handlers
+from hiphop_bot.dialog_bot.services.query_handling.handlers import restart as restart_handlers
+from hiphop_bot.dialog_bot.services.query_handling.handlers import like_dislike as like_dislike_handlers
+from hiphop_bot.dialog_bot.services.query_handling.handlers import number_question as number_question_handlers
+from hiphop_bot.dialog_bot.services.query_handling.handlers import info as info_handlers
+from hiphop_bot.dialog_bot.services.query_handling.handlers import settings as settings_handlers
+from hiphop_bot.dialog_bot.services.query_handling.handlers import genres as genres_handlers
 from hiphop_bot.dialog_bot.services.sentence_analyzer.query import Query
 from hiphop_bot.dialog_bot.services.query_solving.dialog import Dialog, DialogState
 from hiphop_bot.dialog_bot.services.query_handling.query_handler import QueryHandler
@@ -57,69 +64,69 @@ class QuerySolver:
         return None
 
     def match_restart_patterns(self, query: Query) -> DialogState | None:
-        restart_handler = handlers.RestartHandler()
+        restart_handler = restart_handlers.RestartHandler()
         return self.match_patterns([restart_handler], query)
 
     def match_like_dislike_patterns(self, query: Query) -> DialogState | None:
-        like_dislike_handlers = [
-            handlers.ExcludeDislikeHandler(),
-            handlers.ExcludeLikeHandler(),
-            handlers.LikeHandler(),
-            handlers.DislikeHandler(),
+        handlers_ = [
+            like_dislike_handlers.ExcludeDislikeHandler(),
+            like_dislike_handlers.ExcludeLikeHandler(),
+            like_dislike_handlers.LikeHandler(),
+            like_dislike_handlers.DislikeHandler(),
         ]
-        return self.match_patterns(like_dislike_handlers, query)
+        return self.match_patterns(handlers_, query)
 
     def match_number_query_patterns(self, query: Query) -> DialogState | None:
-        number_query_handlers = [
-            handlers.NumberWithSexHandler(),
-            handlers.NumberWithAgeRangeHandler(),
-            handlers.NumberWithAgeHandler(),
-            handlers.NumberHandler(),
+        handlers_ = [
+            number_question_handlers.NumberWithSexHandler(),
+            number_question_handlers.NumberWithAgeRangeHandler(),
+            number_question_handlers.NumberWithAgeHandler(),
+            number_question_handlers.NumberHandler(),
         ]
-        return self.match_patterns(number_query_handlers, query)
+        return self.match_patterns(handlers_, query)
 
     def match_search_patterns(self, query: Query) -> DialogState | None:
-        search_handler = handlers.SearchByArtistHandler()
+        search_handler = search_handlers.SearchByArtistHandler()
         if search_handler.match_pattern(query):
             next_state = search_handler.handle(query, self._user, self.dialog)
             search_handler.remove_used_keywords_and_args(query)
             self.solve_multi_filters(query)
             return next_state
 
-        search_handlers = [
-            handlers.RecommendationHandler(),
-            handlers.SearchBySexHandler(),
-            handlers.SearchByAgeRangeHandler(),
-            handlers.SearchByAgeHandler(),
-            handlers.SearchByGenreHandler(),
-            handlers.ShowAllArtistsHandler(),
-            handlers.ShowAllGenresHandler(),
+        handlers_ = [
+            search_handlers.RecommendationHandler(),
+            search_handlers.SearchBySexHandler(),
+            search_handlers.SearchByAgeRangeHandler(),
+            search_handlers.SearchByAgeHandler(),
+            search_handlers.SearchByGenreHandler(),
+            search_handlers.ShowAllArtistsHandler(),
+            genres_handlers.ShowAllGenresHandler(),
         ]
-        return self.match_patterns(search_handlers, query)
+        return self.match_patterns(handlers_, query)
 
     def match_info_patterns(self, query: Query) -> DialogState | None:
-        info_handlers = [
-            handlers.InfoHandler(),
-            handlers.InfoAboutBotAlgorithmHandler(),
-            handlers.InfoAboutBotHandler(),
-            handlers.InfoAboutBotOpportunitiesHandler(),
+        handlers_ = [
+            info_handlers.InfoHandler(),
+            info_handlers.InfoAboutBotAlgorithmHandler(),
+            info_handlers.InfoAboutBotHandler(),
+            info_handlers.InfoAboutBotOpportunitiesHandler(),
         ]
-        return self.match_patterns(info_handlers, query)
+        return self.match_patterns(handlers_, query)
 
     def match_filter_patterns(self, query: Query) -> DialogState | None:
-        filter_handlers = [
-            handlers.FilterBySexExcludeHandler(),
-            handlers.FilterBySexIncludeHandler(),
-            handlers.FilterByAgeRangeHandler(),
-            handlers.FilterByAgeExcludeHandler(),
-            handlers.FilterByAgeIncludeHandler(),
-            handlers.FilterByMembersCountHandler(),
-            handlers.FilterOutputLenHandler(),
+        handlers_ = [
+            filter_handlers.FilterBySexExcludeHandler(),
+            filter_handlers.FilterBySexIncludeHandler(),
+            filter_handlers.FilterByAgeRangeHandler(),
+            filter_handlers.FilterByAgeExcludeHandler(),
+            filter_handlers.FilterByAgeIncludeHandler(),
+            filter_handlers.FilterByMembersCountHandler(),
+            filter_handlers.FilterOutputLenHandler(),
 
-            handlers.RemoveResultLenFilterHandler(),
-            handlers.RemoveFiltersHandler(),
+            filter_handlers.RemoveResultLenFilterHandler(),
+            filter_handlers.RemoveFiltersHandler(),
         ]
-        return self.match_patterns(filter_handlers, query)
+        return self.match_patterns(handlers_, query)
 
     def solve_multi_filters(self, query: Query) -> None:
         while True:
@@ -161,7 +168,7 @@ class QuerySolver:
                 return QuerySolvingState.SOLVED
 
             # set output len
-            next_state = self.match_patterns([handlers.SetOutputLenHandler()], query)
+            next_state = self.match_patterns([settings_handlers.SetOutputLenHandler()], query)
             if next_state:
                 self.state = next_state
                 return QuerySolvingState.SOLVED
