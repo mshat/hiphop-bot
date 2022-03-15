@@ -1,4 +1,3 @@
-from __future__ import annotations
 from abc import ABC
 from hiphop_bot.dialog_bot.services.query_solving.dialog import Dialog, DialogState
 from hiphop_bot.dialog_bot.services.query_solving.user import User

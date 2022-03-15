@@ -2,7 +2,7 @@ from __future__ import annotations
 from hiphop_bot.dialog_bot.services.query_handling.query_handler import QueryHandler
 from hiphop_bot.dialog_bot.services.query_solving.dialog import Dialog, DialogState
 from hiphop_bot.dialog_bot.services.query_solving.user import User
-from hiphop_bot.recommender_system import interface, artist_filterer
+from hiphop_bot.recommender_system import artist_filterer
 from hiphop_bot.dialog_bot.services.sentence_analyzer.query import Query
 from hiphop_bot.dialog_bot.models.const import SexFilter
 from hiphop_bot.dialog_bot.services.query_handling.tag_condition import (AndTagCondition as And,
@@ -21,7 +21,7 @@ class NumberWithSexHandler(QueryHandler):
 
     def handle(self, query: Query, user: User, dialog: Dialog):
         sex = get_arguments_by_type(query, 'SexArgument')[0]
-        artists = interface.get_all_artists()
+        artists = self._recommender_system.get_all_artists()
         artists = artist_filterer.filter_artists(artists, sex=sex.value.value)
         if sex.value == SexFilter.MALE:
             dialog.output_message = f'В базе {len(artists)} исполнителя мужского пола'
@@ -46,7 +46,7 @@ class NumberWithAgeRangeHandler(QueryHandler):
             from_age, to_age = sorted([int(age[0].value), int(age[1].value)])
             dialog.debug_message = f'количество артистов от {from_age} до {to_age} лет'
 
-            artists = interface.get_all_artists()
+            artists = self._recommender_system.get_all_artists()
             artists = artist_filterer.filter_artists(artists, older=from_age, younger=to_age)
 
             dialog.output_message = f'Количество исполнителей от {from_age} до {to_age} лет: {len(artists)}'
@@ -66,7 +66,7 @@ class NumberWithAgeHandler(QueryHandler):
         age = get_arguments_by_type(query, 'NumArgument')[0]
         age = int(age.value)
 
-        artists = interface.get_all_artists()
+        artists = self._recommender_system.get_all_artists()
 
         if 'younger' in query.query_tag_structure:
             artists = artist_filterer.filter_artists(artists, younger=age)
@@ -84,6 +84,6 @@ class NumberHandler(QueryHandler):
         self.debug_msg = 'Количество артистов в базе'
 
     def handle(self, query: Query, user: User, dialog: Dialog):
-        artists = interface.get_all_artists()
+        artists = self._recommender_system.get_all_artists()
         dialog.output_message = f'В базе {len(artists)} исполнителя'
         return DialogState.NUMBER

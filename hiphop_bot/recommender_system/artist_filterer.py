@@ -1,8 +1,10 @@
 from typing import List
 from hiphop_bot.recommender_system.tree.artist_node import ArtistVisualNode
-from hiphop_bot.recommender_system.interface import find_artist
+from hiphop_bot.recommender_system.recommender_system import RecommenderSystem
 
 EXCLUDE = ['sex', 'group_type', 'older', 'younger']
+
+recommender_system = RecommenderSystem()
 
 
 def filter_artists(
@@ -16,7 +18,7 @@ def filter_artists(
     filtered = []
     for artist in artists:
         if isinstance(artist, str):
-            artist = find_artist(artist)
+            artist = recommender_system.find_artist(artist)
         if group_type != 'any' and artist.solo_duet_group != group_type and 'group_type' not in exclude:
             continue
         if sex != 'anysex' and artist.gender != sex and 'sex' not in exclude:

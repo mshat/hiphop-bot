@@ -7,6 +7,7 @@ from hiphop_bot.dialog_bot.services.tools.debug_print import debug_print
 from hiphop_bot.dialog_bot.services.query_handling.query_pattern import QueryPattern
 from hiphop_bot.dialog_bot.services.query_solving.user import User
 from hiphop_bot.dialog_bot.services.query_solving.dialog import Dialog, DialogState
+from hiphop_bot.recommender_system.recommender_system import RecommenderSystem
 
 
 class QueryHandler(ABC):
@@ -14,6 +15,7 @@ class QueryHandler(ABC):
     required_argument_type: str | None
     required_arguments: Dict[str, int] | None
     debug_msg: str
+    _recommender_system: RecommenderSystem
 
     @abstractmethod
     def __init__(self):
@@ -24,6 +26,8 @@ class QueryHandler(ABC):
 
         self.used_keywords = []
         self.used_args = []
+
+        self._recommender_system = RecommenderSystem()
 
     @property
     def pattern(self):

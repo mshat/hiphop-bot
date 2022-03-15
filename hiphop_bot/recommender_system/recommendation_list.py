@@ -26,7 +26,7 @@ def load_artist_pairs_proximity() -> dict:
 
 def get_recommendations(
         seed_object: ArtistVisualNode,
-        artist_pairs_proximity: dict) -> OrderedDict:
+        artist_pairs_proximity: dict) -> OrderedDict[str, float]:
     artist_pairs = artist_pairs_proximity[seed_object.name]
     artist_pairs_sorted_by_proximity = OrderedDict(sorted(artist_pairs.items(), key=lambda item: item[1]))
 
@@ -37,16 +37,3 @@ def get_recommendations(
                 recommendations[artist_name] = proximity
     return recommendations
 
-
-# TODO не используется
-def show_recommendations(
-        seed_object: ArtistVisualNode,
-        artist_pairs_proximity: dict,
-        show_proximity=False) -> None:
-    recommendations = get_recommendations(seed_object, artist_pairs_proximity)
-
-    for recommendation_name, proximity in recommendations.items():
-        if show_proximity:
-            format_print([recommendation_name, proximity], [20, 5])
-        else:
-            print(recommendation_name)

@@ -2,7 +2,6 @@ from __future__ import annotations
 from hiphop_bot.dialog_bot.services.query_handling.query_handler import QueryHandler
 from hiphop_bot.dialog_bot.services.query_solving.dialog import Dialog, DialogState
 from hiphop_bot.dialog_bot.services.query_solving.user import User
-from hiphop_bot.recommender_system import interface
 from hiphop_bot.dialog_bot.services.sentence_analyzer.query import Query
 from hiphop_bot.dialog_bot.services.query_handling.tag_condition import (AndTagCondition as And,
                                                                          OrTagCondition as Or,
@@ -20,7 +19,7 @@ class InfoHandler(QueryHandler):
 
     def handle(self, query: Query, user: User, dialog: Dialog):
         artist_arg = get_arguments_by_type(query, 'ArtistArgument')[0]
-        artist = interface.get_artist_by_name(artist_arg.value)
+        artist = self._recommender_system.find_artist(artist_arg.value)
         if not artist:
             dialog.output_message = 'Артист не найден :('
         else:
