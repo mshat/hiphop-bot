@@ -1,6 +1,5 @@
 Запрос: Рестарт                                        | Паттерн: Аргументы:                      | Условие: restart
-Запрос: Изменить количество выводимых результатов      | Паттерн: Аргументы: NumArgument: 1       | Условие: (show OR restrict) OR (po AND (result OR artist OR line)) AND (NOT range AND NOT older AND NOT younger)
-Запрос: Фильтр по полу "включить"                      | Паттерн: Аргументы: SexArgument: 1       | Условие: 
+Запрос: Фильтр по полу "включить"                      | Паттерн: Аргументы: SexArgument: 1       | Условие: include OR (exclude AND except)
 Запрос: Фильтр по полу "исключить"                     | Паттерн: Аргументы: SexArgument: 1       | Условие: exclude AND NOT except
 Запрос: Фильтр по возрасту в диапазоне                 | Паттерн: Аргументы: NumArgument: 2       | Условие: range OR (older AND younger)
 Запрос: Фильтр по возрасту "включить"                  | Паттерн: Аргументы: NumArgument: 1       | Условие: (older OR younger)
@@ -25,6 +24,7 @@
 Запрос: Рекомендация по интересам                      | Паттерн: Аргументы:                      | Условие: ((search OR recommend OR show OR artist) AND (to me OR like)) OR (to me AND like)
 Запрос: Вывести всех артистов в базе                   | Паттерн: Аргументы:                      | Условие: (all OR like/how) AND NOT genre AND (include OR artist OR show)
 Запрос: Вывести все жанры в базе                       | Паттерн: Аргументы:                      | Условие: (all OR like/how) AND (include OR genre OR show)
+Запрос: Изменить количество выводимых результатов      | Паттерн: Аргументы: NumArgument: 1       | Условие: (show OR restrict) OR (po AND (result OR artist OR line)) AND (NOT range AND NOT older AND NOT younger)
 Запрос: Информация об артисте                          | Паттерн: Аргументы: ArtistArgument: 1    | Условие: talk about OR about OR info
 Запрос: Информация о боте                              | Паттерн: Аргументы:                      | Условие: you OR who AND NOT opportunities
 Запрос: Информация о возможностях бота                 | Паттерн: Аргументы:                      | Условие: opportunities
