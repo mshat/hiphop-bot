@@ -5,6 +5,7 @@ from abc import ABC
 from psycopg2 import pool
 from hiphop_bot.dialog_bot.services.tools.randomword import randomword
 from hiphop_bot.dialog_bot.services.tools.debug_print import debug_message, debug_print
+from hiphop_bot.dialog_bot.config import DEBUG_DB
 from dotenv import dotenv_values
 
 
@@ -43,14 +44,14 @@ class Connection:
         self._closed = False
         self._name = randomword(6)
 
-        debug_print(f"[db] Cоединение {self._name} создано")
+        debug_print(DEBUG_DB, f"[db] Cоединение {self._name} создано")
 
     def put_connection(self):
         if self.conn:
             self._pool.putconn(self.conn)
             self._closed = True
 
-        debug_print(f"[db] Cоединение {self._name} вернулось в пул")
+        debug_print(DEBUG_DB, f"[db] Cоединение {self._name} вернулось в пул")
 
     def cursor(self):
         return self.conn.cursor()
@@ -72,12 +73,12 @@ class AbstractConnectionPool(ABC):
         except psycopg2.DatabaseError as error:
             raise ConnectionPoolError(f"Ошибка при подключении к БД: {error}")
         else:
-            debug_print('[db] Пул соединений создан')
+            debug_print(DEBUG_DB, '[db] Пул соединений создан')
 
     def get_connection(self):
         return Connection(self.pool.getconn(), self.pool)
 
-    @debug_message("[db] Пул соединений БД закрыт")
+    @debug_message(DEBUG_DB, "[db] Пул соединений БД закрыт")
     def __del__(self):
         if self.pool:
             self.pool.closeall()

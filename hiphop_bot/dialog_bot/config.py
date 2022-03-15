@@ -1,5 +1,6 @@
-DEBUG = False
-DEBUG_PRINT = False
+DEBUG = True
+DEBUG_QUERY_HANDLER = True
+DEBUG_DB = False
 ERROR_PRINT = True
 
 ENABLE_FILTERS = True
