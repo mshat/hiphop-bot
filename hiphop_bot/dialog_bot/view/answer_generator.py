@@ -1,6 +1,6 @@
 from typing import Iterable, List, Tuple
 from hiphop_bot.recommender_system import artist_filterer
-from hiphop_bot.dialog_bot.config import ENABLE_FILTERS, DEBUG
+from hiphop_bot.dialog_bot.config import DEBUG_QUERY_HANDLER
 from hiphop_bot.recommender_system.tree.artist_node import ArtistVisualNode
 from hiphop_bot.dialog_bot.services.query_solving.dialog import Dialog
 from hiphop_bot.dialog_bot.services.query_solving.user import User
@@ -14,14 +14,13 @@ def trunc_output(output: Iterable, output_len=None) -> List:
     return output[:output_len]
 
 
+# TODO убрал флаг включения/отключения фильтрации, эта функция больше не нужна
 def get_after_search_message():
-    if ENABLE_FILTERS:
-        msg = (
-            'Вы находитесь в режиме ФИЛЬТРАЦИИ. Вы можете добавить фильтры к полученному результату поиска.\n'
-            'Чтобы задать новый вопрос, скажите мне начать сначала\n'
-        )
-        return msg
-    return ''
+    msg = (
+        'Вы находитесь в режиме ФИЛЬТРАЦИИ. Вы можете добавить фильтры к полученному результату поиска.\n'
+        'Чтобы задать новый вопрос, скажите мне начать сначала\n'
+    )
+    return msg
 
 
 def filter_search_result(user: User, dialog: Dialog) -> List[ArtistVisualNode]:
@@ -91,7 +90,7 @@ class AnswerGenerator:
     def generate_answer(self) -> Tuple[str, str]:
         out_msg = OutputMessage()
         additional_message = ''
-        if DEBUG and self.dialog.debug_message is not None:
+        if DEBUG_QUERY_HANDLER and self.dialog.debug_message is not None:
             out_msg.msg += f'DEBUG {self.dialog.debug_message}'
 
         if self.dialog.output_genres is not None:
