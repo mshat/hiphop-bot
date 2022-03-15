@@ -1,7 +1,6 @@
 from hiphop_bot.dialog_bot.services.query_solving.query_solver import QuerySolvingState
 from hiphop_bot.dialog_bot.services.query_solving.dialog import DialogState
-from hiphop_bot.dialog_bot.config import DEBUG
-from hiphop_bot.dialog_bot.models.data import LINE_LEN
+from hiphop_bot.dialog_bot.models.const import LINE_LEN
 from hiphop_bot.dialog_bot.view.answer_generator import AnswerGenerator
 from hiphop_bot.dialog_bot.controller.controller import UserInterfaceController
 
@@ -34,9 +33,6 @@ def main():
             print(controller.unresolved_answer)
         else:
             raise Exception('Unknown query_solver result')
-
-        if DEBUG:
-            print('[CURRENT STATE]', controller.state)
         print()
 
 

@@ -4,7 +4,6 @@ from typing import Tuple, Dict
 from hiphop_bot.dialog_bot.services.query_solving.query_solver import QuerySolvingState
 from hiphop_bot.dialog_bot.view.answer_generator import AnswerGenerator
 from hiphop_bot.dialog_bot.controller.controller import UserInterfaceController
-from hiphop_bot.dialog_bot.config import DEBUG
 from hiphop_bot.dialog_bot.models.tg_user import TelegramUserModel
 from dotenv import dotenv_values
 
