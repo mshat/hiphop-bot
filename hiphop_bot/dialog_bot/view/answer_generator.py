@@ -1,68 +1,16 @@
 from typing import Iterable, List, Tuple
-from hiphop_bot.recommender_system import artist_filterer
 from hiphop_bot.dialog_bot.config import DEBUG_QUERY_HANDLER
-from hiphop_bot.recommender_system.tree.artist_node import ArtistVisualNode
 from hiphop_bot.dialog_bot.services.query_solving.dialog import Dialog
 from hiphop_bot.dialog_bot.services.query_solving.user import User
-from hiphop_bot.dialog_bot.view.output_message import OutputMessage
+from hiphop_bot.dialog_bot.view.output_message import Output
+from hiphop_bot.recommender_system.models.artist import _Artist  # Импортируется для аннотаций
+from hiphop_bot.dialog_bot.services.recommender_system_class_adapter import AdaptedRecommenderSystem
 
 
-def trunc_output(output: Iterable, output_len=None) -> List:
-    output = list(output)
-    if output_len is None:
-        output_len = 100000
-    return output[:output_len]
-
-
-# TODO убрал флаг включения/отключения фильтрации, эта функция больше не нужна
-def get_after_search_message():
-    msg = (
+AFTER_SEARCH_MESSAGE = (
         'Вы находитесь в режиме ФИЛЬТРАЦИИ. Вы можете добавить фильтры к полученному результату поиска.\n'
         'Чтобы задать новый вопрос, скажите мне начать сначала\n'
     )
-    return msg
-
-
-def filter_search_result(user: User, dialog: Dialog) -> List[ArtistVisualNode]:
-    return artist_filterer.filter_artists(
-        dialog.search_result,
-        group_type=user.group_type_filter.value,
-        sex=user.sex_filter.value,
-        younger=user.younger_filter,
-        older=user.older_filter,
-    )
-
-
-def generate_used_filters_str(user: User):
-    out_msg = ''
-    if user.dislikes:
-        out_msg += f'Список дизлайков: {", ".join(user.dislikes)}\n'
-    if user.str_filters != '':
-        out_msg += f'Установлены фильтры: {user.str_filters}\n'
-    return out_msg
-
-
-def generate_recommendations_message(user: User, recommended_artists: List[ArtistVisualNode]) -> str:
-    out_msg = ''
-
-    recommended_artists = trunc_output(recommended_artists, user.max_output_len)
-    if recommended_artists:
-        out_msg += generate_used_filters_str(user)
-
-        for artist in recommended_artists:
-            spotify_link = artist._artist.streaming_service_links.get_link_by_streaming_name('spotify')
-            out_msg += f'\n{artist.name}\n{spotify_link}\n'  # TODO костыль со ссылкой
-    return out_msg
-
-
-def generate_genres_message(user: User, dialog: Dialog) -> str:
-    out_msg = ''
-    genres = dialog.output_genres
-    genres = trunc_output(genres, user.max_output_len)
-    if genres:
-        for genre in genres:
-            out_msg += f'{genre}\n'
-    return out_msg
 
 
 class AnswerGenerator:
@@ -87,38 +35,92 @@ class AnswerGenerator:
         assert isinstance(val, User)
         self._user = val
 
-    def generate_answer(self) -> Tuple[str, str]:
-        out_msg = OutputMessage()
+    def trunc_output(self, output: Iterable) -> List:
+        output_len = self.user.max_output_len
+        output = list(output)
+        if output_len is None:
+            output_len = 100000
+        return output[:output_len]
+
+    def _generate_genres_str(self) -> str:
+        if not self.dialog.found_genres:
+            return 'Ничего не найдено'
+        else:
+            out_msg = ''
+            genres = self.dialog.found_genres
+            genres = self.trunc_output(genres)
+            if genres:
+                for genre in genres:
+                    out_msg += f'{genre}\n'
+            return out_msg
+
+    def _generate_info_message_str(self) -> str:
+        if not self.dialog.info:
+            return 'Я не смог найти ответ'
+        else:
+            return self.dialog.info
+
+    def _generate_used_filters_str(self):
+        out_msg = ''
+        if self.user.dislikes:
+            out_msg += f'Список дизлайков: {", ".join(self.user.dislikes)}\n'
+        if self.user.str_filters != '':
+            out_msg += f'Установлены фильтры: {self.user.str_filters}\n'
+        return out_msg
+
+    def _generate_artists_message(self, recommended_artists: List[_Artist]) -> str:
+        out_msg = ''
+
+        recommended_artists = self.trunc_output(recommended_artists)
+        if recommended_artists:
+            out_msg += self._generate_used_filters_str()
+
+            for artist in recommended_artists:
+                spotify_link = artist.streaming_service_links.get_link_by_streaming_name('spotify')
+                out_msg += f'\n{artist.name}\n{spotify_link}\n'
+        return out_msg
+
+    def _filter_search_result(self) -> List[_Artist]:
+        recommender_system = AdaptedRecommenderSystem()
+        return recommender_system.filter_artists(
+            self.dialog.found_artists,
+            group_type=self.user.group_type_filter.value,
+            sex=self.user.sex_filter.value,
+            younger=self.user.younger_filter,
+            older=self.user.older_filter,
+        )
+
+    def _generate_found_artists_str(self) -> Tuple[str, str]:
+        found_artists = self.dialog.found_artists
         additional_message = ''
+
+        if self.user.has_filters:
+            filtered_artists = self._filter_search_result()
+            if filtered_artists:
+                found_artists = filtered_artists
+                additional_message = AFTER_SEARCH_MESSAGE
+            else:
+                return 'Не найдено результатов, подходящих под фильтры', ''
+
+        res_str = self._generate_artists_message(found_artists)
+
+        return res_str, additional_message
+
+    def generate_answer(self) -> Output:
+        output = Output()
         if DEBUG_QUERY_HANDLER and self.dialog.debug_message is not None:
-            out_msg.msg += f'DEBUG {self.dialog.debug_message}'
+            output.debug_msg += f'DEBUG {self.dialog.debug_message}'
 
-        if self.dialog.output_genres is not None:
-            if not self.dialog.output_genres:
-                out_msg.msg += 'Ничего не найдено'
-            else:
-                out_msg.msg += generate_genres_message(self.user, self.dialog)
+        if self.dialog.found_artists is not None:
+            res_str, additional_message = self._generate_found_artists_str()
+            output.artists += res_str
+            output.additional_msg += additional_message
 
-        if self.dialog.output_message is not None:
-            if not self.dialog.output_message:
-                out_msg.msg += 'Я не смог найти ответ'
-            else:
-                out_msg.msg += self.dialog.output_message
+        if self.dialog.found_genres is not None:
+            output.genres += self._generate_genres_str()
 
-        if self.dialog.search_result is not None:
-            if not self.dialog.search_result:
-                out_msg.msg += 'Ничего не найдено'
-            else:
-                filtered = filter_search_result(self.user, self.dialog)
-                if filtered:
-                    out_msg.msg += generate_recommendations_message(self.user, filtered)
-                    additional_message += get_after_search_message()
-                else:
-                    out_msg.msg += 'Не найдено результатов, подходящих под фильтры'
+        if self.dialog.info is not None:
+            output.info += self._generate_info_message_str()
 
         self.dialog.reset_output()
-
-        if len(out_msg.msg) > 1 and out_msg.msg[-1] == '\n':
-            out_msg.msg = out_msg.msg[:-1]
-
-        return out_msg.msg, additional_message
+        return output
