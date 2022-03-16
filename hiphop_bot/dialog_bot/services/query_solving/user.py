@@ -54,6 +54,17 @@ class User:
         return self._dislikes
 
     @property
+    def has_filters(self) -> bool:
+        if (self.group_type_filter != GroupTypeFilter.ANY or
+                self.younger_filter or
+                self.older_filter or
+                self.sex_filter != SexFilter.ANY or
+                self.max_output_len != ALL):
+            return True
+        else:
+            return False
+
+    @property
     def group_type_filter(self) -> GroupTypeFilter:
         return self._group_type_filter
 
