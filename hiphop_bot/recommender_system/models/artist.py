@@ -1,4 +1,5 @@
 from typing import List, Tuple
+from datetime import datetime
 from hiphop_bot.db.abstract_model import Model, ModelError
 from hiphop_bot.recommender_system.models.theme import _Theme  # импортирутеся для аннотации
 from hiphop_bot.recommender_system.models.gender import _Gender  # импортирутеся для аннотации
@@ -32,6 +33,11 @@ class _Artist:
         self._streaming_service_links = streaming_service_links
 
     @property
+    def age(self):
+        current_year = datetime.now().year
+        return current_year - self.year_of_birth
+
+    @property
     def theme(self):
         return self._theme.name
 
@@ -52,7 +58,7 @@ class _Artist:
         if isinstance(links, _StreamingServiceLinks):
             self._streaming_service_links = links
         else:
-            raise ModelError("Argument must have _StreamingServiceLinks type")
+            raise ModelError("Argument must be of type _StreamingServiceLinks")
 
     def __str__(self):
         return f'{self.name} {self.year_of_birth} {self.group_members_number} {self._theme} {self._gender} ' \
