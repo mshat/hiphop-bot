@@ -1,31 +1,22 @@
 from typing import List
 from hiphop_bot.recommender_system.tree.artist_node import ArtistVisualNode
-from hiphop_bot.recommender_system.recommender_system import RecommenderSystem
-
-EXCLUDE = ['sex', 'group_type', 'older', 'younger']
-
-recommender_system = RecommenderSystem()
 
 
 def filter_artists(
-        artists: List[str] | List[ArtistVisualNode],
+        artists: List[ArtistVisualNode],
         group_type: str = 'any',
         sex: str = 'anysex',
         younger: int = None,
-        older: int = None,
-        exclude=None) -> List[ArtistVisualNode]:
-    exclude = exclude if exclude else []
+        older: int = None) -> List[ArtistVisualNode]:
     filtered = []
     for artist in artists:
-        if isinstance(artist, str):
-            artist = recommender_system.find_artist(artist)
-        if group_type != 'any' and artist.solo_duet_group != group_type and 'group_type' not in exclude:
+        if group_type != 'any' and artist.solo_duet_group != group_type:
             continue
-        if sex != 'anysex' and artist.gender != sex and 'sex' not in exclude:
+        if sex != 'anysex' and artist.gender != sex:
             continue
-        if not (older is None) and artist.age < older and 'older' not in exclude:
+        if not (older is None) and artist.age < older:
             continue
-        if not (younger is None) and artist.age > younger and 'younger' not in exclude:
+        if not (younger is None) and artist.age > younger:
             continue
         if artist not in filtered:
             filtered.append(artist)
