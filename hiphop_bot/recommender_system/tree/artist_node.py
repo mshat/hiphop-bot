@@ -14,33 +14,36 @@ class ArtistVisualNode(VisualNode):
         super().__init__(val=self._artist.name)
 
     @property
-    def name(self):
+    def artist(self) -> _Artist:
+        return self._artist
+
+    @property
+    def name(self) -> str:
         return self._artist.name
 
     @property
-    def year_of_birth(self):
+    def year_of_birth(self) -> int:
         return self._artist.year_of_birth
 
     @property
-    def group_members_number(self):
+    def group_members_number(self) -> int:
         return self._artist.group_members_number
 
     @property
-    def theme(self):
+    def theme(self) -> str:
         return self._artist.theme
 
     @property
-    def gender(self):
+    def gender(self) -> str:
         return self._artist.gender
 
     @property
-    def genre(self):
+    def genre(self) -> str:
         return self._artist.genre
 
     @property
-    def age(self):
-        current_year = datetime.now().year
-        return current_year - self.year_of_birth
+    def age(self) -> int:
+        return self._artist.age
 
     @property
     def solo_duet_group(self) -> str:
@@ -54,7 +57,7 @@ class ArtistVisualNode(VisualNode):
         raise ValueError('Group_members_number must be > 0')
 
     @property
-    def values_str(self):
+    def values_str(self) -> str:
         attributes = []
         attributes.append(self.genre.upper())
         male_female = self.gender
