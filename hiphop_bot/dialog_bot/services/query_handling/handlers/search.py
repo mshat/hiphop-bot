@@ -2,7 +2,6 @@ from abc import ABC
 from hiphop_bot.dialog_bot.services.query_handling.query_handler import QueryHandler
 from hiphop_bot.dialog_bot.services.query_solving.dialog import Dialog, DialogState
 from hiphop_bot.dialog_bot.services.query_solving.user import User
-from hiphop_bot.recommender_system import artist_filterer
 from hiphop_bot.dialog_bot.services.sentence_analyzer.query import Query
 from hiphop_bot.dialog_bot.config import DEBUG_QUERY_HANDLER
 from hiphop_bot.dialog_bot.services.query_handling.tag_condition import (AndTagCondition as And,
@@ -11,6 +10,10 @@ from hiphop_bot.dialog_bot.services.query_handling.tag_condition import (AndTagC
                                                                          AndMultiTagCondition as AndMulti,
                                                                          OrMultiTagCondition as OrMulti)
 from hiphop_bot.dialog_bot.services.query_handling.handling_tools import get_arguments_by_type
+
+
+class SearchQueryHandler(QueryHandler, ABC):
+    NEXT_STATE = DialogState.SEARCH
 
 
 class SearchBySexHandler(QueryHandler):
@@ -23,8 +26,8 @@ class SearchBySexHandler(QueryHandler):
     def handle(self, query: Query, user: User, dialog: Dialog):
         sex = get_arguments_by_type(query, 'SexArgument')[0]
         artists = self._recommender_system.get_all_artists()
-        artists = artist_filterer.filter_artists(artists, sex=sex.value.value)
-        dialog.search_result = artists
+        artists = self._recommender_system.filter_artists(artists, sex=sex.value.value)
+        dialog.found_artists = artists
         return DialogState.SEARCH
 
 
@@ -45,8 +48,8 @@ class SearchByAgeRangeHandler(QueryHandler):
             dialog.debug_message = f'артисты в возрасте от {from_age} до {to_age} лет'
 
             artists = self._recommender_system.get_all_artists()
-            artists = artist_filterer.filter_artists(artists, older=from_age, younger=to_age)
-            dialog.search_result = artists
+            artists = self._recommender_system.filter_artists(artists, older=from_age, younger=to_age)
+            dialog.found_artists = artists
         else:
             return DialogState.START
         return DialogState.SEARCH
@@ -70,12 +73,12 @@ class SearchByAgeHandler(QueryHandler):
 
         if 'younger' in query.query_tag_structure:
             dialog.debug_message = f'фильтр до {age} лет'
-            artists = artist_filterer.filter_artists(artists, younger=age)
+            artists = self._recommender_system.filter_artists(artists, younger=age)
         elif 'older' in query.query_tag_structure:
             dialog.debug_message = f'фильтр от {age} лет'
-            artists = artist_filterer.filter_artists(artists, older=age)
+            artists = self._recommender_system.filter_artists(artists, older=age)
 
-        dialog.search_result = artists
+        dialog.found_artists = artists
         return DialogState.SEARCH
 
 
@@ -89,7 +92,7 @@ class SearchByGenreHandler(QueryHandler):
     def handle(self, query: Query, user: User, dialog: Dialog):
         genre = get_arguments_by_type(query, 'GenreArgument')[0]
         artists = self._recommender_system.get_artists_by_genre(genre.value)
-        dialog.search_result = artists
+        dialog.found_artists = artists
         return DialogState.SEARCH
 
 
@@ -103,7 +106,7 @@ class SearchByArtistHandler(QueryHandler):
     def handle(self, query: Query, user: User, dialog: Dialog):
         artist = get_arguments_by_type(query, 'ArtistArgument')[0]
         artists = self._recommender_system.recommend_by_seed(artist.value, disliked_artists=user.dislikes)
-        dialog.search_result = artists.keys()
+        dialog.found_artists = artists
         return DialogState.SEARCH
 
 
@@ -124,8 +127,9 @@ class RecommendationHandler(QueryHandler):
                                     'мне нравится нойз мс\n' \
                                     '(Можете перечислить сразу несколько артистов)'
             return DialogState.START
-        dialog.search_result = self._recommender_system.recommend_by_likes(
-            user.dislikes, user.likes, DEBUG_QUERY_HANDLER).keys()
+        dialog.found_artists = self._recommender_system.recommend_by_likes(
+            user.likes, user.dislikes, DEBUG_QUERY_HANDLER
+        )
 
         dialog.output_message = f'Список лайков: {", ".join(user.likes)}'
         return DialogState.SEARCH
@@ -143,7 +147,7 @@ class ShowAllArtistsHandler(QueryHandler):
 
     def handle(self, query: Query, user: User, dialog: Dialog):
         artists = self._recommender_system.get_all_artists()
-        dialog.search_result = artists
+        dialog.found_artists = artists
         by_the_way_msg = '\nКстати, в запросах вы можете указывать имя артиста или ' \
                          'группы на русском языке, даже если тут он записан на английском'
         if dialog.output_message:

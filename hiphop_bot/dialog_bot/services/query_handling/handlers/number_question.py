@@ -2,7 +2,6 @@ from __future__ import annotations
 from hiphop_bot.dialog_bot.services.query_handling.query_handler import QueryHandler
 from hiphop_bot.dialog_bot.services.query_solving.dialog import Dialog, DialogState
 from hiphop_bot.dialog_bot.services.query_solving.user import User
-from hiphop_bot.recommender_system import artist_filterer
 from hiphop_bot.dialog_bot.services.sentence_analyzer.query import Query
 from hiphop_bot.dialog_bot.models.const import SexFilter
 from hiphop_bot.dialog_bot.services.query_handling.tag_condition import (AndTagCondition as And,
@@ -22,7 +21,7 @@ class NumberWithSexHandler(QueryHandler):
     def handle(self, query: Query, user: User, dialog: Dialog):
         sex = get_arguments_by_type(query, 'SexArgument')[0]
         artists = self._recommender_system.get_all_artists()
-        artists = artist_filterer.filter_artists(artists, sex=sex.value.value)
+        artists = self._recommender_system.filter_artists(artists, sex=sex.value.value)
         if sex.value == SexFilter.MALE:
             dialog.output_message = f'В базе {len(artists)} исполнителя мужского пола'
         else:
@@ -47,7 +46,7 @@ class NumberWithAgeRangeHandler(QueryHandler):
             dialog.debug_message = f'количество артистов от {from_age} до {to_age} лет'
 
             artists = self._recommender_system.get_all_artists()
-            artists = artist_filterer.filter_artists(artists, older=from_age, younger=to_age)
+            artists = self._recommender_system.filter_artists(artists, older=from_age, younger=to_age)
 
             dialog.output_message = f'Количество исполнителей от {from_age} до {to_age} лет: {len(artists)}'
         else:
@@ -69,10 +68,10 @@ class NumberWithAgeHandler(QueryHandler):
         artists = self._recommender_system.get_all_artists()
 
         if 'younger' in query.query_tag_structure:
-            artists = artist_filterer.filter_artists(artists, younger=age)
+            artists = self._recommender_system.filter_artists(artists, younger=age)
             dialog.output_message = f'Количество артистов до {age} лет: {len(artists)}'
         elif 'older' in query.query_tag_structure:
-            artists = artist_filterer.filter_artists(artists, older=age)
+            artists = self._recommender_system.filter_artists(artists, older=age)
             dialog.output_message = f'Количество артистов от {age} лет: {len(artists)}'
         return DialogState.NUMBER
 

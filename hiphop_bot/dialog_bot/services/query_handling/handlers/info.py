@@ -19,7 +19,7 @@ class InfoHandler(QueryHandler):
 
     def handle(self, query: Query, user: User, dialog: Dialog):
         artist_arg = get_arguments_by_type(query, 'ArtistArgument')[0]
-        artist = self._recommender_system.find_artist(artist_arg.value)
+        artist = self._recommender_system.get_artist_by_name(artist_arg.value)
         if not artist:
             dialog.output_message = 'Артист не найден :('
         else:
