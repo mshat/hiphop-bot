@@ -16,8 +16,8 @@ class ShowAllGenresHandler(QueryHandler):
 
     def handle(self, query: Query, user: User, dialog: Dialog):
         genres = set(GENRES.values())
-        dialog.output_genres = genres
-        dialog.output_message = 'Кстати, в фильтрах вы можете указывать название жанра на русском языке'
+        dialog.found_genres = genres
+        dialog.info = 'Кстати, в фильтрах вы можете указывать название жанра на русском языке'
         return DialogState.START
 
 

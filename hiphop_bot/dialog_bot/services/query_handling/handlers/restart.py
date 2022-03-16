@@ -13,5 +13,5 @@ class RestartHandler(QueryHandler):
         self.debug_msg = 'Рестарт'
 
     def handle(self, query: Query, user: User, dialog: Dialog):
-        dialog.output_message = 'Готово!'
+        dialog.info = 'Готово!'
         return DialogState.START

@@ -21,22 +21,22 @@ class InfoHandler(QueryHandler):
         artist_arg = get_arguments_by_type(query, 'ArtistArgument')[0]
         artist = self._recommender_system.get_artist_by_name(artist_arg.value)
         if not artist:
-            dialog.output_message = 'Артист не найден :('
+            dialog.info = 'Артист не найден :('
         else:
             sex = "мужской" if artist.gender == "male" else "женский"
             if artist.group_members_number == 1:
-                dialog.output_message = f'Артист {artist.name}'
+                dialog.info = f'Артист {artist.name}'
             elif artist.group_members_number == 2:
-                dialog.output_message = f'Дуэт {artist.name}'
+                dialog.info = f'Дуэт {artist.name}'
             else:
-                dialog.output_message = f'Группа {artist.name}'
+                dialog.info = f'Группа {artist.name}'
             if artist.group_members_number > 1:
-                dialog.output_message = f'Возраст фронтмэна: {artist.age}\n'
-                dialog.output_message += f'Пол фронтмэна: {sex}\n'
-                dialog.output_message += f'Количество участников: {artist.group_members_number}\n'
+                dialog.info = f'Возраст фронтмэна: {artist.age}\n'
+                dialog.info += f'Пол фронтмэна: {sex}\n'
+                dialog.info += f'Количество участников: {artist.group_members_number}\n'
             else:
-                dialog.output_message = f'Возраст: {artist.age}\n'
-                dialog.output_message += f'Пол: {sex}'
+                dialog.info = f'Возраст: {artist.age}\n'
+                dialog.info += f'Пол: {sex}'
 
         return DialogState.INFO
 
@@ -49,7 +49,7 @@ class InfoAboutBotHandler(QueryHandler):
 
     def handle(self, query: Query, user: User, dialog: Dialog):
         dialog.debug_message = 'Информация о боте'
-        dialog.output_message = 'Я - ваш помощник в мире русского хипхопа. Меня сделал Шатохин Максим, ИУ7-12М'
+        dialog.info = 'Я - ваш помощник в мире русского хипхопа. Меня сделал Шатохин Максим, ИУ7-12М'
         return DialogState.INFO
 
 
@@ -61,7 +61,7 @@ class InfoAboutBotOpportunitiesHandler(QueryHandler):
 
     def handle(self, query: Query, user: User, dialog: Dialog):
         dialog.debug_message = 'Возможности бота'
-        dialog.output_message = """Вы можете в свободной форме задавать мне вопросы или поручать команды.
+        dialog.info = """Вы можете в свободной форме задавать мне вопросы или поручать команды.
 
 Я могу:
 
@@ -94,7 +94,7 @@ class InfoAboutBotAlgorithmHandler(QueryHandler):
 
     def handle(self, query: Query, user: User, dialog: Dialog):
         dialog.debug_message = 'Алгоритм бота'
-        dialog.output_message = """Я работаю следующим образом:
+        dialog.info = """Я работаю следующим образом:
 Вначале, когда я получаю от вас текстовое сообщение, я удаляю из него лишние пробелы и запятые.
 Затем в полученном предложении происходит поиск аргументов. Я имею словари аргументов, таких как
 имена музыкантов, названия жанров и пол людей. В первую очередь я извлекаю из текста именно их.

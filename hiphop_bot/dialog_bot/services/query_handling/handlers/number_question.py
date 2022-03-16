@@ -23,9 +23,9 @@ class NumberWithSexHandler(QueryHandler):
         artists = self._recommender_system.get_all_artists()
         artists = self._recommender_system.filter_artists(artists, sex=sex.value.value)
         if sex.value == SexFilter.MALE:
-            dialog.output_message = f'В базе {len(artists)} исполнителя мужского пола'
+            dialog.info = f'В базе {len(artists)} исполнителя мужского пола'
         else:
-            dialog.output_message = f'В базе {len(artists)} исполнитель женского пола'
+            dialog.info = f'В базе {len(artists)} исполнитель женского пола'
         return DialogState.NUMBER
 
 
@@ -48,7 +48,7 @@ class NumberWithAgeRangeHandler(QueryHandler):
             artists = self._recommender_system.get_all_artists()
             artists = self._recommender_system.filter_artists(artists, older=from_age, younger=to_age)
 
-            dialog.output_message = f'Количество исполнителей от {from_age} до {to_age} лет: {len(artists)}'
+            dialog.info = f'Количество исполнителей от {from_age} до {to_age} лет: {len(artists)}'
         else:
             return dialog.state
         return DialogState.NUMBER
@@ -69,10 +69,10 @@ class NumberWithAgeHandler(QueryHandler):
 
         if 'younger' in query.query_tag_structure:
             artists = self._recommender_system.filter_artists(artists, younger=age)
-            dialog.output_message = f'Количество артистов до {age} лет: {len(artists)}'
+            dialog.info = f'Количество артистов до {age} лет: {len(artists)}'
         elif 'older' in query.query_tag_structure:
             artists = self._recommender_system.filter_artists(artists, older=age)
-            dialog.output_message = f'Количество артистов от {age} лет: {len(artists)}'
+            dialog.info = f'Количество артистов от {age} лет: {len(artists)}'
         return DialogState.NUMBER
 
 
@@ -84,5 +84,5 @@ class NumberHandler(QueryHandler):
 
     def handle(self, query: Query, user: User, dialog: Dialog):
         artists = self._recommender_system.get_all_artists()
-        dialog.output_message = f'В базе {len(artists)} исполнителя'
+        dialog.info = f'В базе {len(artists)} исполнителя'
         return DialogState.NUMBER

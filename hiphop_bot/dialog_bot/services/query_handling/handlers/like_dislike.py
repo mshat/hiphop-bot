@@ -20,7 +20,7 @@ class ExcludeDislikeHandler(QueryHandler):
         liked_artists = [artist.value for artist in liked_artists]
         for artist in liked_artists:
             user.add_like(artist)
-        dialog.output_message = f'Поставлен лайк: {", ".join(liked_artists)}'
+        dialog.info = f'Поставлен лайк: {", ".join(liked_artists)}'
         return DialogState.LIKE
 
 
@@ -44,7 +44,7 @@ class ExcludeLikeHandler(QueryHandler):
         disliked_artists = [artist.value for artist in disliked_artists]
         for artist in disliked_artists:
             user.add_dislike(artist)
-        dialog.output_message = f'Поставлен дизлайк: {", ".join(disliked_artists)}'
+        dialog.info = f'Поставлен дизлайк: {", ".join(disliked_artists)}'
         return DialogState.DISLIKE
 
 

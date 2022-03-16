@@ -122,7 +122,7 @@ class RecommendationHandler(QueryHandler):
 
     def handle(self, query: Query, user: User, dialog: Dialog):
         if len(user.likes) == 0:
-            dialog.output_message = 'Я еще не знаю ваших предпочтений!\n' \
+            dialog.info = 'Я еще не знаю ваших предпочтений!\n' \
                                     'Чтобы поставить лайк или дизлайк, скажите что-нибудь вроде:\n' \
                                     'мне нравится нойз мс\n' \
                                     '(Можете перечислить сразу несколько артистов)'
@@ -131,7 +131,7 @@ class RecommendationHandler(QueryHandler):
             user.likes, user.dislikes, DEBUG_QUERY_HANDLER
         )
 
-        dialog.output_message = f'Список лайков: {", ".join(user.likes)}'
+        dialog.info = f'Список лайков: {", ".join(user.likes)}'
         return DialogState.SEARCH
 
 
@@ -150,8 +150,8 @@ class ShowAllArtistsHandler(QueryHandler):
         dialog.found_artists = artists
         by_the_way_msg = '\nКстати, в запросах вы можете указывать имя артиста или ' \
                          'группы на русском языке, даже если тут он записан на английском'
-        if dialog.output_message:
-            dialog.output_message += by_the_way_msg
+        if dialog.info:
+            dialog.info += by_the_way_msg
         else:
-            dialog.output_message = by_the_way_msg
+            dialog.info = by_the_way_msg
         return DialogState.SEARCH

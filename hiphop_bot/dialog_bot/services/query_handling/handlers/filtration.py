@@ -166,5 +166,5 @@ class FilterOutputLenHandler(FilterQueryHandler):
 
         user.max_output_len = int(output_len.value)
 
-        dialog.output_message = f'Буду выводить по {output_len.value} строк'
+        dialog.info = f'Буду выводить по {output_len.value} строк'
         return self.NEXT_STATE
