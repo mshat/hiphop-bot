@@ -5,6 +5,7 @@ from hiphop_bot.dialog_bot.services.query_solving.dialog import Dialog, DialogSt
 from hiphop_bot.dialog_bot.services.query_solving.query_solver import QuerySolver
 from hiphop_bot.dialog_bot.services.sentence_analyzer.sentence_parser import SentenceParser
 from hiphop_bot.dialog_bot.services.query_solving.user import User
+from hiphop_bot.recommender_system.models.artist import _Artist
 
 
 class DataForTests:
@@ -214,9 +215,10 @@ class TestQuerySolving(unittest.TestCase):
             with self.subTest(i=sentence):
                 handler_path = handle_method_paths[expected_handler]
                 with unittest.mock.patch(f'{handler_path}.{expected_handler}.handle') as patched_handle_method:
-                    # сеттер состояния не даст установить состояние SEARCH, если пустой search_result
+                    # сеттер состояния не даст установить состояние SEARCH, если пустой результат поиска
                     if state == DialogState.SEARCH:
-                        self.query_solver.dialog.search_result = ['test']
+                        artist_mock = unittest.mock.Mock(spec=_Artist)
+                        self.query_solver.dialog.found_artists = [artist_mock]
                     self.query_solver.state = state
                     assert self.query_solver.state == state
 
@@ -273,9 +275,10 @@ class TestIntegrationStates(unittest.TestCase):
             for sentence in sentences_:
                 expected_handler = TEST_DATA.get_handler_class(sentence)
                 with self.subTest(i=expected_handler):
-                    # сеттер состояния не даст установить состояние SEARCH, если пустой search_result
+                    # сеттер состояния не даст установить состояние SEARCH, если пустой результат поиска
                     if state == DialogState.SEARCH:
-                        query_solver.dialog.search_result = ['test']
+                        artist_mock = unittest.mock.Mock(spec=_Artist)
+                        query_solver.dialog.found_artists = [artist_mock]
 
                     query_solver.state = state
                     assert query_solver.state == state
