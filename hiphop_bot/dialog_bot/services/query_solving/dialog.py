@@ -1,5 +1,6 @@
 import enum
 from typing import List
+from hiphop_bot.recommender_system.models.artist import _Artist  # Импортируется для аннотаций
 
 
 class DialogState(enum.Enum):
@@ -12,33 +13,48 @@ class DialogState(enum.Enum):
     INFO = 8
 
 
+class DialogTypeError(Exception): pass
+
+
 class Dialog:
     _state: DialogState
-    search_result: List | None
+    _found_artists: List[_Artist] | None
     output_message: str | None
     output_genres: List | None
     debug_message: str | None
 
     def __init__(self):
         self._state = DialogState.START
-        self.search_result = None
+        self._found_artists = None
         self.output_message = None
         self.output_genres = None
         self.debug_message = None
 
     def reset_search_result(self):
-        self.search_result = None
+        self._found_artists = None
 
     def reset_output(self):
         if self.state not in (DialogState.SEARCH, DialogState.FILTER):
-            self.search_result = None
+            self._found_artists = None
         self.output_message = None
         self.output_genres = None
         self.debug_message = None
 
     @property
+    def found_artists(self) -> List[_Artist] | None:
+        return self._found_artists
+
+    @found_artists.setter
+    def found_artists(self, artists: List[_Artist]):
+        # Второе условие - проверка на то, что каждый элемент списка имеет тип _Artist
+        if isinstance(artists, list) and set([isinstance(item, _Artist) for item in artists]) == {True}:
+            self._found_artists = artists
+        else:
+            raise DialogTypeError('Argument must be of type List[_Artist]')
+
+    @property
     def search_result_found(self) -> bool:
-        if not (self.search_result is None):
+        if not (self.found_artists is None):
             return True
         else:
             return False
