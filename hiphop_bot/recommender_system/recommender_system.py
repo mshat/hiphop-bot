@@ -9,7 +9,7 @@ from hiphop_bot.recommender_system.proximity_measures import (
     normalize_proximities
 )
 from hiphop_bot.recommender_system.tree.tree_tools import get_leafs_values
-from hiphop_bot.recommender_system.tree.artist_node import ArtistVisualNode
+from hiphop_bot.recommender_system.tree.artist_node import ArtistNode
 from hiphop_bot.recommender_system.singleton import Singleton
 from hiphop_bot.recommender_system.config import MIN_SIMILARITY_PROXIMITY
 from hiphop_bot.recommender_system.artist_filterer import filter_artists
@@ -29,7 +29,7 @@ class RecommenderSystem(metaclass=Singleton):
         min_proximity = calc_min_general_proximity(self._artists_pairs_proximity)
         normalize_proximities(self._artists_pairs_proximity, min_proximity, max_proximity)
 
-    def get_artist_by_name(self, name: str) -> ArtistVisualNode:
+    def get_artist_by_name(self, name: str) -> ArtistNode:
         artist = Node.get_child_by_name(self._tree, name)
         if not artist:
             raise RecommenderSystemArgumentError(f'Артиста "{name}" нет в базе')
@@ -37,7 +37,7 @@ class RecommenderSystem(metaclass=Singleton):
 
     def _get_recommendations(
             self,
-            seed_object: ArtistVisualNode) -> OrderedDict[str, float]:
+            seed_object: ArtistNode) -> OrderedDict[str, float]:
         artist_pairs: Dict[str, float] = self._artists_pairs_proximity[seed_object.name]
 
         # pycharm подсвечивает ошибку типов, но ошибки нет. Sorted возвращает List[Tuple[str, float]], а не List[str]
@@ -50,10 +50,10 @@ class RecommenderSystem(metaclass=Singleton):
                     recommendations[artist_name] = proximity
         return recommendations
 
-    def recommend_by_seed(self, seed_artist: str, disliked_artists: List[str], debug=False) -> List[ArtistVisualNode]:
+    def recommend_by_seed(self, seed_artist: str, disliked_artists: List[str], debug=False) -> List[ArtistNode]:
         seed = self.get_artist_by_name(seed_artist)
 
-        recommendations_by_artist: List[ArtistVisualNode] = []
+        recommendations_by_artist: List[ArtistNode] = []
         recommendations = self._get_recommendations(seed)
 
         for artist_name, proximity in recommendations.items():
@@ -65,13 +65,13 @@ class RecommenderSystem(metaclass=Singleton):
         return recommendations_by_artist
 
     def recommend_by_likes(self, liked_artists: List[str], disliked_artists: List[str], debug=False)\
-            -> List[ArtistVisualNode]:
-        artists_recommendations: Dict[str, List[ArtistVisualNode]] = OrderedDict()
+            -> List[ArtistNode]:
+        artists_recommendations: Dict[str, List[ArtistNode]] = OrderedDict()
         for artist_name in liked_artists:
-            recommendations_: List[ArtistVisualNode] = self.recommend_by_seed(artist_name, disliked_artists, debug)
+            recommendations_: List[ArtistNode] = self.recommend_by_seed(artist_name, disliked_artists, debug)
             artists_recommendations[artist_name] = list(recommendations_)
 
-        recommendations_by_likes: List[ArtistVisualNode] = []
+        recommendations_by_likes: List[ArtistNode] = []
         max_recommendation_len = max(map(len, artists_recommendations.values()))
         for i in range(max_recommendation_len):
             for artist, recommended_artists in artists_recommendations.items():
@@ -84,12 +84,12 @@ class RecommenderSystem(metaclass=Singleton):
                     recommendations_by_likes.append(recommended_artist)
         return recommendations_by_likes
 
-    def get_all_artists(self) -> List[ArtistVisualNode]:
+    def get_all_artists(self) -> List[ArtistNode]:
         artists = []
         get_leafs_values(self._tree, artists)  # TODO возможно, это можео сделать мтеодами класса Node
         return artists
 
-    def get_artists_by_genre(self, genre: str) -> List[ArtistVisualNode]:
+    def get_artists_by_genre(self, genre: str) -> List[ArtistNode]:
         artists = []
         genre_node = Node.get_child_by_name(self._tree, genre)
         if genre_node:
@@ -107,11 +107,11 @@ class RecommenderSystem(metaclass=Singleton):
 
     def filter_artists(
             self,
-            artists: List[ArtistVisualNode],
+            artists: List[ArtistNode],
             group_type: str = 'any',
             sex: str = 'anysex',
             younger: int = None,
-            older: int = None) -> List[ArtistVisualNode]:
+            older: int = None) -> List[ArtistNode]:
         return filter_artists(artists, group_type, sex, younger, older)
 
 

@@ -1,18 +1,18 @@
 from hiphop_bot.recommender_system.pow_distance import calc_distance_in_pow
-from hiphop_bot.recommender_system.tree.artist_node import ArtistVisualNode
+from hiphop_bot.recommender_system.tree.artist_node import ArtistNode
 from hiphop_bot.recommender_system.tree.node import Node
 from hiphop_bot.recommender_system.tree.tree_tools import (
     calc_distance_between_nodes, get_leafs_values, calc_max_distance_between_nodes_optimized)
 from hiphop_bot.recommender_system.tree.tree_tools import calc_distance_between_all_nodes
 
 
-def calc_euclidean_measure(leaf_1: ArtistVisualNode, leaf_2: ArtistVisualNode):
+def calc_euclidean_measure(leaf_1: ArtistNode, leaf_2: ArtistNode):
     attributes1 = [val for name, val in leaf_1.countable_attributes.items() if name not in ('name', 'theme')]
     attributes2 = [val for name, val in leaf_2.countable_attributes.items() if name not in ('name', 'theme')]
     return calc_distance_in_pow(attributes1, attributes2, 2)
 
 
-def calc_manhattan_measure(leaf_1: ArtistVisualNode, leaf_2: ArtistVisualNode):
+def calc_manhattan_measure(leaf_1: ArtistNode, leaf_2: ArtistNode):
     attributes1 = [val for name, val in leaf_1.countable_attributes.items() if name in ('name', 'theme')]
     attributes2 = [val for name, val in leaf_2.countable_attributes.items() if name in ('name', 'theme')]
     return calc_distance_in_pow(attributes1, attributes2, 1)
@@ -20,8 +20,8 @@ def calc_manhattan_measure(leaf_1: ArtistVisualNode, leaf_2: ArtistVisualNode):
 
 def calc_tree_distance_measure(
         tree: Node,
-        leaf_1: ArtistVisualNode,
-        leaf_2: ArtistVisualNode,
+        leaf_1: ArtistNode,
+        leaf_2: ArtistNode,
         max_distance_between_nodes: int
 ):
     return calc_distance_between_nodes(tree, leaf_1.name, leaf_2.name) / max_distance_between_nodes
@@ -44,8 +44,8 @@ def calc_min_general_proximity(node_pairs_proximity: dict) -> float:
 
 def generalizing_proximity_measure(
         tree: Node,
-        leaf_1: ArtistVisualNode,
-        leaf_2: ArtistVisualNode,
+        leaf_1: ArtistNode,
+        leaf_2: ArtistNode,
         max_distance_between_nodes: int,
         min_general_proximity: float = None,
         max_general_proximity: float = None) -> float:

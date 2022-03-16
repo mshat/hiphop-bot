@@ -1,6 +1,6 @@
 from typing import Dict
-from hiphop_bot.recommender_system.tree.visual_node import VisualNode
-from hiphop_bot.recommender_system.tree.artist_node import ArtistVisualNode
+from hiphop_bot.recommender_system.tree.node import Node
+from hiphop_bot.recommender_system.tree.artist_node import ArtistNode
 from hiphop_bot.recommender_system.models.artist import ArtistModel
 from hiphop_bot.recommender_system.models.genre_tree import GenreTreeModel
 
@@ -24,12 +24,12 @@ def create_node(node_name, children_dict):
         if artists:
             leafs = []
             for artist in artists:
-                leafs.append(ArtistVisualNode(artist))
+                leafs.append(ArtistNode(artist))
             return leafs
         else:
-            node = VisualNode(val=node_name)
+            node = Node(val=node_name)
     else:
-        node = VisualNode(val=node_name)
+        node = Node(val=node_name)
     for child_name in children_dict.keys():
         if children_dict:
             res = create_node(child_name, children_dict[child_name])
@@ -41,6 +41,6 @@ def create_node(node_name, children_dict):
     return node
 
 
-def load_tree() -> VisualNode:
+def load_tree() -> Node:
     genres_tree: Dict[str, Dict] = load_genre_tree()
     return create_node('hiphop', genres_tree['hiphop'])

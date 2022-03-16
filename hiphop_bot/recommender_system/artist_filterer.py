@@ -1,13 +1,13 @@
 from typing import List
-from hiphop_bot.recommender_system.tree.artist_node import ArtistVisualNode
+from hiphop_bot.recommender_system.tree.artist_node import ArtistNode
 
 
 def filter_artists(
-        artists: List[ArtistVisualNode],
+        artists: List[ArtistNode],
         group_type: str = 'any',
         sex: str = 'anysex',
         younger: int = None,
-        older: int = None) -> List[ArtistVisualNode]:
+        older: int = None) -> List[ArtistNode]:
     filtered = []
     for artist in artists:
         if group_type != 'any' and artist.solo_duet_group != group_type:

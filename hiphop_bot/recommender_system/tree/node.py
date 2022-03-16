@@ -1,5 +1,5 @@
 class Node:
-    def __init__(self, val: int = 0, children: list = None):
+    def __init__(self, val: int | str = 0, children: list = None):
         self.value = val
         self.children = children if children else []
 
