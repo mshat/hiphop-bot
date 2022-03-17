@@ -276,7 +276,7 @@ class TestIntegrationStates(unittest.TestCase):
                 expected_handler = TEST_DATA.get_handler_class(sentence)
                 with self.subTest(i=expected_handler):
                     # сеттер состояния не даст установить состояние SEARCH, если пустой результат поиска
-                    if state == DialogState.SEARCH:
+                    if state == DialogState.SEARCH or state == DialogState.FILTER:
                         artist_mock = unittest.mock.Mock(spec=_Artist)
                         query_solver.dialog.found_artists = [artist_mock]
 
@@ -311,10 +311,10 @@ class TestIntegrationStates(unittest.TestCase):
     def test_next_states_search(self):
         """ Проверяет в какие состояния можно перейти из состояния search"""
         allowed = [
-            # "оставь исполнителей мужского пола",
-            # "убери моргенштерна из списка дизлайков",
-            # "сколько исполнителей в базе?",
-            # "информация о касте",
+            "оставь исполнителей мужского пола",
+            "убери моргенштерна из списка дизлайков",
+            "сколько исполнителей в базе?",
+            "информация о касте",
             "артисты мужчины",
             "начало",
         ]
@@ -326,14 +326,13 @@ class TestIntegrationStates(unittest.TestCase):
         """ Проверяет в какие состояния можно перейти из состояния filter"""
         allowed = [
             "оставь исполнителей мужского пола",
-            "начало"
-        ]
-        disallowed = [
+            "начало",
             "убери моргенштерна из списка дизлайков",
             "сколько исполнителей в базе?",
             "информация о касте",
             "артисты мужчины",
         ]
+        disallowed = []
 
         self.check_next_states(DialogState.FILTER, allowed, disallowed)
 

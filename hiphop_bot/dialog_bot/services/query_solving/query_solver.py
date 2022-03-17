@@ -39,7 +39,7 @@ class QuerySolver:
             self.dialog.reset_search_result()
 
         # Если по запросу поиска ничего не было найдено, состояние диалога сбрасыватся до START, тк фильтровать нечего
-        if val == DialogState.SEARCH and not self.dialog.search_result_found:
+        if val == DialogState.SEARCH and not self.dialog.artists_were_found:
             self.dialog.state = DialogState.START
         debug_print(DEBUG_QUERY_HANDLER, f'[QUERY_HANDLER] new dialog state: {self.dialog.state}')
 
@@ -122,7 +122,6 @@ class QuerySolver:
             filter_handlers.FilterByAgeIncludeHandler(),
             filter_handlers.FilterByMembersCountHandler(),
             filter_handlers.FilterOutputLenHandler(),
-
             filter_handlers.RemoveResultLenFilterHandler(),
             filter_handlers.RemoveFiltersHandler(),
         ]
@@ -148,36 +147,35 @@ class QuerySolver:
                 self.state = next_state
                 return QuerySolvingState.SOLVED
 
-        if self.state != DialogState.FILTER:
-            # like / dislike,
-            next_state = self.match_like_dislike_patterns(query)
-            if next_state:
-                self.state = next_state
-                return QuerySolvingState.SOLVED
+        # like / dislike,
+        next_state = self.match_like_dislike_patterns(query)
+        if next_state:
+            self.state = next_state
+            return QuerySolvingState.SOLVED
 
-            # number query
-            next_state = self.match_number_query_patterns(query)
-            if next_state:
-                self.state = next_state
-                return QuerySolvingState.SOLVED
+        # number query
+        next_state = self.match_number_query_patterns(query)
+        if next_state:
+            self.state = next_state
+            return QuerySolvingState.SOLVED
 
-            # search
-            next_state = self.match_search_patterns(query)
-            if next_state:
-                self.state = next_state
-                return QuerySolvingState.SOLVED
+        # search
+        next_state = self.match_search_patterns(query)
+        if next_state:
+            self.state = next_state
+            return QuerySolvingState.SOLVED
 
-            # set output len
-            next_state = self.match_patterns([settings_handlers.SetOutputLenHandler()], query)
-            if next_state:
-                self.state = next_state
-                return QuerySolvingState.SOLVED
+        # set output len
+        next_state = self.match_patterns([settings_handlers.SetOutputLenHandler()], query)
+        if next_state:
+            self.state = next_state
+            return QuerySolvingState.SOLVED
 
-            # info
-            next_state = self.match_info_patterns(query)
-            if next_state:
-                self.state = next_state
-                return QuerySolvingState.SOLVED
+        # info
+        next_state = self.match_info_patterns(query)
+        if next_state:
+            self.state = next_state
+            return QuerySolvingState.SOLVED
 
         error_print(f'[UNRECOGNIZED SENTENCE] {query.arguments} {query.keywords} {query.words}')
         return QuerySolvingState.UNSOLVED

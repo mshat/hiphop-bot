@@ -53,7 +53,7 @@ class Dialog:
             raise DialogTypeError('Argument must be of type List[_Artist]')
 
     @property
-    def search_result_found(self) -> bool:
+    def artists_were_found(self) -> bool:
         if not (self.found_artists is None):
             return True
         else:
