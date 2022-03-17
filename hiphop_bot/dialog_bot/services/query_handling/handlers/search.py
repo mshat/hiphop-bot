@@ -92,7 +92,10 @@ class SearchByGenreHandler(QueryHandler):
     def handle(self, query: Query, user: User, dialog: Dialog):
         genre = get_arguments_by_type(query, 'GenreArgument')[0]
         artists = self._recommender_system.get_artists_by_genre(genre.value)
-        dialog.found_artists = artists
+        if artists:
+            dialog.found_artists = artists
+        else:
+            dialog.info = 'Артистов в этом жанре нет в базе :('
         return DialogState.SEARCH
 
 
