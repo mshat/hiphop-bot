@@ -1,10 +1,10 @@
 import os
 import telebot
 from typing import Dict
+from dotenv import dotenv_values
 from hiphop_bot.dialog_bot.services.query_solving.query_solver import QuerySolvingState
 from hiphop_bot.dialog_bot.controller.controller import UserInterfaceController
 from hiphop_bot.dialog_bot.models.tg_user import TelegramUserModel
-from dotenv import dotenv_values
 from hiphop_bot.dialog_bot.view.telegram_view import TelegramView
 from hiphop_bot.dialog_bot.models.tg_user import _TelegramUser  # Импортирутеся для аннотаций
 from hiphop_bot.dialog_bot.models.user_query_history import UserQueryHistoryModel
@@ -46,11 +46,13 @@ class TgBot:
             user_view.view_hello_message()
             user_view.view_opportunities_message()
             # добавление записи в историю запросов юзера
-            self.user_query_history_model.add_record(tg_user, QuerySolvingState.SOLVED, message.text)
+            self.user_query_history_model.add_record(tg_user, QuerySolvingState.SOLVED, message.text, None)
         elif message.text == '':
             user_view.view_blank_query_answer()
         else:
             query_solving_res = user_controller.solve_query(message.text)
+            matched_handler_name = user_controller.dialog.matched_handler_name
+
             user_view.view(query_solving_res, user_controller.dialog, user_controller.user)
 
             if query_solving_res == QuerySolvingState.UNSOLVED:
@@ -61,7 +63,7 @@ class TgBot:
                 )
 
             # добавление записи в историю запросов юзера
-            self.user_query_history_model.add_record(tg_user, query_solving_res, message.text)
+            self.user_query_history_model.add_record(tg_user, query_solving_res, message.text, matched_handler_name)
 
     def _get_tg_user(self, from_user: telebot.types.User) -> _TelegramUser:
         # create new db record if user is new
