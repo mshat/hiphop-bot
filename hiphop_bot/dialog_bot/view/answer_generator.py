@@ -36,18 +36,6 @@ class AnswerGenerator:
             output_len = 100000
         return output[:output_len]
 
-    def _generate_genres_str(self) -> str:
-        if not self.dialog.found_genres:
-            return 'Ничего не найдено'
-        else:
-            out_msg = ''
-            genres = self.dialog.found_genres
-            genres = self.trunc_output(genres)
-            if genres:
-                for genre in genres:
-                    out_msg += f'{genre}\n'
-            return out_msg
-
     def _generate_info_message_str(self) -> str:
         if not self.dialog.info:
             return 'Я не смог найти ответ'
@@ -106,9 +94,6 @@ class AnswerGenerator:
         if self.dialog.found_artists is not None:
             res_str = self._generate_found_artists_str()
             output.artists += res_str
-
-        if self.dialog.found_genres is not None:
-            output.genres += self._generate_genres_str()
 
         if self.dialog.info is not None:
             output.info += self._generate_info_message_str()

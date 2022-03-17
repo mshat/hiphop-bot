@@ -19,14 +19,12 @@ class DialogTypeError(Exception): pass
 class Dialog:
     _state: DialogState
     _found_artists: List[_Artist] | None
-    found_genres: List[str] | None
     info: str | None
     debug_message: str | None
 
     def __init__(self):
         self._state = DialogState.START
         self._found_artists = None
-        self.found_genres = None
         self.info = None
         self.debug_message = None
 
@@ -36,7 +34,6 @@ class Dialog:
     def reset_output(self):
         if self.state not in (DialogState.SEARCH, DialogState.FILTER):
             self._found_artists = None
-        self.found_genres = None
         self.info = None
         self.debug_message = None
 
