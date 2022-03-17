@@ -56,10 +56,10 @@ class QuerySolver:
                 f"MATCH_PATTERN {handler.debug_msg} [{str(handler.pattern).replace('  ', '')}] "
                 f"TO [{query.raw_sentence}] RESULT {match_res}"
             )
-
             if match_res:
                 next_state = handler.handle(query, self._user, self.dialog)
                 handler.remove_used_keywords_and_args(query)
+                self.dialog.matched_handler_name = handler.__class__.__name__
                 return next_state
         return None
 
@@ -89,6 +89,7 @@ class QuerySolver:
         search_handler = search_handlers.SearchByArtistHandler()
         if search_handler.match_pattern(query):
             next_state = search_handler.handle(query, self._user, self.dialog)
+            self.dialog.matched_handler_name = search_handler.__class__.__name__
             search_handler.remove_used_keywords_and_args(query)
             self.solve_multi_filters(query)
             return next_state
