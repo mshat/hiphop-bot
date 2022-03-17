@@ -23,7 +23,7 @@
 Запрос: Рекомендация по артисту                        | Паттерн: Аргументы: ArtistArgument: 1    | Условие: search OR like/how OR recommend OR show
 Запрос: Рекомендация по интересам                      | Паттерн: Аргументы:                      | Условие: ((search OR recommend OR show OR artist) AND (to me OR like)) OR (to me AND like)
 Запрос: Вывести всех артистов в базе                   | Паттерн: Аргументы:                      | Условие: (all OR like/how) AND NOT genre AND (include OR artist OR show)
-Запрос: Вывести все жанры в базе                       | Паттерн: Аргументы:                      | Условие: (all OR like/how) AND (include OR genre OR show)
+Запрос: Вывести все жанры в базе                       | Паттерн: Аргументы:                      | Условие: genre AND (all OR like/how OR tree)
 Запрос: Изменить количество выводимых результатов      | Паттерн: Аргументы: NumArgument: 1       | Условие: (show OR restrict) OR (po AND (result OR artist OR line)) AND (NOT range AND NOT older AND NOT younger)
 Запрос: Информация об артисте                          | Паттерн: Аргументы: ArtistArgument: 1    | Условие: talk about OR about OR info
 Запрос: Информация о боте                              | Паттерн: Аргументы:                      | Условие: you OR who AND NOT opportunities
