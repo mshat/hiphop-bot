@@ -29,3 +29,15 @@ class SetOutputLenHandler(QueryHandler):
 
         dialog.info = f'Буду выводить по {output_len.value} строк'
         return DialogState.START
+
+
+class RemoveFiltersHandler(QueryHandler):
+    def __init__(self):
+        super().__init__()
+        self.conditions = [And('exclude'), AndMulti([Or('filter'), Or('restrict')])]
+        self.debug_msg = 'Удалить все фильтры'
+
+    def handle(self, query: Query, user: User, dialog: Dialog):
+        user.set_all_filters_to_default()
+        dialog.info = f'Все фильтры удалены'
+        return DialogState.START

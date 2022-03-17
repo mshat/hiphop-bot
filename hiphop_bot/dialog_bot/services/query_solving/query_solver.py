@@ -104,6 +104,13 @@ class QuerySolver:
         ]
         return self.match_patterns(handlers_, query)
 
+    def match_settings_patterns(self, query: Query) -> DialogState | None:
+        handlers_ = [
+            settings_handlers.SetOutputLenHandler(),
+            settings_handlers.RemoveFiltersHandler(),
+        ]
+        return self.match_patterns(handlers_, query)
+
     def match_info_patterns(self, query: Query) -> DialogState | None:
         handlers_ = [
             info_handlers.InfoHandler(),
@@ -165,8 +172,8 @@ class QuerySolver:
             self.state = next_state
             return QuerySolvingState.SOLVED
 
-        # set output len
-        next_state = self.match_patterns([settings_handlers.SetOutputLenHandler()], query)
+        # settings
+        next_state = self.match_settings_patterns(query)
         if next_state:
             self.state = next_state
             return QuerySolvingState.SOLVED
