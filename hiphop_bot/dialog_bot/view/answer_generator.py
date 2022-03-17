@@ -1,4 +1,4 @@
-from typing import Iterable, List, Tuple
+from typing import Iterable, List
 from hiphop_bot.dialog_bot.config import DEBUG_QUERY_HANDLER
 from hiphop_bot.dialog_bot.services.query_solving.dialog import Dialog
 from hiphop_bot.dialog_bot.services.query_solving.user import User
@@ -98,5 +98,5 @@ class AnswerGenerator:
         if self.dialog.info is not None:
             output.info += self._generate_info_message_str()
 
-        self.dialog.reset_output()
+        self.dialog.reset()
         return output
