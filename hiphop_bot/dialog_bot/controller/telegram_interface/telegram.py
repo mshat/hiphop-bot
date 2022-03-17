@@ -7,6 +7,7 @@ from hiphop_bot.dialog_bot.models.tg_user import TelegramUserModel
 from dotenv import dotenv_values
 from hiphop_bot.dialog_bot.view.telegram_view import TelegramView
 from hiphop_bot.dialog_bot.models.tg_user import _TelegramUser  # Импортирутеся для аннотаций
+from hiphop_bot.dialog_bot.models.user_query_history import UserQueryHistoryModel
 from hiphop_bot.dialog_bot.services.tools.debug_print import debug_print
 from hiphop_bot.dialog_bot.config import DEBUG_TG_INTERFACE
 
@@ -24,6 +25,7 @@ class TgBot:
     tg_user_model = TelegramUserModel()
     user_interface_controllers: Dict[int, UserInterfaceController] = {}
     user_views: Dict[int, TelegramView] = {}
+    user_query_history_model = UserQueryHistoryModel()
 
     def __init__(self):
         @self.bot.message_handler(content_types=['text'])
@@ -31,7 +33,8 @@ class TgBot:
             self._solve_message(message)
 
     def _solve_message(self, message: telebot.types.Message):
-        user_controller = self._get_controller(message.from_user)
+        tg_user = self._get_tg_user(message.from_user)
+        user_controller = self._get_controller(tg_user)
         user_view = self._get_view(message.from_user)
 
         debug_print(
@@ -42,6 +45,8 @@ class TgBot:
         if message.text == "/start":
             user_view.view_hello_message()
             user_view.view_opportunities_message()
+            # добавление записи в историю запросов юзера
+            self.user_query_history_model.add_record(tg_user, QuerySolvingState.SOLVED, message.text)
         elif message.text == '':
             user_view.view_blank_query_answer()
         else:
@@ -55,6 +60,9 @@ class TgBot:
                     f'{message.from_user.full_name} {message.from_user.id} ({message.text}) was not recognized'
                 )
 
+            # добавление записи в историю запросов юзера
+            self.user_query_history_model.add_record(tg_user, query_solving_res, message.text)
+
     def _get_tg_user(self, from_user: telebot.types.User) -> _TelegramUser:
         # create new db record if user is new
         tg_user = self.tg_user_model.get_by_user_id(from_user.id)
@@ -63,8 +71,7 @@ class TgBot:
             tg_user = self.tg_user_model.get_by_user_id(from_user.id)
         return tg_user
 
-    def _get_controller(self, from_user: telebot.types.User) -> UserInterfaceController:
-        tg_user = self._get_tg_user(from_user)
+    def _get_controller(self, tg_user: _TelegramUser) -> UserInterfaceController:
         if tg_user.user_id in self.user_interface_controllers:
             controller = self.user_interface_controllers[tg_user.user_id]
         else:
