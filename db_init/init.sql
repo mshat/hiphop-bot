@@ -161,3 +161,21 @@ CREATE TABLE tg_user (
     last_name VARCHAR(64),
     username VARCHAR(32)
 );
+
+--table query_solving_state
+CREATE TABLE query_solving_state (
+    id SERIAL PRIMARY KEY,
+    state VARCHAR(8)
+);
+
+INSERT INTO query_solving_state VALUES
+    (0, 'solved'),
+    (1, 'unsolved');
+
+--table user_history
+CREATE TABLE user_history (
+    id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES tg_user (id),
+    query_solving_state_id INT REFERENCES query_solving_state (id),
+    query VARCHAR(200),
+);

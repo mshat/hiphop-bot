@@ -59,10 +59,12 @@ class Model(ABC):
             cursor.close()
             connection.put_connection()
             return added_records_number
+
         except errors.UndefinedColumn as e:
             error_print(f'[db UndefinedColumn] {e}')
             return 0
         except errors.UniqueViolation as e:
+            error_print(f'[db] attempt to add an existing user to the database')
             raise ModelUniqueViolationError(e)
         except Exception as e:
             error_print(f'[db unknown error] {e}')

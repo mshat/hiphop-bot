@@ -3,7 +3,7 @@ from hiphop_bot.dialog_bot.services.query_handling.query_handler import QueryHan
 from hiphop_bot.dialog_bot.services.query_solving.dialog import Dialog, DialogState
 from hiphop_bot.dialog_bot.services.query_solving.user import User
 from hiphop_bot.dialog_bot.services.sentence_analyzer.query import Query
-from hiphop_bot.dialog_bot.config import DEBUG_QUERY_HANDLER
+from hiphop_bot.dialog_bot.config import DEBUG_RECOMMENDER_SYSTEM
 from hiphop_bot.dialog_bot.services.query_handling.tag_condition import (AndTagCondition as And,
                                                                          OrTagCondition as Or,
                                                                          AndNotTagCondition as AndNot,
@@ -131,7 +131,7 @@ class RecommendationHandler(QueryHandler):
                                     '(Можете перечислить сразу несколько артистов)'
             return DialogState.START
         dialog.found_artists = self._recommender_system.recommend_by_likes(
-            user.likes, user.dislikes, DEBUG_QUERY_HANDLER
+            user.likes, user.dislikes, DEBUG_RECOMMENDER_SYSTEM
         )
 
         dialog.info = f'Список лайков: {", ".join(user.likes)}'

@@ -17,8 +17,8 @@ from hiphop_bot.dialog_bot.config import DEBUG_QUERY_HANDLER, DEBUG_QUERY_HANDLE
 
 
 class QuerySolvingState(Enum):
-    SOLVED = 1
-    UNSOLVED = 2
+    SOLVED = 'solved'
+    UNSOLVED = 'unsolved'
 
 
 class QuerySolver:
