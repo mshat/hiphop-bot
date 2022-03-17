@@ -115,3 +115,4 @@ class RecommenderSystem(metaclass=Singleton):
         return filter_artists(artists, group_type, sex, younger, older)
 
 
+
