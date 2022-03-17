@@ -12,7 +12,7 @@ class _HistoryItem:
         self.query_solving_state = query_solving_state
 
     def __str__(self):
-        return f'{self.raw_query} {self.query_solving_state}'
+        return f'Запрос: [{self.raw_query}] Результат распознавания {self.query_solving_state}'
 
 
 class _UserQueryHistory:
@@ -84,3 +84,16 @@ class UserQueryHistoryModel(Model):
             debug_print(DEBUG_MODEL, f'[MODEL] Добавил {added_records_number} запись в таблицу {self._table_name}')
         except ModelUniqueViolationError:
             pass
+
+    def get_all_unresolved_queries(self) -> List[_UserQueryHistory]:
+        query = self._get_all_query + "where qss.state = 'unsolved'"
+        objects = self._select_model_objects(query)
+        return objects
+
+
+if __name__ == '__main__':
+    model = UserQueryHistoryModel()
+    # вывести все нераспознанные запросы
+    unresolved = model.get_all_unresolved_queries()
+    for item in unresolved:
+        print(f'{item.tg_user.full_name} {item.tg_user.user_id} {item.history}')
