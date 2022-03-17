@@ -33,4 +33,8 @@ class PatternMatcher:
 
         if match_res is None:
             match_res = True
+        if match_res:
+            match_res = True
+        if not match_res:
+            match_res = False
         return match_res, all_used_words

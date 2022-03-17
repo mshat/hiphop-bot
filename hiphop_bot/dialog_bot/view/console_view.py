@@ -1,8 +1,5 @@
 from hiphop_bot.dialog_bot.view.base_view import View
-from hiphop_bot.dialog_bot.services.query_solving.user import User
 from hiphop_bot.dialog_bot.services.query_solving.dialog import Dialog
-from hiphop_bot.dialog_bot.view.output_message import Output
-from hiphop_bot.dialog_bot.services.query_solving.query_solver import QuerySolvingState
 from hiphop_bot.dialog_bot.services.query_solving.dialog import DialogState
 
 
@@ -18,27 +15,18 @@ class ConsoleView(View):
         input_prompt = 'ФИЛЬТР -> ' if dialog.state == DialogState.FILTER else 'ЗАПРОС -> '
         return input_prompt
 
-    def view(self, query_solving_res: QuerySolvingState, dialog: Dialog, user: User):
-        output: Output = self._generate_answer(dialog=dialog, user=user)
-
-        if query_solving_res == QuerySolvingState.SOLVED:
-            if output.debug_msg:
-                print(output.debug_msg, end='')
-            if output.artists:
-                print(output.artists, end='')
-            if output.genres:
-                print(output.genres, end='')
-            if output.info:
-                print(output.info, end='')
-            if output.additional_msg:
-                print(output.additional_msg, end='')
-        elif query_solving_res == QuerySolvingState.UNSOLVED:
-            print(self._unresolved_answer)
+    def _send_message(self, msg: str):
+        msg = msg.strip()
+        if len(msg) > 1 and msg[-1] == '\n':
+            print(msg, end='')
         else:
-            raise Exception('Unknown query_solver result')
+            print(msg)
+
+    def send_blank_mgs(self):
+        self._send_message('')
 
     def view_hello_message(self):
-        print(self._hello_message)
+        self._send_message(self._hello_message)
 
     def view_blank_query_answer(self):
-        print(self._blank_query_answer)
+        self._send_message(self._blank_query_answer)

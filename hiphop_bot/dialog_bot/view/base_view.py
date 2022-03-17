@@ -8,9 +8,12 @@ from hiphop_bot.dialog_bot.services.query_solving.query_solver import QuerySolvi
 
 class View(ABC):
     _hello_message = (
-        "Вас приветствует разговорный бот.\n"
-        "Я кое-что знаю о русском хип-хопе и готов ответить на ваши вопросы по этой теме.\n"
-        "Вы можете узнать о моих возможностях, спросив меня об этом.\n"
+        "Вас приветствует HipHopBot!\n\n"
+        "Я кое-что знаю о русском хип-хопе и готов ответить на ваши вопросы по этой теме.\n\n"
+        "Кстати, я не совсем обычный телеграм-бот. У меня нет заранее заданного списка команд.\n"
+        "Я буду пытаться понимать вашу естественную речь, например, просьбу "
+        "'порекомендуй артистов, которые мне понравятся' или 'покажи соло артистов типа касты'.\n"
+        "В разговоре со мной не обязательно соблюдать правила пунктуации и писать имена артистов с большой буквы.\n"
     )
     _blank_query_answer = 'Вы что-то хотели?..'
     _unresolved_answer = 'Я вас не понял :('
@@ -25,5 +28,24 @@ class View(ABC):
         return output
 
     @abstractmethod
-    def view(self, query_solving_res: QuerySolvingState, dialog: Dialog, user: User):
+    def _send_message(self, msg: str):
         pass
+
+    def view(self, query_solving_res: QuerySolvingState, dialog: Dialog, user: User):
+        output: Output = self._generate_answer(dialog=dialog, user=user)
+
+        if query_solving_res == QuerySolvingState.SOLVED:
+            if output.debug_msg:
+                self._send_message(output.debug_msg)
+            if output.artists:
+                self._send_message(output.artists)
+            if output.genres:
+                self._send_message(output.genres)
+            if output.info:
+                self._send_message(output.info)
+            if output.additional_msg:
+                self._send_message(output.additional_msg)
+        elif query_solving_res == QuerySolvingState.UNSOLVED:
+            self._send_message(self._unresolved_answer)
+        else:
+            raise Exception('Unknown query_solver result')

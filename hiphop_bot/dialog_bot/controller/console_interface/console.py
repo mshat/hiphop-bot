@@ -16,6 +16,7 @@ def main():
             continue
         query_solving_res = controller.solve_query(sentence)
         view.view(query_solving_res, controller.dialog, controller.user)
+        view.send_blank_mgs()
 
 
 if __name__ == '__main__':

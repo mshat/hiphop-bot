@@ -5,7 +5,7 @@ from abc import ABC
 from psycopg2 import pool
 from hiphop_bot.dialog_bot.services.tools.randomword import randomword
 from hiphop_bot.dialog_bot.services.tools.debug_print import debug_message, debug_print
-from hiphop_bot.dialog_bot.config import DEBUG_DB
+from hiphop_bot.dialog_bot.config import DEBUG_DB, DEBUG
 from dotenv import dotenv_values
 
 
@@ -34,7 +34,7 @@ else:
     DB_PORT = ENV['DB_PORT']
     DB_NAME = ENV['DB_NAME']
 
-print(f'[DEBUG] db settings: {DB_USER} {DB_NAME} {DB_HOST}')
+debug_print(DEBUG, f'[INFO] db settings: {DB_USER} {DB_NAME} {DB_HOST}')
 
 
 class Connection:
