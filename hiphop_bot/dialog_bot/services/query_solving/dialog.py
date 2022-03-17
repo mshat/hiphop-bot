@@ -21,21 +21,24 @@ class Dialog:
     _found_artists: List[_Artist] | None
     info: str | None
     debug_message: str | None
+    matched_handler_name: str | None
 
     def __init__(self):
         self._state = DialogState.START
         self._found_artists = None
         self.info = None
         self.debug_message = None
+        self.matched_handler_name = None
 
     def reset_search_result(self):
         self._found_artists = None
 
-    def reset_output(self):
+    def reset(self):
         if self.state not in (DialogState.SEARCH, DialogState.FILTER):
             self._found_artists = None
         self.info = None
         self.debug_message = None
+        self.matched_handler_name = None
 
     @property
     def found_artists(self) -> List[_Artist] | None:
