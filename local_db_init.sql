@@ -182,7 +182,9 @@ INSERT INTO query_solving_state VALUES
 --table user_history
 CREATE TABLE user_history (
     id SERIAL PRIMARY KEY,
-    user_id INT REFERENCES tg_user (id),
-    query_solving_state_id INT REFERENCES query_solving_state (id),
-    query VARCHAR(200)
+    user_id INT REFERENCES tg_user (id) NOT NULL,
+    query_solving_state_id INT REFERENCES query_solving_state (id) NOT NULL,
+    query VARCHAR(200),
+    query_time timestamp NOT NULL,
+    matched_handler VARCHAR(30)
 );
