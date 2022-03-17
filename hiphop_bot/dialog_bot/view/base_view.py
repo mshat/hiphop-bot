@@ -4,6 +4,7 @@ from hiphop_bot.dialog_bot.services.query_solving.user import User
 from hiphop_bot.dialog_bot.services.query_solving.dialog import Dialog
 from hiphop_bot.dialog_bot.view.output_message import Output
 from hiphop_bot.dialog_bot.services.query_solving.query_solver import QuerySolvingState
+from hiphop_bot.dialog_bot.services.query_solving.dialog import DialogState
 
 
 class View(ABC):
@@ -17,6 +18,10 @@ class View(ABC):
     )
     _blank_query_answer = 'Вы что-то хотели?..'
     _unresolved_answer = 'Я вас не понял :('
+    _you_can_filter_msg = (
+        'Вы можете добавить фильтры к полученному результату поиска.\n'
+        'Например, "оставь только дуэты" или "убери артистов старше 30 лет"\n'
+    )
 
     def __init__(self):
         self._answer_generator = AnswerGenerator()
@@ -43,8 +48,9 @@ class View(ABC):
                 self._send_message(output.genres)
             if output.info:
                 self._send_message(output.info)
-            if output.additional_msg:
-                self._send_message(output.additional_msg)
+
+            if dialog.state == DialogState.SEARCH:
+                self._send_message(self._you_can_filter_msg)
         elif query_solving_res == QuerySolvingState.UNSOLVED:
             self._send_message(self._unresolved_answer)
         else:

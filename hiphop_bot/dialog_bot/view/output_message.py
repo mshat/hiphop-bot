@@ -25,7 +25,6 @@ class Output:
         self._artists = OutputMessage()
         self._genres = OutputMessage()
         self._info = OutputMessage()
-        self._additional_msg = OutputMessage()
         self._debug_msg = OutputMessage()
 
     @property
@@ -51,14 +50,6 @@ class Output:
     @info.setter
     def info(self, msg: str) -> None:
         self._info.msg = msg
-
-    @property
-    def additional_msg(self) -> str:
-        return self._additional_msg.msg
-
-    @additional_msg.setter
-    def additional_msg(self, msg: str) -> None:
-        self._additional_msg.msg = msg
 
     @property
     def debug_msg(self) -> str:

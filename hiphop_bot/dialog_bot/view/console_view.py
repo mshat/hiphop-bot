@@ -17,10 +17,8 @@ class ConsoleView(View):
 
     def _send_message(self, msg: str):
         msg = msg.strip()
-        if len(msg) > 1 and msg[-1] == '\n':
-            print(msg, end='')
-        else:
-            print(msg)
+        print(msg)
+        print()
 
     def send_blank_mgs(self):
         self._send_message('')

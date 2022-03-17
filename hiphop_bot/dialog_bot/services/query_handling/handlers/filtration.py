@@ -165,6 +165,4 @@ class FilterOutputLenHandler(FilterQueryHandler):
         output_len = get_arguments_by_type(query, 'NumArgument')[-1]
 
         user.max_output_len = int(output_len.value)
-
-        dialog.info = f'Буду выводить по {output_len.value} строк'
         return self.NEXT_STATE

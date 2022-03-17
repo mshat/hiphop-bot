@@ -53,6 +53,10 @@ class SentenceParser:
         return arguments
 
     def _split(self) -> List[str]:
+        replace_to_space_chars = ['.', ',', '-', '  ']
+        for char in replace_to_space_chars:
+            self._sentence = self._sentence.replace(char, ' ')
+
         words = self._sentence.split()
         i = 0
         while i < len(words):

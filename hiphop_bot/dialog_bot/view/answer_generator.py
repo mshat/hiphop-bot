@@ -7,12 +7,6 @@ from hiphop_bot.recommender_system.models.artist import _Artist  # Импорт�
 from hiphop_bot.dialog_bot.services.recommender_system_class_adapter import AdaptedRecommenderSystem
 
 
-AFTER_SEARCH_MESSAGE = (
-        'Вы можете добавить фильтры к полученному результату поиска.\n'
-        'Например, "оставь только дуэты" или "убери артистов старше 30 лет"\n'
-    )
-
-
 class AnswerGenerator:
     _dialog: Dialog
     _user: User
@@ -90,21 +84,19 @@ class AnswerGenerator:
             older=self.user.older_filter,
         )
 
-    def _generate_found_artists_str(self) -> Tuple[str, str]:
+    def _generate_found_artists_str(self) -> str:
         found_artists = self.dialog.found_artists
-        additional_message = ''
 
         if self.user.has_filters:
             filtered_artists = self._filter_search_result()
             if filtered_artists:
                 found_artists = filtered_artists
-                additional_message = AFTER_SEARCH_MESSAGE
             else:
-                return 'Не найдено результатов, подходящих под фильтры', ''
+                return 'Не найдено результатов, подходящих под фильтры'
 
         res_str = self._generate_artists_message(found_artists)
 
-        return res_str, additional_message
+        return res_str
 
     def generate_answer(self) -> Output:
         output = Output()
@@ -112,9 +104,8 @@ class AnswerGenerator:
             output.debug_msg += f'DEBUG {self.dialog.debug_message}'
 
         if self.dialog.found_artists is not None:
-            res_str, additional_message = self._generate_found_artists_str()
+            res_str = self._generate_found_artists_str()
             output.artists += res_str
-            output.additional_msg += additional_message
 
         if self.dialog.found_genres is not None:
             output.genres += self._generate_genres_str()
