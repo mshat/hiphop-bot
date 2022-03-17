@@ -5,6 +5,7 @@ from hiphop_bot.dialog_bot.services.query_solving.dialog import Dialog
 from hiphop_bot.dialog_bot.view.output_message import Output
 from hiphop_bot.dialog_bot.services.query_solving.query_solver import QuerySolvingState
 from hiphop_bot.dialog_bot.services.query_solving.dialog import DialogState
+from hiphop_bot.dialog_bot.config import DEBUG_OUTPUT
 
 
 class View(ABC):
@@ -40,7 +41,7 @@ class View(ABC):
         output: Output = self._generate_answer(dialog=dialog, user=user)
 
         if query_solving_res == QuerySolvingState.SOLVED:
-            if output.debug_msg:
+            if DEBUG_OUTPUT and output.debug_msg:
                 self._send_message(output.debug_msg)
             if output.artists:
                 self._send_message(output.artists)
