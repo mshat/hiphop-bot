@@ -94,4 +94,4 @@ class ThreadedConnectionPool(AbstractConnectionPool):
         super().__init__(psycopg2.pool.ThreadedConnectionPool, minconn, maxconn)
 
 
-CONNECTION_POOL = SimpleConnectionPool()
+CONNECTION_POOL = ThreadedConnectionPool()
