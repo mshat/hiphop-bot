@@ -55,8 +55,6 @@ class AnswerGenerator:
 
         recommended_artists = self.trunc_output(recommended_artists)
         if recommended_artists:
-            out_msg += self._generate_used_filters_str()
-
             for artist in recommended_artists:
                 spotify_link = artist.streaming_service_links.get_link_by_streaming_name('spotify')
                 out_msg += f'\n{artist.name}\n{spotify_link}\n'
@@ -92,6 +90,7 @@ class AnswerGenerator:
             output.debug_msg += f'DEBUG {self.dialog.debug_message}'
 
         if self.dialog.found_artists is not None:
+            output.filters = self._generate_used_filters_str()
             res_str = self._generate_found_artists_str()
             output.artists += res_str
 
