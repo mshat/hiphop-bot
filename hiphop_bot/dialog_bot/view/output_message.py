@@ -22,10 +22,19 @@ class OutputMessage:
 
 class Output:
     def __init__(self):
+        self._filters = OutputMessage()
         self._artists = OutputMessage()
         self._genres = OutputMessage()
         self._info = OutputMessage()
         self._debug_msg = OutputMessage()
+
+    @property
+    def filters(self) -> str:
+        return self._filters.msg
+
+    @filters.setter
+    def filters(self, msg: str) -> None:
+        self._filters.msg = msg
 
     @property
     def artists(self) -> str:
