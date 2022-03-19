@@ -40,17 +40,23 @@ class Dialog:
         self.debug_message = None
         self.matched_handler_name = None
 
+    def _check_artists(self, artists: List[_Artist]) -> None:
+        """
+        Метод используется для проверки входных данных в сеттере found_artists
+        Метод поднимает DialogTypeError если входные данные невалидны
+        """
+        # Второе условие - проверка на то, что каждый элемент списка имеет тип _Artist
+        if not(isinstance(artists, list) and set([isinstance(item, _Artist) for item in artists]) == {True}):
+            raise DialogTypeError('Argument must be of type List[_Artist]')
+
     @property
     def found_artists(self) -> List[_Artist] | None:
         return self._found_artists
 
     @found_artists.setter
     def found_artists(self, artists: List[_Artist]):
-        # Второе условие - проверка на то, что каждый элемент списка имеет тип _Artist
-        if isinstance(artists, list) and set([isinstance(item, _Artist) for item in artists]) == {True}:
-            self._found_artists = artists
-        else:
-            raise DialogTypeError('Argument must be of type List[_Artist]')
+        self._check_artists(artists)
+        self._found_artists = artists
 
     @property
     def artists_were_found(self) -> bool:
