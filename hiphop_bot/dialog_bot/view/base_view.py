@@ -20,7 +20,7 @@ class View(ABC):
     _blank_query_answer = 'Вы что-то хотели?..'
     _unresolved_answer = 'Я вас не понял :('
     _you_can_filter_msg = (
-        'Вы можете добавить фильтры к полученному результату поиска.\n'
+        'Вы можете добавлять фильтры к полученному результату поиска.\n'
         'Например, "оставь только дуэты", "убери артистов старше 30 лет" или "выводи по 5 артистов".\n'
     )
 
@@ -44,14 +44,18 @@ class View(ABC):
             if DEBUG_OUTPUT and output.debug_msg:
                 self._send_message(output.debug_msg)
             if output.artists:
+                if output.filters:
+                    self._send_message(output.filters)
                 self._send_message(output.artists)
+
+                # сообщение о том, что можно добавить фильтры
+                if dialog.state == DialogState.SEARCH:
+                    if not user.has_filters:
+                        self._send_message(self._you_can_filter_msg)
             if output.genres:
                 self._send_message(output.genres)
             if output.info:
                 self._send_message(output.info)
-
-            if dialog.state == DialogState.SEARCH:
-                self._send_message(self._you_can_filter_msg)
         elif query_solving_res == QuerySolvingState.UNSOLVED:
             self._send_message(self._unresolved_answer)
         else:
