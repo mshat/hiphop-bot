@@ -32,25 +32,32 @@ class TgBot:
         def get_text_messages(message):
             self._solve_message(message)
 
+    def _prepare_message(self, msg: str):
+        msg = msg.replace('\n', ' ')
+        msg = msg.replace('  ', ' ')
+        return msg
+
     def _solve_message(self, message: telebot.types.Message):
         tg_user = self._get_tg_user(message.from_user)
         user_controller = self._get_controller(tg_user)
         user_view = self._get_view(message.from_user)
 
+        query = self._prepare_message(message.text)
+
         debug_print(
             DEBUG_TG_INTERFACE,
-            f'[TG] Got message from {message.from_user.full_name} {message.from_user.id}: {message.text}'
+            f'[TG] Got message from {tg_user.full_name} {tg_user.user_id}: {query}'
         )
 
-        if message.text == "/start":
+        if query == "/start":
             user_view.view_hello_message()
             user_view.view_opportunities_message()
             # добавление записи в историю запросов юзера
-            self.user_query_history_model.add_record(tg_user, QuerySolvingState.SOLVED, message.text, None)
-        elif message.text == '':
+            self.user_query_history_model.add_record(tg_user, QuerySolvingState.SOLVED, query, None)
+        elif query == '':
             user_view.view_blank_query_answer()
         else:
-            query_solving_res = user_controller.solve_query(message.text)
+            query_solving_res = user_controller.solve_query(query)
             matched_handler_name = user_controller.dialog.matched_handler_name
 
             user_view.view(query_solving_res, user_controller.dialog, user_controller.user)
@@ -59,11 +66,11 @@ class TgBot:
                 debug_print(
                     DEBUG_TG_INTERFACE,
                     f'[TG UNRESOLVED] Message from '
-                    f'{message.from_user.full_name} {message.from_user.id} ({message.text}) was not recognized'
+                    f'{tg_user.full_name} {tg_user.user_id} ({query}) was not recognized'
                 )
 
             # добавление записи в историю запросов юзера
-            self.user_query_history_model.add_record(tg_user, query_solving_res, message.text, matched_handler_name)
+            self.user_query_history_model.add_record(tg_user, query_solving_res, query, matched_handler_name)
 
     def _get_tg_user(self, from_user: telebot.types.User) -> _TelegramUser:
         # create new db record if user is new
