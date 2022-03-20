@@ -9,8 +9,8 @@ CREATE DATABASE hiphop_bot
 
 --table Gender
 CREATE TABLE gender(
-    id INT NOT NULL PRIMARY KEY,
-    name VARCHAR(10)
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(10) NOT NULL
 );
 
 INSERT INTO gender VALUES
@@ -19,8 +19,8 @@ INSERT INTO gender VALUES
 
 --table Theme
 CREATE TABLE theme (
-    id INT NOT NULL PRIMARY KEY,
-    name VARCHAR(15)
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(15) NOT NULL
 );
 
 INSERT INTO theme VALUES
@@ -34,8 +34,8 @@ INSERT INTO theme VALUES
 
 --table Genre
 CREATE TABLE genre(
-    id INT NOT NULL PRIMARY KEY,
-    name VARCHAR(25)
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(25) NOT NULL
 );
 
 WITH new_genres (doc) AS
@@ -51,13 +51,13 @@ on conflict (id) do update
 
 --table Artist
 CREATE TABLE artist (
-    id INT NOT NULL PRIMARY KEY,
-    name VARCHAR(100),
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
     year_of_birth INT NOT NULL,
     group_members_num INT NOT NULL,
-    theme_id INT REFERENCES theme (id),
-    gender_id INT REFERENCES gender (id),
-    genre_id INT REFERENCES genre (id)
+    theme_id INT REFERENCES theme (id) NOT NULL,
+    gender_id INT REFERENCES gender (id) NOT NULL,
+    genre_id INT REFERENCES genre (id) NOT NULL
 );
 
 WITH new_artists (doc) AS
@@ -77,10 +77,10 @@ on conflict (id) do update
 
 --table Artist_pairs_proximity
 CREATE TABLE artist_pairs_proximity (
-    id INT NOT NULL PRIMARY KEY,
-    first_artist_id INT REFERENCES artist (id),
-    second_artist_id INT REFERENCES artist (id),
-    proximity FLOAT
+    id SERIAL PRIMARY KEY,
+    first_artist_id INT REFERENCES artist (id) NOT NULL,
+    second_artist_id INT REFERENCES artist (id) NOT NULL,
+    proximity FLOAT NOT NULL
 );
 
 WITH new_pairs_proximity (doc) AS
@@ -100,9 +100,9 @@ on conflict (id) do update
 
 --table Genres_adjacency_table
 CREATE TABLE genres_adjacency_table (
-    id INT NOT NULL PRIMARY KEY,
-    parent_genre_node_id INT REFERENCES genre (id),
-    child_genre_node_id INT REFERENCES genre (id)
+    id SERIAL PRIMARY KEY,
+    parent_genre_node_id INT REFERENCES genre (id) NOT NULL,
+    child_genre_node_id INT REFERENCES genre (id) NOT NULL
 );
 
 WITH new_genres_adjacency_table (doc) AS
@@ -120,8 +120,8 @@ on conflict (id) do update
 
 --table streaming_service
 CREATE TABLE streaming_service(
-    id INT NOT NULL PRIMARY KEY,
-    name VARCHAR(40)
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(40) NOT NULL
 );
 
 WITH new_streaming_service (doc) AS
@@ -138,10 +138,10 @@ on conflict (id) do update
 	
 --table streaming_service_link
 CREATE TABLE streaming_service_link(
-    id INT NOT NULL PRIMARY KEY,
-    artist_id INT REFERENCES artist (id),
-    streaming_service_id INT REFERENCES streaming_service (id),
-    link VARCHAR(150)
+    id SERIAL PRIMARY KEY,
+    artist_id INT REFERENCES artist (id) NOT NULL,
+    streaming_service_id INT REFERENCES streaming_service (id) NOT NULL,
+    link VARCHAR(150) NOT NULL
 );
 
 
@@ -163,7 +163,7 @@ on conflict (id) do update
 --table tg_user
 CREATE TABLE tg_user (
     id SERIAL PRIMARY KEY,
-    user_id INT UNIQUE,
+    user_id INT UNIQUE NOT NULL,
     first_name VARCHAR(64),
     last_name VARCHAR(64),
     username VARCHAR(32)
@@ -172,7 +172,7 @@ CREATE TABLE tg_user (
 --table query_solving_state
 CREATE TABLE query_solving_state (
     id SERIAL PRIMARY KEY,
-    state VARCHAR(8)
+    state VARCHAR(8) NOT NULL
 );
 
 INSERT INTO query_solving_state VALUES
