@@ -14,8 +14,8 @@ CREATE TABLE gender(
 );
 
 INSERT INTO gender VALUES
-    (0, 'male'),
-    (1, 'female');
+    (1, 'male'),
+    (2, 'female');
 
 --table Theme
 CREATE TABLE theme (
@@ -24,13 +24,13 @@ CREATE TABLE theme (
 );
 
 INSERT INTO theme VALUES
-    (0, 'hard-gangsta'),
-    (1, 'workout'),
-    (2, 'soft-gangsta'),
-    (3, 'feelings'),
-    (4, 'fun'),
-    (5, 'art'),
-    (6, 'conscious');
+    (1, 'hard-gangsta'),
+    (2, 'workout'),
+    (3, 'soft-gangsta'),
+    (4, 'feelings'),
+    (5, 'fun'),
+    (6, 'art'),
+    (7, 'conscious');
 
 --table Genre
 CREATE TABLE genre(
@@ -38,16 +38,15 @@ CREATE TABLE genre(
     name VARCHAR(25) NOT NULL
 );
 
-CREATE TEMP TABLE new_genres (info json);
+CREATE TEMP TABLE new_genres (doc json);
 \copy new_genres from 'docker-entrypoint-initdb.d/genres.json'
 
-insert into genre (id, name)
-select p.*
+insert into genre (name)
+select p.name
 from new_genres l
-  cross join lateral json_populate_recordset(null::genre, info) as p
+  cross join lateral json_populate_recordset(null::genre, doc) as p
 on conflict (id) do update
   set name = excluded.name;
-
 
 --table Artist
 CREATE TABLE artist (
@@ -60,20 +59,19 @@ CREATE TABLE artist (
     genre_id INT REFERENCES genre (id) NOT NULL
 );
 
-CREATE TEMP TABLE new_artists (info json);
+CREATE TEMP TABLE new_artists (doc json);
 \copy new_artists from 'docker-entrypoint-initdb.d/artists.json'
 
-insert into artist (id, name, year_of_birth, group_members_num, theme_id, gender_id, genre_id)
-select p.*
+insert into artist (name, year_of_birth, group_members_num, theme_id, gender_id, genre_id)
+select p.name, p.year_of_birth, p.group_members_num, p.theme_id, p.gender_id, p.genre_id
 from new_artists l
-  cross join lateral json_populate_recordset(null::artist, info) as p
+  cross join lateral json_populate_recordset(null::artist, doc) as p
 on conflict (id) do update
   set name = excluded.name,
   year_of_birth = excluded.year_of_birth,
   theme_id = excluded.theme_id,
   gender_id = excluded.gender_id,
   genre_id = excluded.genre_id;
-
 
 --table Artist_pairs_proximity
 CREATE TABLE artist_pairs_proximity (
@@ -83,13 +81,13 @@ CREATE TABLE artist_pairs_proximity (
     proximity FLOAT NOT NULL
 );
 
-CREATE TEMP TABLE new_pairs_proximity (info json);
+CREATE TEMP TABLE new_pairs_proximity (doc json);
 \copy new_pairs_proximity from 'docker-entrypoint-initdb.d/artist_pairs_proximity.json'
 
-insert into artist_pairs_proximity (id, first_artist_id, second_artist_id, proximity)
-select p.*
+insert into artist_pairs_proximity (first_artist_id, second_artist_id, proximity)
+select p.first_artist_id, p.second_artist_id, p.proximity
 from new_pairs_proximity l
-  cross join lateral json_populate_recordset(null::artist_pairs_proximity, info) as p
+  cross join lateral json_populate_recordset(null::artist_pairs_proximity, doc) as p
 on conflict (id) do update
   set first_artist_id = excluded.first_artist_id,
   second_artist_id = excluded.second_artist_id,
@@ -103,13 +101,13 @@ CREATE TABLE genres_adjacency_table (
     child_genre_node_id INT REFERENCES genre (id) NOT NULL
 );
 
-CREATE TEMP TABLE new_genres_adjacency_table (info json);
+CREATE TEMP TABLE new_genres_adjacency_table (doc json);
 \copy new_genres_adjacency_table from 'docker-entrypoint-initdb.d/genres_adjacency_table.json'
 
-insert into genres_adjacency_table (id, parent_genre_node_id, child_genre_node_id)
-select p.*
+insert into genres_adjacency_table (parent_genre_node_id, child_genre_node_id)
+select p.parent_genre_node_id, p.child_genre_node_id
 from new_genres_adjacency_table l
-  cross join lateral json_populate_recordset(null::genres_adjacency_table, info) as p
+  cross join lateral json_populate_recordset(null::genres_adjacency_table, doc) as p
 on conflict (id) do update
   set parent_genre_node_id = excluded.parent_genre_node_id,
   child_genre_node_id = excluded.child_genre_node_id;
@@ -121,13 +119,13 @@ CREATE TABLE streaming_service(
     name VARCHAR(40) NOT NULL
 );
 
-CREATE TEMP TABLE new_streaming_service (info json);
+CREATE TEMP TABLE new_streaming_service (doc json);
 \copy new_streaming_service from 'docker-entrypoint-initdb.d/streaming_services.json'
 
-insert into streaming_service (id, name)
-select p.*
+insert into streaming_service (name)
+select p.name
 from new_streaming_service l
-  cross join lateral json_populate_recordset(null::streaming_service, info) as p
+  cross join lateral json_populate_recordset(null::streaming_service, doc) as p
 on conflict (id) do update
   set name = excluded.name;
 
@@ -140,13 +138,13 @@ CREATE TABLE streaming_service_link(
     link VARCHAR(150) NOT NULL
 );
 
-CREATE TEMP TABLE new_streaming_service_link (info json);
+CREATE TEMP TABLE new_streaming_service_link (doc json);
 \copy new_streaming_service_link from 'docker-entrypoint-initdb.d/streaming_service_links.json'
 
-insert into streaming_service_link (id, artist_id, streaming_service_id, link)
-select p.*
+insert into streaming_service_link (artist_id, streaming_service_id, link)
+select p.artist_id, p.streaming_service_id, p.link
 from new_streaming_service_link l
-  cross join lateral json_populate_recordset(null::streaming_service_link, info) as p
+  cross join lateral json_populate_recordset(null::streaming_service_link, doc) as p
 on conflict (id) do update
   set artist_id = excluded.artist_id,
   streaming_service_id = excluded.streaming_service_id,
@@ -169,8 +167,8 @@ CREATE TABLE query_solving_state (
 );
 
 INSERT INTO query_solving_state VALUES
-    (0, 'solved'),
-    (1, 'unsolved');
+    (1, 'solved'),
+    (2, 'unsolved');
 
 --table user_history
 CREATE TABLE user_history (
