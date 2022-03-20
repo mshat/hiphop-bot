@@ -93,14 +93,13 @@ class UserQueryHistoryModel(Model):
             f'insert into {self._table_name} (user_id, query_solving_state_id, query, query_time, matched_handler) '
             f"VALUES(%s, %s, %s, %s, %s);"
         )
-        query_solving_state = 0 if query_solving_state == QuerySolvingState.SOLVED else 1
+        query_solving_state = 1 if query_solving_state == QuerySolvingState.SOLVED else 2
         values = (tg_user.db_row_id, query_solving_state, user_query, query_time, matched_handler)
 
         try:
             added_records_number = self._insert(query, values)
             if added_records_number < 1:
                 raise ModelError('Failed to add record')
-            debug_print(DEBUG_MODEL, f'[MODEL] Добавил {added_records_number} запись в таблицу {self._table_name}')
         except ModelUniqueViolationError:
             pass
 

@@ -1,7 +1,5 @@
 from typing import List
 from hiphop_bot.db.abstract_model import Model, ModelUniqueViolationError, ModelError
-from hiphop_bot.dialog_bot.services.tools.debug_print import debug_print
-from hiphop_bot.dialog_bot.config import DEBUG_MODEL
 
 
 class _TelegramUser:
@@ -54,7 +52,6 @@ class TelegramUserModel(Model):
             added_records_number = self._insert(query, values)
             if added_records_number < 1:
                 raise ModelError('Failed to add record')
-            debug_print(DEBUG_MODEL, f'[MODEL] Добавил {added_records_number} запись в таблицу {self._table_name}')
         except ModelUniqueViolationError:
             pass
 

@@ -1,14 +1,15 @@
 from typing import List, Tuple
 from datetime import datetime
-from hiphop_bot.db.abstract_model import Model, ModelError
-from hiphop_bot.recommender_system.models.theme import _Theme  # импортирутеся для аннотации
-from hiphop_bot.recommender_system.models.gender import _Gender  # импортирутеся для аннотации
-from hiphop_bot.recommender_system.models.genre import _Genre  # импортирутеся для аннотации
+from hiphop_bot.db.abstract_model import Model, ModelError, ModelUniqueViolationError
+from hiphop_bot.recommender_system.models.theme import ThemeModel, _Theme  # импортирутеся для аннотации
+from hiphop_bot.recommender_system.models.gender import GenderModel, _Gender  # импортирутеся для аннотации
+from hiphop_bot.recommender_system.models.genre import GenreModel, _Genre  # импортирутеся для аннотации
 from hiphop_bot.recommender_system.models.artist_streaming_service_link import (
     ArtistStreamingServiceLinkModel, _StreamingServiceLinks)
+from hiphop_bot.recommender_system.models.model_object_class import _ModelObject
 
 
-class _Artist:
+class _Artist(_ModelObject):
     theme: _Theme
     gender: _Gender
     genre: _Genre
@@ -16,20 +17,22 @@ class _Artist:
 
     def __init__(
             self,
+            db_row_id: int,
             name: str,
             year_of_birth: int,
             group_members_number: int,
-            theme: _Theme | str,
-            gender: _Gender | str,
-            genre: _Genre | str,
-            streaming_service_links: _StreamingServiceLinks = None,
+            theme: _Theme,
+            gender: _Gender,
+            genre: _Genre,
+            streaming_service_links: _StreamingServiceLinks = None
     ):
+        super().__init__(db_row_id, name)
         self.name = name
         self.year_of_birth = year_of_birth
         self.group_members_number = group_members_number
-        self._theme = theme if isinstance(theme, _Theme) else _Theme(theme)
-        self._gender = gender if isinstance(gender, _Gender) else _Gender(gender)
-        self._genre = genre if isinstance(genre, _Genre) else _Genre(genre)
+        self._theme = theme
+        self._gender = gender
+        self._genre = genre
         self._streaming_service_links = streaming_service_links
 
     @property
@@ -73,7 +76,7 @@ class ArtistModel(Model):
         super().__init__('artist', _Artist)
 
         self._get_all_query = (
-            "SELECT artist.name, year_of_birth, group_members_num, theme.name, gender.name, genre.name "
+            "SELECT artist.id, artist.name, year_of_birth, group_members_num, theme.name, gender.name, genre.name "
             f"from {self._table_name} "
             "inner join theme on artist.theme_id = theme.id "
             "inner join gender on artist.gender_id = gender.id "
@@ -101,7 +104,57 @@ class ArtistModel(Model):
         return names
 
     def get_by_genre(self, genre) -> List[_Artist] | List:
-        query = self._get_all_query + \
-                f"where genre.name = '{genre}'"
+        query = self._get_all_query + f"where genre.name = '{genre}'"
         artists = self._select_model_objects(query)
         return artists
+
+    def get_by_name(self, name) -> _Artist | None:
+        query = self._get_all_query + f"where artist.name ='{name}'"
+        artists = self._select_model_objects(query)
+        if len(artists) > 0:
+            return artists[0]
+        else:
+            return None
+
+    def _add_streaming_service_link(self, artist_name: str, streaming_service_name: str, streaming_service_link: str):
+        new_artist_id = self.get_by_name(artist_name).id
+        streaming_service_link_model = ArtistStreamingServiceLinkModel()
+        streaming_service_link_model.add_record(new_artist_id, streaming_service_name, streaming_service_link)
+
+    def add_record(
+            self,
+            name: str,
+            year_of_birth: int,
+            group_members_num: int,
+            theme: str,
+            gender: str,
+            genre: str,
+            streaming_service_name: str,
+            streaming_service_link: str,
+    ):
+        if self.get_by_name(name):
+            raise ModelError('Failed to add record. This artist already exists')
+        theme_model = ThemeModel()
+        gender_model = GenderModel()
+        genre_model = GenreModel()
+        theme_obj: _Theme = theme_model.get_by_name(theme)
+        gender_obj: _Gender = gender_model.get_by_name(gender)
+        genre_obj: _Genre = genre_model.get_by_name(genre)
+
+        if not (name and year_of_birth and group_members_num and theme_obj and gender_obj and genre_obj):
+            raise ModelError('Чего-то не нашлось')
+
+        query = (
+            f'insert into {self._table_name} (name, year_of_birth, group_members_num, theme_id, gender_id, genre_id) '
+            f"VALUES(%s, %s, %s, %s, %s, %s);"
+        )
+        values = (name, year_of_birth, group_members_num, theme_obj.id, gender_obj.id, genre_obj.id)
+
+        try:
+            added_records_number = self._insert(query, values)
+            if added_records_number < 1:
+                raise ModelError('Failed to add record')
+        except ModelUniqueViolationError:
+            pass
+
+        self._add_streaming_service_link(name, streaming_service_name, streaming_service_link)
