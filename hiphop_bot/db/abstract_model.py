@@ -2,7 +2,8 @@ from typing import Tuple, List, Callable
 from abc import ABC
 from psycopg2 import errors
 from hiphop_bot.db.connection_pool import Connection, CONNECTION_POOL
-from hiphop_bot.dialog_bot.services.tools.debug_print import error_print
+from hiphop_bot.dialog_bot.services.tools.debug_print import error_print, debug_print
+from hiphop_bot.dialog_bot.config import DEBUG_MODEL
 
 
 class ModelError(Exception): pass
@@ -58,13 +59,13 @@ class Model(ABC):
             added_records_number = cursor.rowcount
             cursor.close()
             connection.put_connection()
+            debug_print(DEBUG_MODEL, f'[MODEL] Добавил {added_records_number} запись в таблицу {self._table_name}')
             return added_records_number
-
         except errors.UndefinedColumn as e:
             error_print(f'[db UndefinedColumn] {e}')
             return 0
         except errors.UniqueViolation as e:
-            error_print(f'[db] attempt to add an existing user to the database')
+            error_print(f'[db] attempt to add an existing object to the database: {e}')
             raise ModelUniqueViolationError(e)
         except Exception as e:
             error_print(f'[db unknown error] {e}')
