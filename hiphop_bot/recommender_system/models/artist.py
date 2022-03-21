@@ -22,18 +22,18 @@ class _Artist(ModelObject):
             name: str,
             year_of_birth: int,
             group_members_number: int,
-            theme: _Theme,
-            gender: _Gender,
-            genre: _Genre,
+            theme: _Theme | str,
+            gender: _Gender | str,
+            genre: _Genre | str,
             streaming_service_links: _StreamingServiceLinks = None
     ):
         super().__init__(db_row_id, name)
         self.name = name
         self.year_of_birth = year_of_birth
         self.group_members_number = group_members_number
-        self._theme = theme
-        self._gender = gender
-        self._genre = genre
+        self._theme = theme if isinstance(theme, _Theme) else ThemeModel().get_by_name(theme)
+        self._gender = gender if isinstance(gender, _Gender) else GenderModel().get_by_name(gender)
+        self._genre = genre if isinstance(genre, _Genre) else GenreModel().get_by_name(genre)
         self._streaming_service_links = streaming_service_links
 
     @property
@@ -101,7 +101,7 @@ class ArtistModel(Model):
 
     def get_artist_names(self) -> List[str]:
         raw_data: List[Tuple] = self.get_all_raw()
-        names = [raw_artist[0] for raw_artist in raw_data]
+        names = [raw_artist[1] for raw_artist in raw_data]
         return names
 
     def get_by_genre(self, genre) -> List[_Artist] | List:
@@ -175,6 +175,3 @@ class ArtistModel(Model):
 
         self._add_streaming_service_link(name, streaming_service_name, streaming_service_link)
         self._add_artist_aliases(name, artist_name_aliases)
-
-# m = ArtistModel()
-# m.add_record('Max', 1999, 1, 'fun', 'male', 'cloud', 'spotify', 'link', ['максимильян'])
