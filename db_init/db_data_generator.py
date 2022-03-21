@@ -147,11 +147,30 @@ def streaming_service_links_hardcode_references():
         json.dump(streaming_service_links_db, file, ensure_ascii=False)
 
 
+def generate_artists_names_aliases_json():
+    with open('artists.json', 'r', encoding='utf-8') as file:
+        artists = json.load(file)
+    artists = {artist['name']: artist['id'] for artist in artists}
+
+    with open('artists_names_aliases_source.json', 'r', encoding='utf-8') as file:
+        artists_names_aliases_source = json.load(file)
+
+    artists_names_aliases = []
+    for artist_name, aliases in artists_names_aliases_source.items():
+        aliases_ = '{' + ', '.join(aliases) + '}'
+        artists_names_aliases.append({'artist_id': artists[artist_name], 'aliases': f"{aliases_}"})
+
+    print(artists_names_aliases)
+    with open('artists_names_aliases.json', 'w', encoding='utf-8') as file:
+        json.dump(artists_names_aliases, file, ensure_ascii=False)
+
+
 def main():
-    genres_tree_hardcode_references()
-    artists_data_hardcode_genre_gender_theme_references()
-    artist_pairs_proximity_hardcode_references()
-    streaming_service_links_hardcode_references()
+    # genres_tree_hardcode_references()
+    # artists_data_hardcode_genre_gender_theme_references()
+    # artist_pairs_proximity_hardcode_references()
+    # streaming_service_links_hardcode_references()
+    generate_artists_names_aliases_json()
     pass
 
 

@@ -179,3 +179,24 @@ CREATE TABLE user_history (
     query_time timestamp NOT NULL,
     matched_handler VARCHAR(30)
 );
+
+
+--table artists_names_aliases
+CREATE TABLE artists_names_aliases (
+    id SERIAL PRIMARY KEY,
+    artist_id INT REFERENCES artist (id) NOT NULL UNIQUE,
+    aliases VARCHAR(100)[] NOT NULL
+);
+
+
+CREATE TEMP TABLE new_artists_names_aliases (doc json);
+\copy new_artists_names_aliases from 'docker-entrypoint-initdb.d/artists_names_aliases.json'
+
+
+insert into artists_names_aliases (artist_id, aliases)
+select p.artist_id, p.aliases
+from new_artists_names_aliases l
+  cross join lateral json_populate_recordset(null::artists_names_aliases, doc) as p
+on conflict (id) do update
+  set artist_id = excluded.artist_id,
+  aliases = excluded.aliases;
