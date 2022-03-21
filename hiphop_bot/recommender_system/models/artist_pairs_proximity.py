@@ -1,6 +1,9 @@
 from typing import List, Tuple, Dict
 from hiphop_bot.db.abstract_model import Model, ModelError, ModelUniqueViolationError
 from hiphop_bot.base_models.model_object_class import BaseModelObject
+from psycopg2 import errors
+from hiphop_bot.dialog_bot.services.tools.debug_print import error_print, debug_print
+from hiphop_bot.dialog_bot.config import DEBUG_MODEL
 
 
 class _ArtistsPairsProximityItem(BaseModelObject):
@@ -74,5 +77,30 @@ class ArtistsPairsProximityModel(Model):
         updated_records_number = self._update(query)
         if updated_records_number < 1:
             raise ModelError('Failed to add record')
+
+    def update_multiple_proximities(self, new_artists_pairs_proximity: List[Tuple[int, int, float]]):
+        connection = self._get_connection()
+        cursor = connection.cursor()
+
+        for item in new_artists_pairs_proximity:
+            first_artist_id = item[0]
+            second_artist_id = item[1]
+            proximity = item[2]
+
+            query = (f"update {self._table_name} "
+                     f"set proximity = {proximity} "
+                     f"where first_artist_id={first_artist_id} and second_artist_id={second_artist_id} ")
+            try:
+                cursor.execute(query)
+            except errors.UndefinedColumn as e:
+                error_print(f'[db UndefinedColumn] {e}')
+            except Exception as e:
+                error_print(f'[db unknown error] {e}')
+
+        connection.conn.commit()
+        added_records_number = cursor.rowcount
+        cursor.close()
+        connection.put_connection()
+        debug_print(DEBUG_MODEL, f'[MODEL] Обновил {added_records_number} запись в таблице {self._table_name}')
 
 
