@@ -1,10 +1,9 @@
 from abc import ABC, abstractmethod
 
 
-class _ModelObject(ABC):
-    def __init__(self, db_row_id: int, name: str):
+class BaseModelObject(ABC):
+    def __init__(self, db_row_id: int):
         self._db_row_id = db_row_id
-        self.name = name
 
     @property
     def id(self) -> int:
@@ -17,3 +16,10 @@ class _ModelObject(ABC):
     @abstractmethod
     def __repr__(self):
         pass
+
+
+class ModelObject(BaseModelObject, ABC):
+    def __init__(self, db_row_id: int, name: str):
+        super().__init__(db_row_id)
+        self.name = name
+
