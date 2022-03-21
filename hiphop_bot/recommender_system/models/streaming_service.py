@@ -1,9 +1,9 @@
 from typing import List, Tuple
 from hiphop_bot.db.abstract_model import Model
-from hiphop_bot.recommender_system.models.model_object_class import _ModelObject
+from hiphop_bot.base_models.model_object_class import ModelObject
 
 
-class _StreamingService(_ModelObject):
+class _StreamingService(ModelObject):
     def __str__(self):
         return f'StreamingService {self.name}'
 

@@ -1,9 +1,9 @@
 from typing import List
 from hiphop_bot.db.abstract_model import Model
-from hiphop_bot.recommender_system.models.model_object_class import _ModelObject
+from hiphop_bot.base_models.model_object_class import ModelObject
 
 
-class _Genre(_ModelObject):
+class _Genre(ModelObject):
     def __str__(self):
         return f'{self.name}'
 
