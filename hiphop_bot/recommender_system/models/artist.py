@@ -4,12 +4,13 @@ from hiphop_bot.db.abstract_model import Model, ModelError, ModelUniqueViolation
 from hiphop_bot.recommender_system.models.theme import ThemeModel, _Theme  # импортирутеся для аннотации
 from hiphop_bot.recommender_system.models.gender import GenderModel, _Gender  # импортирутеся для аннотации
 from hiphop_bot.recommender_system.models.genre import GenreModel, _Genre  # импортирутеся для аннотации
+from hiphop_bot.dialog_bot.models.artists_names_aliases import ArtistsNamesAliasesModel
 from hiphop_bot.recommender_system.models.artist_streaming_service_link import (
     ArtistStreamingServiceLinkModel, _StreamingServiceLinks)
-from hiphop_bot.recommender_system.models.model_object_class import _ModelObject
+from hiphop_bot.base_models.model_object_class import ModelObject
 
 
-class _Artist(_ModelObject):
+class _Artist(ModelObject):
     theme: _Theme
     gender: _Gender
     genre: _Genre
@@ -121,6 +122,11 @@ class ArtistModel(Model):
         streaming_service_link_model = ArtistStreamingServiceLinkModel()
         streaming_service_link_model.add_record(new_artist_id, streaming_service_name, streaming_service_link)
 
+    def _add_artist_aliases(self, artist_name: str, aliases: List[str]):
+        new_artist_id = self.get_by_name(artist_name).id
+        artist_names_aliases = ArtistsNamesAliasesModel()
+        artist_names_aliases.add_record(new_artist_id, aliases)
+
     def add_record(
             self,
             name: str,
@@ -131,7 +137,15 @@ class ArtistModel(Model):
             genre: str,
             streaming_service_name: str,
             streaming_service_link: str,
+            artist_name_aliases: List[str]
     ):
+        name = name.lower()
+        theme = theme.lower()
+        gender = gender.lower()
+        genre = genre.lower()
+        streaming_service_name = streaming_service_name.lower()
+        streaming_service_link = streaming_service_link.lower()
+        artist_name_aliases = [alias.lower() for alias in artist_name_aliases]
         if self.get_by_name(name):
             raise ModelError('Failed to add record. This artist already exists')
         theme_model = ThemeModel()
@@ -141,8 +155,10 @@ class ArtistModel(Model):
         gender_obj: _Gender = gender_model.get_by_name(gender)
         genre_obj: _Genre = genre_model.get_by_name(genre)
 
-        if not (name and year_of_birth and group_members_num and theme_obj and gender_obj and genre_obj):
-            raise ModelError('Чего-то не нашлось')
+        for field_name, field in {'name': name, 'year_of_birth': year_of_birth, 'group_members_num': group_members_num,
+                                  'theme_obj': theme_obj, 'gender_obj': gender_obj, 'genre_obj': genre_obj}.items():
+            if not field:
+                raise ModelError(f'Error adding artist: {field_name} field is None ')
 
         query = (
             f'insert into {self._table_name} (name, year_of_birth, group_members_num, theme_id, gender_id, genre_id) '
@@ -158,3 +174,7 @@ class ArtistModel(Model):
             pass
 
         self._add_streaming_service_link(name, streaming_service_name, streaming_service_link)
+        self._add_artist_aliases(name, artist_name_aliases)
+
+# m = ArtistModel()
+# m.add_record('Max', 1999, 1, 'fun', 'male', 'cloud', 'spotify', 'link', ['максимильян'])
