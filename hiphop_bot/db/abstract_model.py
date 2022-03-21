@@ -79,6 +79,24 @@ class Model(ABC):
         else:
             return []
 
+    def _update(self, query):
+        try:
+            connection = self._get_connection()
+            cursor = connection.cursor()
+            cursor.execute(query)
+            connection.conn.commit()
+            added_records_number = cursor.rowcount
+            cursor.close()
+            connection.put_connection()
+            debug_print(DEBUG_MODEL, f'[MODEL] Обновил {added_records_number} запись в таблице {self._table_name}')
+            return added_records_number
+        except errors.UndefinedColumn as e:
+            error_print(f'[db UndefinedColumn] {e}')
+            return 0
+        except Exception as e:
+            error_print(f'[db unknown error] {e}')
+            return 0
+
     def get_all_raw(self) -> List[Tuple]:
         """
         Возвращает все записи из таблицы в виде списка кортежей
