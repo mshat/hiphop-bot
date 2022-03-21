@@ -45,6 +45,7 @@ def calc_distance_between_all_nodes(tree: Node, leafs: list):
                 distances_between_nodes.update(
                     {f'pair{i}': {'artist1': leaf1.name, 'artist2': leaf2.name, 'distance': distance_between_nodes}}
                 )
+                i += 1
 
     return distances_between_nodes
 
