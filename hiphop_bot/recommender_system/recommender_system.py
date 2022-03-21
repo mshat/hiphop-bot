@@ -2,15 +2,10 @@ from typing import List, Dict
 from collections import OrderedDict
 from hiphop_bot.recommender_system.tree.node import Node
 from hiphop_bot.recommender_system.tree.tree_loader import load_tree
-from hiphop_bot.recommender_system.proximity_measures import (
-    calc_max_general_proximity,
-    calc_min_general_proximity,
-    normalize_proximities
-)
 from hiphop_bot.recommender_system.tree.tree_tools import get_leafs_values
 from hiphop_bot.recommender_system.tree.artist_node import ArtistNode
 from hiphop_bot.recommender_system.singleton import Singleton
-from hiphop_bot.recommender_system.config import MIN_SIMILARITY_PROXIMITY
+from hiphop_bot.recommender_system.config import MIN_PROXIMITY
 from hiphop_bot.recommender_system.artist_filterer import filter_artists
 from hiphop_bot.recommender_system.models.artist_pairs_proximity import ArtistsPairsProximityModel
 
@@ -25,10 +20,6 @@ class RecommenderSystem(metaclass=Singleton):
         self._tree = load_tree()
         artist_pairs_proximity_model = ArtistsPairsProximityModel()
         self._artists_pairs_proximity = artist_pairs_proximity_model.get_artists_proximity_dict()
-
-        max_proximity = calc_max_general_proximity(self._artists_pairs_proximity)
-        min_proximity = calc_min_general_proximity(self._artists_pairs_proximity)
-        normalize_proximities(self._artists_pairs_proximity, min_proximity, max_proximity)
 
     def get_artist_by_name(self, name: str) -> ArtistNode:
         artist = Node.get_child_by_name(self._tree, name)
@@ -46,9 +37,8 @@ class RecommenderSystem(metaclass=Singleton):
 
         recommendations = OrderedDict()
         for artist_name, proximity in artist_pairs_sorted_by_proximity.items():
-            if proximity <= MIN_SIMILARITY_PROXIMITY:
-                if artist_name not in recommendations:
-                    recommendations[artist_name] = proximity
+            if proximity <= MIN_PROXIMITY and artist_name not in recommendations:
+                recommendations[artist_name] = proximity
         return recommendations
 
     def recommend_by_seed(self, seed_artist: str, disliked_artists: List[str], debug=False) -> List[ArtistNode]:
