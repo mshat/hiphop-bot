@@ -67,7 +67,7 @@ class ArtistStreamingServiceLinkModel(Model):
         artist_links_dict = {}
         streaming_service_links_raw = self._raw_select(self._get_all_query)
         for streaming_service_link in streaming_service_links_raw:
-            artist_name = streaming_service_link[0]
+            artist_name = streaming_service_link[0]  # TODO если добавлю id в self._get_all_query - поменять
             streaming_name = streaming_service_link[1]
             link = streaming_service_link[2]
 
