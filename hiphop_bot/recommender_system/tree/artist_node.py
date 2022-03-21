@@ -72,12 +72,6 @@ class ArtistNode(Node):
         attributes = {}
         male_female = (1 if self.gender == 'male' else 2) / 2
         attributes.update({'male_female': male_female})
-        if self.name not in ARTISTS:
-            print(self.name)
-            print(ARTISTS)
-        assert self.name in ARTISTS
-        name = ARTISTS.index(self.name) / len(ARTISTS)
-        attributes.update({'name': name})
         assert self.theme in THEMES
         theme = THEMES.index(self.theme) / len(THEMES)
         attributes.update({'theme': theme})
