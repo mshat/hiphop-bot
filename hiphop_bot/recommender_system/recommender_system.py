@@ -12,7 +12,7 @@ from hiphop_bot.recommender_system.tree.artist_node import ArtistNode
 from hiphop_bot.recommender_system.singleton import Singleton
 from hiphop_bot.recommender_system.config import MIN_SIMILARITY_PROXIMITY
 from hiphop_bot.recommender_system.artist_filterer import filter_artists
-from hiphop_bot.recommender_system.models.artist_pairs_proximity import ArtistPairsProximityModel
+from hiphop_bot.recommender_system.models.artist_pairs_proximity import ArtistsPairsProximityModel
 
 
 class RecommenderSystemArgumentError(Exception): pass
@@ -23,9 +23,8 @@ class RecommenderSystem(metaclass=Singleton):
 
     def __init__(self):
         self._tree = load_tree()
-        artist_pairs_proximity_model = ArtistPairsProximityModel()
-        artist_pairs_proximity_obj = artist_pairs_proximity_model.get_all()
-        self._artists_pairs_proximity = artist_pairs_proximity_obj.artists_proximity
+        artist_pairs_proximity_model = ArtistsPairsProximityModel()
+        self._artists_pairs_proximity = artist_pairs_proximity_model.get_artists_proximity_dict()
 
         max_proximity = calc_max_general_proximity(self._artists_pairs_proximity)
         min_proximity = calc_min_general_proximity(self._artists_pairs_proximity)
