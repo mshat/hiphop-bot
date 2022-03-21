@@ -65,7 +65,7 @@ class ArtistsNamesAliasesModel(Model):
         except ModelUniqueViolationError:
             raise ModelError('Aliases for artist with this id already exist. Try to use update_aliases method')
 
-    def update_record(
+    def update_aliases(
             self,
             artist_id: int = None,
             additional_aliases: List[str] = None,
