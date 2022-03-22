@@ -56,7 +56,7 @@ class ArtistsNamesAliasesModel(Model):
             f'insert into {self._table_name} (artist_id, aliases) '
             f"VALUES(%s, %s);"
         )
-        values = (artist_id, '{' + ','.join(aliases) + '}')
+        values = (artist_id, self._convert_aliases_list_to_db_array(aliases))
 
         try:
             added_records_number = self._insert(query, values)
@@ -100,13 +100,3 @@ class ArtistsNamesAliasesModel(Model):
         updated_records_number = self._update(query)
         if updated_records_number < 1:
             raise ModelError('Failed to add record')
-
-
-# m = ArtistsNamesAliasesModel()
-# m.update_record(61, additional_aliases=['макса', 'максима', 'максимуса'])
-# print(m.get_by_artist_name('Max'))
-# print(m.get_by_artist_id(1))
-# # m.add_record(1, ['lizer_test1', 'lizer_test2'])
-# # all = m.get_all()
-# # print(all)
-# # print(m.get_by_artist_name('guf'))
