@@ -9,7 +9,7 @@ from hiphop_bot.dialog_bot.config import DEBUG_MODEL
 class Proximity:
     general_proximity: float
     proximities: List[float]
-    
+
     def __init__(self, general_proximity: float, proximities: List[float]):
         self.general_proximity = general_proximity
         self.proximities = proximities
