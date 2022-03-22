@@ -3,7 +3,7 @@ from hiphop_bot.recommender_system.pow_distance import calc_distance_in_pow
 from hiphop_bot.recommender_system.tree.artist_node import ArtistNode
 from hiphop_bot.recommender_system.tree.node import Node
 from hiphop_bot.recommender_system.tree.tree_tools import calc_distance_between_nodes, get_leafs_values
-from hiphop_bot.recommender_system.proximity import GeneralProximity
+from hiphop_bot.recommender_system.proximity import RawGeneralProximity
 
 
 def calc_manhattan_measure(attribute1: float, attribute2: float):
@@ -22,7 +22,7 @@ def calc_tree_distance_measure(
 def generalizing_proximity_measure(
         tree: Node,
         leaf_1: ArtistNode,
-        leaf_2: ArtistNode) -> GeneralProximity:
+        leaf_2: ArtistNode) -> RawGeneralProximity:
     attributes1 = leaf_1.countable_attributes
     attributes2 = leaf_2.countable_attributes
     gender_proximity = calc_manhattan_measure(attributes1['male_female'], attributes2['male_female'])
@@ -32,7 +32,7 @@ def generalizing_proximity_measure(
     tree_distance = calc_tree_distance_measure(tree, leaf_1, leaf_2)
     genre_proximity = tree_distance
 
-    proximity = GeneralProximity(
+    proximity = RawGeneralProximity(
         gender_proximity=gender_proximity,
         theme_proximity=theme_proximity,
         year_of_birth_proximity=year_of_birth_proximity,
@@ -47,7 +47,7 @@ def calc_generalizing_proximity_measure_for_all_leafs(tree: Node) -> dict:
     leafs = []
     get_leafs_values(tree, leafs)
 
-    leafs_pairs_proximity: Dict[str, Dict[str, GeneralProximity]] = {}
+    leafs_pairs_proximity: Dict[str, Dict[str, RawGeneralProximity]] = {}
     gender_proximities: Set[float] = set()
     theme_proximities: Set[float] = set()
     year_of_birth_proximities: Set[float] = set()
