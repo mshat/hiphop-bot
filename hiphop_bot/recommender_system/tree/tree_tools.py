@@ -19,10 +19,11 @@ def find_path_to_node(root: Node, path: list, node_name: str):
     return
 
 
-def calc_distance_between_nodes(root, node_name1: str, node_name2: str):
+# def calc_distance_between_nodes(root, node_name1: str, node_name2: str):  # TODO костыльный фикс issue 17
+def calc_distance_between_nodes(root, node1, node2):
     if root:
-        path1 = find_path_to_node(root, [], node_name1)
-        path2 = find_path_to_node(root, [], node_name2)
+        path1 = find_path_to_node(root, [], node1.name)
+        path2 = find_path_to_node(root, [], node2.name)
 
         i = 0
         while i < len(path1) and i < len(path2):
@@ -30,7 +31,10 @@ def calc_distance_between_nodes(root, node_name1: str, node_name2: str):
                 break
             i = i + 1
 
-        return len(path1) + len(path2) - 2 * i
+        distance = len(path1) + len(path2) - 2 * i
+        if node1.genre == node2.genre:
+            distance -= 1  # TODO костыльный фикс issue 17
+        return distance
     else:
         return 0
 
@@ -50,6 +54,7 @@ def calc_distance_between_all_nodes(tree: Node, leafs: list):
     return distances_between_nodes
 
 
+# TODO удалить
 def calc_max_distance_between_nodes_optimized(distances_between_nodes: dict):
     max_distance = 0
     for pair_data in distances_between_nodes.values():
