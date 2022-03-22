@@ -7,14 +7,23 @@ from hiphop_bot.recommender_system.tree.artist_node import ArtistNode
 from hiphop_bot.recommender_system.singleton import Singleton
 from hiphop_bot.recommender_system.config import MIN_PROXIMITY
 from hiphop_bot.recommender_system.artist_filterer import filter_artists
-from hiphop_bot.recommender_system.models.artist_pairs_proximity import ArtistsPairsProximityModel
+from hiphop_bot.recommender_system.models.artist_pairs_proximity import ArtistsPairsProximityModel, Proximity
+
+
+class RecommendedArtist:
+    artist: ArtistNode
+    proximity: Proximity
+
+    def __init__(self, artist: ArtistNode, proximity: Proximity):
+        self.artist = artist
+        self.proximity = proximity
 
 
 class RecommenderSystemArgumentError(Exception): pass
 
 
 class RecommenderSystem(metaclass=Singleton):
-    _artists_pairs_proximity: Dict[str, Dict[str, float]]
+    _artists_pairs_proximity: Dict[str, Dict[str, Proximity]]
 
     def __init__(self):
         self._tree = load_tree()
@@ -29,38 +38,40 @@ class RecommenderSystem(metaclass=Singleton):
 
     def _get_recommendations(
             self,
-            seed_object: ArtistNode) -> OrderedDict[str, float]:
-        artist_pairs: Dict[str, float] = self._artists_pairs_proximity[seed_object.name]
+            seed_object: ArtistNode) -> List[RecommendedArtist]:
+        artist_pairs: Dict[str, Proximity] = self._artists_pairs_proximity[seed_object.name]
 
-        # pycharm подсвечивает ошибку типов, но ошибки нет. Sorted возвращает List[Tuple[str, float]], а не List[str]
-        artist_pairs_sorted_by_proximity = OrderedDict(sorted(artist_pairs.items(), key=lambda item: item[1]))
+        # pycharm подсвечивает ошибку типов, но ошибки нет. Sorted возвращает именно OrderedDict[str, Proximity]]
+        artist_pairs_sorted_by_proximity: Dict[str, Proximity] = OrderedDict(
+            sorted(artist_pairs.items(), key=lambda item: item[1].general_proximity)
+        )
 
-        recommendations = OrderedDict()
+        recommendations: List[RecommendedArtist] = []
         for artist_name, proximity in artist_pairs_sorted_by_proximity.items():
-            if proximity <= MIN_PROXIMITY and artist_name not in recommendations:
-                recommendations[artist_name] = proximity
+            if proximity.general_proximity <= MIN_PROXIMITY and artist_name not in recommendations:
+                artist = self.get_artist_by_name(artist_name)
+                recommendations.append(RecommendedArtist(artist, proximity))
         return recommendations
 
-    def recommend_by_seed(self, seed_artist: str, disliked_artists: List[str], debug=False) -> List[ArtistNode]:
+    def recommend_by_seed(self, seed_artist: str, disliked_artists: List[str], debug=False) -> List[RecommendedArtist]:
         seed = self.get_artist_by_name(seed_artist)
 
-        recommendations_by_artist: List[ArtistNode] = []
-        recommendations = self._get_recommendations(seed)
+        recommendations_by_artist: List[RecommendedArtist] = self._get_recommendations(seed)
+        recommendations_by_artist = [recommendation for recommendation in recommendations_by_artist
+                                     if recommendation.artist.name not in disliked_artists]
 
-        for artist_name, proximity in recommendations.items():
-            if artist_name not in disliked_artists:
-                recommendations_by_artist.append(self.get_artist_by_name(artist_name))
-            else:
-                if debug:
-                    print(f'Артист {artist_name} удалён из выборки')
+        if debug:  # TODO поменять на флаг дебаг принта
+            for recommended_artist in recommendations_by_artist:
+                if recommended_artist.artist.name in disliked_artists:
+                    print(f'Артист {recommended_artist.artist.name} удалён из выборки')
         return recommendations_by_artist
 
-    def recommend_by_likes(self, liked_artists: List[str], disliked_artists: List[str], debug=False)\
+    def recommend_by_likes(self, liked_artists: List[str], disliked_artists: List[str], debug=False) \
             -> List[ArtistNode]:
         artists_recommendations: Dict[str, List[ArtistNode]] = OrderedDict()
         for artist_name in liked_artists:
-            recommendations_: List[ArtistNode] = self.recommend_by_seed(artist_name, disliked_artists, debug)
-            artists_recommendations[artist_name] = list(recommendations_)
+            recommendations_: List[RecommendedArtist] = self.recommend_by_seed(artist_name, disliked_artists, debug)
+            artists_recommendations[artist_name] = [artist.artist for artist in recommendations_]
 
         recommendations_by_likes: List[ArtistNode] = []
         max_recommendation_len = max(map(len, artists_recommendations.values()))
