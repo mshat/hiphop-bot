@@ -78,20 +78,21 @@ CREATE TABLE artist_pairs_proximity (
     id SERIAL PRIMARY KEY,
     first_artist_id INT REFERENCES artist (id) NOT NULL,
     second_artist_id INT REFERENCES artist (id) NOT NULL,
-    proximity FLOAT NOT NULL
+    proximity FLOAT NOT NULL,
+    proximities FLOAT[] NOT NULL
 );
 
-CREATE TEMP TABLE new_pairs_proximity (doc json);
-\copy new_pairs_proximity from 'docker-entrypoint-initdb.d/artist_pairs_proximity.json'
-
-insert into artist_pairs_proximity (first_artist_id, second_artist_id, proximity)
-select p.first_artist_id, p.second_artist_id, p.proximity
-from new_pairs_proximity l
-  cross join lateral json_populate_recordset(null::artist_pairs_proximity, doc) as p
-on conflict (id) do update
-  set first_artist_id = excluded.first_artist_id,
-  second_artist_id = excluded.second_artist_id,
-  proximity = excluded.proximity;
+--CREATE TEMP TABLE new_pairs_proximity (doc json);
+--\copy new_pairs_proximity from 'docker-entrypoint-initdb.d/artist_pairs_proximity.json'
+--
+--insert into artist_pairs_proximity (first_artist_id, second_artist_id, proximity)
+--select p.first_artist_id, p.second_artist_id, p.proximity
+--from new_pairs_proximity l
+--  cross join lateral json_populate_recordset(null::artist_pairs_proximity, doc) as p
+--on conflict (id) do update
+--  set first_artist_id = excluded.first_artist_id,
+--  second_artist_id = excluded.second_artist_id,
+--  proximity = excluded.proximity;
 
 
 --table Genres_adjacency_table
