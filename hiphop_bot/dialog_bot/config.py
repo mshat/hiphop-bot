@@ -1,5 +1,7 @@
 DEBUG = True  # Общий дебаг флаг. Если имеет значение False, отключаются все остальные флаги
 
+SHOW_PROXIMITY_MODE = True
+
 DEBUG_RECOMMENDER_SYSTEM = True  # Флаг для вывода отладочных сообщений рекоммендательной системы
 
 DEBUG_QUERY_HANDLER = True  # Флаг для вывода отладочных сообщений модуля query_handling
@@ -24,3 +26,4 @@ if not DEBUG:
     DEBUG_MODEL = False
     DEBUG_TG_INTERFACE = False
     ERROR_PRINT = False
+    SHOW_PROXIMITY_MODE = False
