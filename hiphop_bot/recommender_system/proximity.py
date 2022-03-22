@@ -2,7 +2,13 @@ from typing import List
 from hiphop_bot.recommender_system import config
 
 
-class GeneralProximity:
+class RawGeneralProximity:
+    """
+    Класс используется для хранения результатов вычисления мер близости после их расчёта.
+    Далее его объекты передаются в метод обновления таблиы пар близости артистов в базе данных.
+    В рекомендательной системе для хранения загруженных из бд данных о
+    близости пар артистов ДОЛЖЕН ИСПОЛЬЗОВАТЬСЯ ДРУГОЙ КЛАСС
+    """
     _gender_proximity: float
     _theme_proximity: float
     _year_of_birth_proximity: float
