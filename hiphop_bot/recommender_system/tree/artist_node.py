@@ -70,19 +70,14 @@ class ArtistNode(Node):
     @property
     def countable_attributes(self) -> dict:
         attributes = {}
-        male_female = (1 if self.gender == 'male' else 2) / 2
+        male_female = 1 if self.gender == 'male' else 2
         attributes.update({'male_female': male_female})
         assert self.theme in THEMES
-        theme = THEMES.index(self.theme) / len(THEMES)
+        theme = THEMES.index(self.theme)
         attributes.update({'theme': theme})
-        year_of_birth = self.year_of_birth / 10000
+        year_of_birth = self.year_of_birth
         attributes.update({'year_of_birth': year_of_birth})
-        if self.group_members_number > 2:
-            solo_duet_group = 3
-        else:
-            solo_duet_group = self.group_members_number
-        solo_duet_group = solo_duet_group / 3
-        attributes.update({'solo_duet_group': solo_duet_group})
+        attributes.update({'group_members_num': self.group_members_number})
         return attributes
 
     def __str__(self):
