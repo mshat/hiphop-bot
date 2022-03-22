@@ -43,7 +43,7 @@ def generalizing_proximity_measure(
     return proximity
 
 
-def calc_generalizing_proximity_measure_for_all_leafs(tree: Node) -> dict:
+def calc_generalizing_proximity_measure_for_all_leafs(tree: Node) -> Dict[str, Dict[str, RawGeneralProximity]]:
     leafs = []
     get_leafs_values(tree, leafs)
 
@@ -80,13 +80,6 @@ def calc_generalizing_proximity_measure_for_all_leafs(tree: Node) -> dict:
     max_year_of_birth_proximity = max(year_of_birth_proximities)
     min_genre_proximity = min(genre_proximities)
     max_genre_proximity = max(genre_proximities)
-
-    x = []
-    for first_artist_name, pairs in leafs_pairs_proximity.items():
-        for pair_name, proximity_ in pairs.items():
-            x.append(proximity_.general_proximity)
-    x.sort()
-    x.reverse()
 
     for first_artist_name, pairs in leafs_pairs_proximity.items():
         for pair_name, proximity_ in pairs.items():

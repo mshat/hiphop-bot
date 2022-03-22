@@ -21,7 +21,7 @@ def update_artist_pairs_proximity():
             first_artist_id = artists_ids[first_artist_name]
             pair_artist_id = artists_ids[pair_name]
             if db_obj:
-                if db_obj.general_proximity != proximity_obj.general_proximity:
+                if db_obj.proximity.general_proximity != proximity_obj.general_proximity:
                     pairs_to_update.append((first_artist_id, pair_artist_id, proximity_obj.general_proximity,
                                             proximity_obj.proximities_list))
             else:
