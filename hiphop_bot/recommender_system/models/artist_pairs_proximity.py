@@ -6,6 +6,15 @@ from hiphop_bot.dialog_bot.services.tools.debug_print import error_print, debug_
 from hiphop_bot.dialog_bot.config import DEBUG_MODEL
 
 
+class Proximity:
+    general_proximity: float
+    proximities: List[float]
+    
+    def __init__(self, general_proximity: float, proximities: List[float]):
+        self.general_proximity = general_proximity
+        self.proximities = proximities
+
+
 class _ArtistsPairsProximityItem(BaseModelObject):
     def __init__(
             self,
@@ -17,11 +26,10 @@ class _ArtistsPairsProximityItem(BaseModelObject):
         super().__init__(db_row_id)
         self.first_artist_name = first_artist_name
         self.second_artist_name = second_artist_name
-        self.general_proximity = general_proximity
-        self.proximities = proximities
+        self.proximity = Proximity(general_proximity, proximities)
 
     def __str__(self):
-        return f'ArtistPairsProximityItem {self.first_artist_name} {self.second_artist_name} {self.general_proximity}'
+        return f'ArtistPairsProximityItem {self.first_artist_name} {self.second_artist_name} {self.proximity}'
 
     def __repr__(self):
         return self.__str__()
@@ -52,17 +60,17 @@ class ArtistsPairsProximityModel(Model):
     def get_all(self) -> List[_ArtistsPairsProximityItem]:
         return super().get_all()
 
-    def get_artists_proximity_dict(self) -> Dict[str, Dict[str, float]]:
+    def get_artists_proximity_dict(self) -> Dict[str, Dict[str, Proximity]]:
         artists_proximity_dict = {}
         items = self.get_all()
         for item in items:
             first_artist = item.first_artist_name
             second_artist = item.second_artist_name
-            proximity = item.general_proximity
+            general_proximity = item.proximity
             if first_artist in artists_proximity_dict:
-                artists_proximity_dict[first_artist].update({second_artist: proximity})
+                artists_proximity_dict[first_artist].update({second_artist: general_proximity})
             else:
-                artists_proximity_dict[first_artist] = {second_artist: proximity}
+                artists_proximity_dict[first_artist] = {second_artist: general_proximity}
         return artists_proximity_dict
 
     def _convert_proximities_list_to_db_array(self, proximities: Iterable[float]) -> str:
