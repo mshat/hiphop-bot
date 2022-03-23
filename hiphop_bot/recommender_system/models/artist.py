@@ -1,10 +1,11 @@
-from typing import List, Tuple
+from typing import List, Tuple, Dict
 from datetime import datetime
 from hiphop_bot.db.abstract_model import Model, ModelError, ModelUniqueViolationError
 from hiphop_bot.recommender_system.models.theme import ThemeModel, _Theme  # импортирутеся для аннотации
 from hiphop_bot.recommender_system.models.gender import GenderModel, _Gender  # импортирутеся для аннотации
 from hiphop_bot.recommender_system.models.genre import GenreModel, _Genre  # импортирутеся для аннотации
 from hiphop_bot.dialog_bot.models.artists_names_aliases import ArtistsNamesAliasesModel
+from hiphop_bot.recommender_system.models.artist_pairs_proximity import ArtistsPairsProximityModel
 from hiphop_bot.recommender_system.models.artist_streaming_service_link import (
     ArtistStreamingServiceLinkModel, _StreamingServiceLinks)
 from hiphop_bot.base_models.model_object_class import ModelObject
