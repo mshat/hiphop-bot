@@ -1,16 +1,17 @@
+from typing import List
 from hiphop_bot.recommender_system.proximity_measures import calc_generalizing_proximity_measure_for_all_leafs
 from hiphop_bot.recommender_system.models.artist_pairs_proximity import ArtistsPairsProximityModel
-from hiphop_bot.recommender_system.models.artist import ArtistModel
-from hiphop_bot.recommender_system.tree.tree_loader import load_tree
+from hiphop_bot.recommender_system.models.recommender_system_artist import RecommenderSystemArtist
+from hiphop_bot.recommender_system.models.artist import ArtistModel, _Artist
 
 
 def update_artist_pairs_proximity():
-    tree = load_tree()
-    artist_pairs_proximity = calc_generalizing_proximity_measure_for_all_leafs(tree)
+    artists: List[_Artist] = ArtistModel().get_all()
+    recommender_system_artists: List[RecommenderSystemArtist] = \
+        [RecommenderSystemArtist(artist) for artist in ArtistModel().get_all()]
+    artist_pairs_proximity = calc_generalizing_proximity_measure_for_all_leafs(recommender_system_artists)
     artists_pairs_proximity_model = ArtistsPairsProximityModel()
-    artist_model = ArtistModel()
 
-    artists = artist_model.get_all()
     artists_ids = {artist.name: artist.id for artist in artists}
 
     pairs_to_update = []

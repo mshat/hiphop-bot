@@ -1,8 +1,9 @@
 from typing import Dict, List, Set
 from hiphop_bot.recommender_system.pow_distance import calc_distance_in_pow
-from hiphop_bot.recommender_system.tree.artist_node import ArtistNode
+from hiphop_bot.recommender_system.models.recommender_system_artist import RecommenderSystemArtist
 from hiphop_bot.recommender_system.tree.node import Node
-from hiphop_bot.recommender_system.tree.tree_tools import calc_distance_between_nodes, get_leafs_values
+from hiphop_bot.recommender_system.tree.tree_loader import load_genres_tree
+from hiphop_bot.recommender_system.tree.tree_tools import calc_distance_between_nodes
 from hiphop_bot.recommender_system.proximity import RawGeneralProximity
 
 
@@ -10,26 +11,29 @@ def calc_manhattan_measure(attribute1: float, attribute2: float):
     return calc_distance_in_pow(attribute1, attribute2, 1)
 
 
-def calc_tree_distance_measure(
-        tree: Node,
-        leaf_1: ArtistNode,
-        leaf_2: ArtistNode,
+def calc_genre_tree_distance_measure(
+        genres_tree: Node,
+        genre1: str,
+        genre2: str,
 ):
-    # TODO в должны передаваться .name нод. временно передаю сами ноды issue 16
-    return calc_distance_between_nodes(tree, leaf_1, leaf_2)
+    genre_node1 = genres_tree.get_child_by_name(genres_tree, genre1)
+    genre_node2 = genres_tree.get_child_by_name(genres_tree, genre2)
+    return calc_distance_between_nodes(genres_tree, genre_node1, genre_node2)
 
 
 def generalizing_proximity_measure(
-        tree: Node,
-        leaf_1: ArtistNode,
-        leaf_2: ArtistNode) -> RawGeneralProximity:
-    attributes1 = leaf_1.countable_attributes
-    attributes2 = leaf_2.countable_attributes
+        genres_tree: Node,
+        artist1: RecommenderSystemArtist,
+        artist2: RecommenderSystemArtist) -> RawGeneralProximity:
+    attributes1 = artist1.countable_attributes
+    attributes2 = artist2.countable_attributes
     gender_proximity = calc_manhattan_measure(attributes1['male_female'], attributes2['male_female'])
     theme_proximity = calc_manhattan_measure(attributes1['theme'], attributes2['theme'])
     year_of_birth_proximity = calc_manhattan_measure(attributes1['year_of_birth'], attributes2['year_of_birth'])
     members_num_proximity = calc_manhattan_measure(attributes1['group_members_num'], attributes2['group_members_num'])
-    tree_distance = calc_tree_distance_measure(tree, leaf_1, leaf_2)
+
+    # TODO вычисление среднего из нескольких жанров
+    tree_distance = calc_genre_tree_distance_measure(genres_tree, artist1.genre, artist2.genre)
     genre_proximity = tree_distance
 
     proximity = RawGeneralProximity(
@@ -43,30 +47,30 @@ def generalizing_proximity_measure(
     return proximity
 
 
-def calc_generalizing_proximity_measure_for_all_leafs(tree: Node) -> Dict[str, Dict[str, RawGeneralProximity]]:
-    leafs = []
-    get_leafs_values(tree, leafs)
+def calc_generalizing_proximity_measure_for_all_leafs(artists: List[RecommenderSystemArtist]) \
+        -> Dict[str, Dict[str, RawGeneralProximity]]:
+    genres_tree = load_genres_tree()
 
-    leafs_pairs_proximity: Dict[str, Dict[str, RawGeneralProximity]] = {}
+    artists_pairs_proximity: Dict[str, Dict[str, RawGeneralProximity]] = {}
     gender_proximities: Set[float] = set()
     theme_proximities: Set[float] = set()
     year_of_birth_proximities: Set[float] = set()
     members_num_proximities: Set[float] = set()
     genre_proximities: Set[float] = set()
-    for leaf1 in leafs:
-        for leaf2 in leafs:
-            if leaf1 != leaf2:
-                proximity = generalizing_proximity_measure(tree, leaf1, leaf2)
+    for artist1 in artists:
+        for artist2 in artists:
+            if artist1 != artist2:
+                proximity = generalizing_proximity_measure(genres_tree, artist1, artist2)
                 gender_proximities.update((proximity.gender_proximity,))
                 theme_proximities.update((proximity.theme_proximity,))
                 year_of_birth_proximities.update((proximity.year_of_birth_proximity,))
                 members_num_proximities.update((proximity.members_num_proximity,))
                 genre_proximities.update((proximity.genre_proximity,))
 
-                if leaf1.name not in leafs_pairs_proximity:
-                    leafs_pairs_proximity.update({leaf1.name: {}})
-                leafs_pairs_proximity[leaf1.name].update(
-                    {leaf2.name: proximity}
+                if artist1.name not in artists_pairs_proximity:
+                    artists_pairs_proximity.update({artist1.name: {}})
+                artists_pairs_proximity[artist1.name].update(
+                    {artist2.name: proximity}
                 )
 
     # нормализация значений
@@ -81,7 +85,7 @@ def calc_generalizing_proximity_measure_for_all_leafs(tree: Node) -> Dict[str, D
     min_genre_proximity = min(genre_proximities)
     max_genre_proximity = max(genre_proximities)
 
-    for first_artist_name, pairs in leafs_pairs_proximity.items():
+    for first_artist_name, pairs in artists_pairs_proximity.items():
         for pair_name, proximity_ in pairs.items():
             proximity_.normalize_gender_proximity(min_value=min_gender_proximity, max_value=max_gender_proximity)
             proximity_.normalize_theme_proximity(min_value=min_theme_proximity, max_value=max_theme_proximity)
@@ -93,16 +97,16 @@ def calc_generalizing_proximity_measure_for_all_leafs(tree: Node) -> Dict[str, D
 
     # нормализация general_proximity
     general_proximities: Set[float] = set()
-    for first_artist_name, pairs in leafs_pairs_proximity.items():
+    for first_artist_name, pairs in artists_pairs_proximity.items():
         for pair_name, proximity_ in pairs.items():
             general_proximities.update((proximity_.general_proximity,))
     min_general_proximity = min(general_proximities)
     max_general_proximity = max(general_proximities)
-    for first_artist_name, pairs in leafs_pairs_proximity.items():
+    for first_artist_name, pairs in artists_pairs_proximity.items():
         for pair_name, proximity_ in pairs.items():
             proximity_.normalize_general_proximity(min_value=min_general_proximity, max_value=max_general_proximity)
 
-    return leafs_pairs_proximity
+    return artists_pairs_proximity
 
 
 def calc_generalizing_proximity_measure(artist_name: str, tree: Node):

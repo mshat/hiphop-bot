@@ -1,7 +1,7 @@
 import enum
 from typing import List
 from hiphop_bot.recommender_system.models.artist import _Artist  # Импортируется для аннотаций
-from hiphop_bot.dialog_bot.services.recommender_system_class_adapter import AdaptedRecommendedArtist
+from hiphop_bot.recommender_system.recommender_system import RecommendedArtist
 
 
 class DialogState(enum.Enum):
@@ -20,7 +20,7 @@ class DialogTypeError(Exception): pass
 class Dialog:
     _state: DialogState
     _found_artists: List[_Artist] | None
-    _found_artists_with_proximity: List[AdaptedRecommendedArtist] | None
+    _found_artists_with_proximity: List[RecommendedArtist] | None
     info: str | None
     debug_message: str | None
     matched_handler_name: str | None
@@ -64,11 +64,11 @@ class Dialog:
         self._found_artists = artists
 
     @property
-    def found_artists_with_proximity(self) -> List[AdaptedRecommendedArtist] | None:
+    def found_artists_with_proximity(self) -> List[RecommendedArtist] | None:
         return self._found_artists_with_proximity
 
     @found_artists_with_proximity.setter
-    def found_artists_with_proximity(self, artists: List[AdaptedRecommendedArtist]):
+    def found_artists_with_proximity(self, artists: List[RecommendedArtist]):
         self._found_artists_with_proximity = artists
 
     @property

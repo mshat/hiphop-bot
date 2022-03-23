@@ -1,4 +1,3 @@
-from hiphop_bot.recommender_system.tree.node import Node
 from hiphop_bot.recommender_system.models.artist import _Artist  # импортирутеся для аннотации
 from hiphop_bot.recommender_system.models.artist import ArtistModel
 from hiphop_bot.recommender_system.models.theme import ThemeModel
@@ -7,10 +6,12 @@ THEMES = ThemeModel().get_theme_names()
 ARTISTS = ArtistModel().get_artist_names()
 
 
-class ArtistNode(Node):
+class RecommenderSystemArtist:
+    """
+    Класс артиста для рекомендательной системы. Поля класса _Artist пересчитываются в числовые значения
+    """
     def __init__(self, artist: _Artist):
         self._artist = artist
-        super().__init__(val=self._artist.name)
 
     @property
     def artist(self) -> _Artist:
@@ -81,7 +82,7 @@ class ArtistNode(Node):
         return attributes
 
     def __str__(self):
-        return f'ArtistVisualNode: NodeVal={self.value} Artist={self._artist.__str__()}'
+        return f'RecommenderSystemArtist: {self._artist.__str__()}'
 
     def __repr__(self):
         return self.__str__()

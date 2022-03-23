@@ -4,8 +4,7 @@ from hiphop_bot.dialog_bot.services.query_solving.dialog import Dialog
 from hiphop_bot.dialog_bot.services.query_solving.user import User
 from hiphop_bot.dialog_bot.view.output_message import Output
 from hiphop_bot.recommender_system.models.artist import _Artist  # Импортируется для аннотаций
-from hiphop_bot.dialog_bot.services.recommender_system_class_adapter import (AdaptedRecommenderSystem,
-                                                                             AdaptedRecommendedArtist)
+from hiphop_bot.recommender_system.recommender_system import RecommenderSystem, RecommendedArtist
 
 
 class AnswerGenerator:
@@ -62,7 +61,7 @@ class AnswerGenerator:
         return out_msg
 
     def _filter_search_result(self) -> List[_Artist]:
-        recommender_system = AdaptedRecommenderSystem()
+        recommender_system = RecommenderSystem()
         return recommender_system.filter_artists(
             self.dialog.found_artists,
             group_type=self.user.group_type_filter.value,
@@ -96,7 +95,7 @@ class AnswerGenerator:
 
         out_msg = ''
 
-        recommended_artists: List[AdaptedRecommendedArtist] = self.trunc_output(found_artists)
+        recommended_artists: List[RecommendedArtist] = self.trunc_output(found_artists)
         if recommended_artists:
             for artist in recommended_artists:
                 proximities = artist.proximity.proximities
