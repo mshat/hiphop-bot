@@ -75,6 +75,23 @@ on conflict (id) do update
   gender_id = excluded.gender_id,
   genre_id = excluded.genre_id;
 
+
+-- table artists_themes
+CREATE TABLE artists_themes(
+    id SERIAL PRIMARY KEY,
+    artist_id INT REFERENCES artist (id) NOT NULL,
+    theme_id INT REFERENCES theme (id) NOT NULL
+)
+
+
+-- table artists_genres
+CREATE TABLE artists_genres(
+    id SERIAL PRIMARY KEY,
+    artist_id INT REFERENCES artist (id) NOT NULL,
+    genre_id INT REFERENCES genre (id) NOT NULL
+)
+
+
 --table Artist_pairs_proximity
 CREATE TABLE artist_pairs_proximity (
     id SERIAL PRIMARY KEY,

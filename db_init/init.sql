@@ -48,15 +48,16 @@ from new_genres l
 on conflict (id) do update
   set name = excluded.name;
 
+
 --table Artist
 CREATE TABLE artist (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     year_of_birth INT NOT NULL,
     group_members_num INT NOT NULL,
-    theme_id INT REFERENCES theme (id) NOT NULL,
+    artists_themes_id INT REFERENCES artists_themes (id) NOT NULL,
     gender_id INT REFERENCES gender (id) NOT NULL,
-    genre_id INT REFERENCES genre (id) NOT NULL
+    artists_genres_id INT REFERENCES artists_genres (id) NOT NULL
 );
 
 CREATE TEMP TABLE new_artists (doc json);
@@ -72,6 +73,23 @@ on conflict (id) do update
   theme_id = excluded.theme_id,
   gender_id = excluded.gender_id,
   genre_id = excluded.genre_id;
+
+
+-- table artists_themes
+CREATE TABLE artists_themes(
+    id SERIAL PRIMARY KEY,
+    artist_id INT REFERENCES artist (id) NOT NULL,
+    theme_id INT REFERENCES theme (id) NOT NULL
+)
+
+
+-- table artists_genres
+CREATE TABLE artists_genres(
+    id SERIAL PRIMARY KEY,
+    artist_id INT REFERENCES artist (id) NOT NULL,
+    genre_id INT REFERENCES genre (id) NOT NULL
+)
+
 
 --table Artist_pairs_proximity
 CREATE TABLE artist_pairs_proximity (
