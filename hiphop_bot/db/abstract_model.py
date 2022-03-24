@@ -8,6 +8,8 @@ from hiphop_bot.dialog_bot.config import DEBUG_MODEL
 
 class ModelError(Exception): pass
 class ModelUniqueViolationError(Exception): pass
+class AlreadyInTheDatabaseError(Exception): pass
+class InsertError(Exception): pass
 
 
 class Model(ABC):
@@ -30,9 +32,20 @@ class Model(ABC):
         if self._table_name not in tables:
             raise ModelError('This table does not exist in the database')
 
-    def _get_connection(self) -> Connection:
+    def _get_connection(self) -> Connection:  # TODO обработка исключений
         connection = CONNECTION_POOL.get_connection()
         return connection
+
+    def _get_cursor(self, connection: Connection):   # TODO обработка исключений
+        cursor = connection.cursor()
+        return cursor
+
+    def _close_cursor_and_connection(self, cursor, connection):   # TODO обработка исключений
+        cursor.close()
+        connection.put_connection()
+
+    def _commit(self, connection: Connection):   # TODO обработка исключений
+        connection.conn.commit()
 
     def _raw_select(self, query) -> List[Tuple] | List:
         try:
@@ -53,12 +66,31 @@ class Model(ABC):
     def _insert(self, query: str, values: Tuple) -> int:
         try:
             connection = self._get_connection()
-            cursor = connection.cursor()
+            cursor = self._get_cursor(connection)
             cursor.execute(query, values)
-            connection.conn.commit()
+            self._commit(connection)
             added_records_number = cursor.rowcount
-            cursor.close()
-            connection.put_connection()
+            self._close_cursor_and_connection(cursor, connection)
+            debug_print(DEBUG_MODEL, f'[MODEL] Добавил {added_records_number} запись в таблицу {self._table_name}')
+            return added_records_number
+        except errors.UndefinedColumn as e:
+            error_print(f'[db UndefinedColumn] {e}')
+            return 0
+        except errors.UniqueViolation as e:
+            error_print(f'[db] attempt to add an existing object to the database: {e}')
+            raise ModelUniqueViolationError(e)
+        except Exception as e:
+            error_print(f'[db unknown error] {e}')
+            return 0
+
+    def _simple_insert(self, query: str, values: Tuple, connection: Connection, cursor) -> int:
+        """
+        Метод используется при множественном инсёрте.
+        Действия по созданию и закрытию соединения и курсора, а также коммит выполняются вне
+        """
+        try:
+            cursor.execute(query, values)
+            added_records_number = cursor.rowcount
             debug_print(DEBUG_MODEL, f'[MODEL] Добавил {added_records_number} запись в таблицу {self._table_name}')
             return added_records_number
         except errors.UndefinedColumn as e:
