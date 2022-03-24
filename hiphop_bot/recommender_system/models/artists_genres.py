@@ -71,10 +71,12 @@ class ArtistsGenresModel(Model):
         if added_records_number < 1:
             raise InsertError('Failed to add record')
 
-    def add_multiple_records(self, artist_id: int, genres_ids: List[int]):
+    def add_multiple_records(self, artist_id: int, genres_names: List[str]):
         connection = self._get_connection()
         cursor = self._get_cursor(connection)
 
+        all_themes_ids: Dict[str, int] = {theme.name: theme.id for theme in GenreModel().get_all()}
+        genres_ids = [all_themes_ids[theme_name] for theme_name in genres_names]
         for genre_id in genres_ids:
             try:
                 query, values = self._create_add_record_query(artist_id, genre_id)
