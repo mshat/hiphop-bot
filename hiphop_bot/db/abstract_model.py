@@ -10,6 +10,8 @@ class ModelError(Exception): pass
 class ModelUniqueViolationError(Exception): pass
 class AlreadyInTheDatabaseError(Exception): pass
 class InsertError(Exception): pass
+class DeleteError(Exception): pass
+class NotFoundError(Exception): pass
 
 
 class Model(ABC):
@@ -30,7 +32,7 @@ class Model(ABC):
         test_conn.put_connection()
 
         if self._table_name not in tables:
-            raise ModelError('This table does not exist in the database')
+            raise NotFoundError('This table does not exist in the database')
 
     def _get_connection(self) -> Connection:  # TODO обработка исключений
         connection = CONNECTION_POOL.get_connection()
@@ -83,7 +85,7 @@ class Model(ABC):
             error_print(f'[db unknown error] {e}')
             return 0
 
-    def _simple_insert(self, query: str, values: Tuple, connection: Connection, cursor) -> int:
+    def _raw_insert(self, query: str, values: Tuple, cursor) -> int:
         """
         Метод используется при множественном инсёрте.
         Действия по созданию и закрытию соединения и курсора, а также коммит выполняются вне
@@ -102,6 +104,39 @@ class Model(ABC):
         except Exception as e:
             error_print(f'[db unknown error] {e}')
             return 0
+
+    def _delete(self, query: str, values: Tuple) -> int:
+        try:
+            connection = self._get_connection()
+            cursor = self._get_cursor(connection)
+            cursor.execute(query, values)
+            self._commit(connection)
+            deleted_records_number = cursor.rowcount
+            self._close_cursor_and_connection(cursor, connection)
+            if deleted_records_number == 0:
+                raise DeleteError('No records has been deleted')
+            debug_print(DEBUG_MODEL, f'[MODEL] Удалил записей: {deleted_records_number} из таблицы {self._table_name}')
+            return deleted_records_number
+        except Exception as e:
+            error_print(f'[db unknown error] {e}')
+            return 0
+
+    def _raw_delete(self, query: str, values: Tuple, cursor) -> int:
+        """
+        Метод используется при множественном удалении.
+        Действия по созданию и закрытию соединения и курсора, а также коммит выполняются вне
+        """
+        try:
+            cursor.execute(query, values)
+            deleted_records_number = cursor.rowcount
+        except Exception as e:
+            error_print(f'[db unknown error] {e}')
+            return 0
+        if deleted_records_number == 0:
+            raise DeleteError('No records has been deleted')
+        else:
+            debug_print(DEBUG_MODEL, f'[MODEL] Удалил записей: {deleted_records_number} из таблицы {self._table_name}')
+            return deleted_records_number
 
     def _select_model_objects(self, query) -> List:
         raw_data = self._raw_select(query)

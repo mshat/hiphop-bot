@@ -83,8 +83,12 @@ class ArtistsThemesModel(Model):
             except AlreadyInTheDatabaseError as e:
                 error_print(f'Failed to add record to {self._table_name}: {e}')
                 continue
-            added_records_number = self._simple_insert(query, values, connection, cursor)
+            added_records_number = self._raw_insert(query, values, cursor)
             if added_records_number < 1:
                 raise InsertError(f'Failed to add record to {self._table_name}: {artist_id} {theme_id}')
 
         self._commit(connection)
+        self._close_cursor_and_connection(cursor, connection)
+
+    def delete(self, id_: int, cursor) -> int:
+        return self._raw_delete(f"delete from {self._table_name} where artist_id = %s", (id_,), cursor)

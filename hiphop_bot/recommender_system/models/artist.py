@@ -1,6 +1,6 @@
 from typing import List, Tuple, Dict
 from datetime import datetime
-from hiphop_bot.db.abstract_model import Model, ModelError, ModelUniqueViolationError
+from hiphop_bot.db.abstract_model import Model, ModelError, ModelUniqueViolationError, DeleteError
 from hiphop_bot.recommender_system.models.theme import ThemeModel, _Theme  # импортирутеся для аннотации
 from hiphop_bot.recommender_system.models.gender import GenderModel, _Gender  # импортирутеся для аннотации
 from hiphop_bot.recommender_system.models.genre import GenreModel, _Genre  # импортирутеся для аннотации
@@ -11,7 +11,8 @@ from hiphop_bot.recommender_system.models.artist_pairs_proximity import ArtistsP
 from hiphop_bot.recommender_system.models.artist_streaming_service_link import (
     ArtistStreamingServiceLinkModel, _StreamingServiceLinks)
 from hiphop_bot.base_models.model_object_class import ModelObject
-from hiphop_bot.dialog_bot.services.tools.debug_print import error_print
+from hiphop_bot.dialog_bot.services.tools.debug_print import error_print, debug_print
+from hiphop_bot.dialog_bot.config import DEBUG_MODEL
 
 
 class _Artist(ModelObject):
@@ -169,6 +170,24 @@ class ArtistModel(Model):
         artists_themes_model = ArtistsThemesModel()
         artists_themes_model.add_multiple_records(artist_id, themes)
 
+    def delete_with_requirements(self, id_: int):
+        connection = self._get_connection()
+        cursor = self._get_cursor(connection)
+
+        try:
+            ArtistsPairsProximityModel().delete(id_, cursor)
+            ArtistsThemesModel().delete(id_, cursor)
+            ArtistsGenresModel().delete(id_, cursor)
+            ArtistStreamingServiceLinkModel().delete(id_, cursor)
+            ArtistsNamesAliasesModel().delete(id_, cursor)
+            self._raw_delete(f"delete from {self._table_name} where id = %s", (id_,), cursor)
+        except DeleteError as e:
+            raise DeleteError(f'Не смог удалить артиста с id: {id_}: {e}')
+        else:
+            self._commit(connection)
+            self._close_cursor_and_connection(cursor, connection)
+            debug_print(DEBUG_MODEL, f'[MODEL] Удалил артиста с id {id_}')
+
     def add_record(
             self,
             name: str,
@@ -179,7 +198,8 @@ class ArtistModel(Model):
             genres: List[str],
             streaming_service_name: str,
             streaming_service_link: str,
-            artist_name_aliases: List[str]
+            artist_name_aliases: List[str],
+            update_if_exist=False
     ):
         name = name.lower()
         themes = [theme_.lower() for theme_ in themes]
@@ -188,9 +208,14 @@ class ArtistModel(Model):
         streaming_service_name = streaming_service_name.lower()
         streaming_service_link = streaming_service_link.lower()
         artist_name_aliases = [alias.lower() for alias in artist_name_aliases]
-        if self.get_by_name(name):
-            error_print('Failed to add record. This artist already exists')
-            return
+        existing_record = self.get_by_name(name)
+        if existing_record:
+            if update_if_exist:
+                self.delete_with_requirements(existing_record.id)
+                assert self.get_by_name(name) is None
+            else:
+                error_print(f'Failed to add record. This artist {name} already exists')
+                return
         theme_model = ThemeModel()
         gender_model = GenderModel()
         genre_model = GenreModel()
@@ -225,4 +250,5 @@ class ArtistModel(Model):
         self._add_artist_aliases(new_artist_id, artist_name_aliases)
         self._add_artist_genres(new_artist_id, genres)
         self._add_artist_themes(new_artist_id, themes)
+
 

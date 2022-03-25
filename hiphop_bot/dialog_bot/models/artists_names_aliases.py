@@ -100,3 +100,6 @@ class ArtistsNamesAliasesModel(Model):
         updated_records_number = self._update(query)
         if updated_records_number < 1:
             raise ModelError('Failed to add record')
+
+    def delete(self, id_: int, cursor) -> int:
+        return self._raw_delete(f"delete from {self._table_name} where artist_id = %s", (id_,), cursor)

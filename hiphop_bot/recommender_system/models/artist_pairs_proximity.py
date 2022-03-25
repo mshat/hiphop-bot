@@ -1,5 +1,5 @@
 from typing import List, Tuple, Dict, Iterable
-from hiphop_bot.db.abstract_model import Model, ModelError, ModelUniqueViolationError
+from hiphop_bot.db.abstract_model import Model, ModelError
 from hiphop_bot.base_models.model_object_class import BaseModelObject
 from psycopg2 import errors
 from hiphop_bot.dialog_bot.services.tools.debug_print import error_print, debug_print
@@ -123,3 +123,6 @@ class ArtistsPairsProximityModel(Model):
         connection.put_connection()
         debug_print(DEBUG_MODEL, f'[MODEL] Обновил {added_records_number} запись в таблице {self._table_name}')
 
+    def delete(self, id_: int, cursor) -> int:
+        return self._raw_delete(
+            f"delete from {self._table_name} where first_artist_id = %s or second_artist_id = %s;", (id_, id_), cursor)

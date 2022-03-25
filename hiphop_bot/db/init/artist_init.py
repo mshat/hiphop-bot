@@ -1,5 +1,5 @@
 from hiphop_bot.recommender_system.models.artist import ArtistModel
-
+from hiphop_bot.recommender_system.artists_pairs_proximity_loader import update_artist_pairs_proximity
 
 artist_model = ArtistModel()
 
@@ -50,9 +50,11 @@ artist_model.add_record('каспийский груз', 1983, 2, ['hard-gangsta
 artist_model.add_record('d-man 55', 1982, 1, ['workout'], 'male', ['workout'], 'spotify', 'https://open.spotify.com/artist/1rZc1fJY8Lt02Wf5RPYLpZ', ['d-man 55', 'диман 55', 'димана 55', 'димане 55', ])
 artist_model.add_record('грот', 1988, 1, ['art'], 'male', ['workout'], 'spotify', 'https://open.spotify.com/artist/6X3N6AIX6d8hH0EcZkhzVR', ['грот', 'гроту', 'грота', 'гроте', ])
 artist_model.add_record('миша маваши', 1985, 1, ['workout'], 'male', ['workout'], 'spotify', 'https://open.spotify.com/artist/37WEpynZuuFPhCGUet4jyP', ['миша маваши', 'мишу маваши', 'мише маваши', 'миши маваши', ])
-artist_model.add_record('guf', 1979, 1, ['hard-gangsta'], 'male', ['classic'], 'spotify', 'https://open.spotify.com/artist/0OCyDRYamSDX0nSnJ59W1u', ['guf', 'гуф', 'гуфа', 'гуфу', 'гуфе', ])
-artist_model.add_record('баста', 1980, 1, ['hard-gangsta'], 'male', ['classic'], 'spotify', 'https://open.spotify.com/artist/7as5DY4Rz9jac9tgoTrj9H', ['баста', 'басту', 'басте', 'басты', ])
-artist_model.add_record('каста', 1978, 4, ['soft-gangsta'], 'male', ['classic'], 'spotify', 'https://open.spotify.com/artist/5I37oVgAnT7OGiqKJSMVRH', ['каста', 'касту', 'касте', 'касты', ])
+artist_model.add_record('guf', 1979, 1, ['hard-gangsta'], 'male', ['gangsta'], 'spotify', 'https://open.spotify.com/artist/0OCyDRYamSDX0nSnJ59W1u', ['guf', 'гуф', 'гуфа', 'гуфу', 'гуфе', ])
+artist_model.add_record('баста', 1980, 1, ['hard-gangsta'], 'male', ['gangsta'], 'spotify', 'https://open.spotify.com/artist/7as5DY4Rz9jac9tgoTrj9H', ['баста', 'басту', 'басте', 'басты', ])
+artist_model.add_record('каста', 1978, 4, ['soft-gangsta', 'fun', 'conscious'], 'male', ['classic'], 'spotify', 'https://open.spotify.com/artist/5I37oVgAnT7OGiqKJSMVRH', ['каста', 'касту', 'касте', 'касты', ])
 artist_model.add_record('лигалайз', 1977, 1, ['hard-gangsta'], 'male', ['soft'], 'spotify', 'https://open.spotify.com/artist/5YpQ9lHYFeFs0vr5icob7N', ['лигалайз', 'лигалайза', 'лигалайзу', 'лигалайзе', ])
 artist_model.add_record('многоточие', 1978, 1, ['feelings'], 'male', ['soft'], 'spotify', 'https://open.spotify.com/artist/1z14TxUQYTeNmqJTkZ75Yu', ['многоточие', 'многоточия', 'многоточию', 'многоточии', ])
 artist_model.add_record('krec', 1980, 1, ['feelings'], 'male', ['soft'], 'spotify', 'https://open.spotify.com/artist/5gz8Mj85I56iRsvZgXFGgh', ['krec', 'крек', 'крека', 'креку', 'креке', ])
+
+update_artist_pairs_proximity()
