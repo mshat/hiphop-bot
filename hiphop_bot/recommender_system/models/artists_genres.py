@@ -15,7 +15,7 @@ class _ArtistsGenres(BaseModelObject):
         return f'{self.artist_id} {self.genre_id}'
 
     def __repr__(self):
-        return f'ArtistsThemes: {self.__str__()}'
+        return f'ArtistsGenres: {self.__str__()}'
 
 
 class ArtistsGenresModel(Model):

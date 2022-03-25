@@ -30,7 +30,9 @@ def calc_distance_between_nodes(root, node1: Node, node2: Node):
             i = i + 1
 
         distance = len(path1) + len(path2) - 2 * i
+        if distance == 0:
+            return 1
         return distance
     else:
-        return 0
+        raise Exception('Root arg is None')
 

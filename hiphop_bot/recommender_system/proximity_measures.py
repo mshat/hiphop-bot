@@ -25,16 +25,21 @@ def generalizing_proximity_measure(
         genres_tree: Node,
         artist1: RecommenderSystemArtist,
         artist2: RecommenderSystemArtist) -> RawGeneralProximity:
-    attributes1 = artist1.countable_attributes
-    attributes2 = artist2.countable_attributes
-    gender_proximity = calc_manhattan_measure(attributes1['male_female'], attributes2['male_female'])
-    theme_proximity = calc_manhattan_measure(attributes1['theme'], attributes2['theme'])
-    year_of_birth_proximity = calc_manhattan_measure(attributes1['year_of_birth'], attributes2['year_of_birth'])
-    members_num_proximity = calc_manhattan_measure(attributes1['group_members_num'], attributes2['group_members_num'])
+    gender_proximity = calc_manhattan_measure(artist1.countable_gender, artist2.countable_gender)
+    year_of_birth_proximity = calc_manhattan_measure(artist1.year_of_birth, artist2.year_of_birth)
+    members_num_proximity = calc_manhattan_measure(artist1.group_members_number, artist2.group_members_number)
 
-    # TODO вычисление среднего из нескольких жанров
-    tree_distance = calc_genre_tree_distance_measure(genres_tree, artist1.genre, artist2.genre)
-    genre_proximity = tree_distance
+    themes_proximity = []
+    for artist1_theme in artist1.countable_themes:
+        for artist2_theme in artist2.countable_themes:
+            themes_proximity.append(calc_manhattan_measure(artist1_theme, artist2_theme))
+    theme_proximity = sum(themes_proximity) / len(themes_proximity)
+
+    genre_tree_distances = []
+    for artist1_genre in artist1.genres:
+        for artist2_genre in artist2.genres:
+            genre_tree_distances.append(calc_genre_tree_distance_measure(genres_tree, artist1_genre, artist2_genre))
+    genre_proximity = sum(genre_tree_distances) / len(genre_tree_distances)
 
     proximity = RawGeneralProximity(
         gender_proximity=gender_proximity,
@@ -47,7 +52,7 @@ def generalizing_proximity_measure(
     return proximity
 
 
-def calc_generalizing_proximity_measure_for_all_leafs(artists: List[RecommenderSystemArtist]) \
+def calc_generalizing_proximity_measure(artists: List[RecommenderSystemArtist]) \
         -> Dict[str, Dict[str, RawGeneralProximity]]:
     genres_tree = load_genres_tree()
 
@@ -109,6 +114,6 @@ def calc_generalizing_proximity_measure_for_all_leafs(artists: List[RecommenderS
     return artists_pairs_proximity
 
 
-def calc_generalizing_proximity_measure(artist_name: str, tree: Node):
-
-    pass
+# def calc_generalizing_proximity_measure(artist_name: str, tree: Node):
+#
+#     pass

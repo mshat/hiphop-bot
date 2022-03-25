@@ -30,3 +30,11 @@ class GenreModel(Model):
             return genre[0]
         else:
             return None
+
+    def get_by_id(self, genre_id: int) -> _Genre | None:
+        query = self._get_all_query + f"where id = {genre_id}"
+        genre = self._select_model_objects(query)
+        if len(genre) > 0:
+            return genre[0]
+        else:
+            return None

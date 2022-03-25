@@ -39,3 +39,11 @@ class ThemeModel(Model):
             return theme[0]
         else:
             return None
+
+    def get_by_id(self, theme_id: int) -> _Theme | None:
+        query = self._get_all_query + f"where id = {theme_id}"
+        theme = self._select_model_objects(query)
+        if len(theme) > 0:
+            return theme[0]
+        else:
+            return None

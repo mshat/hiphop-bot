@@ -1,5 +1,5 @@
 from typing import List
-from hiphop_bot.recommender_system.proximity_measures import calc_generalizing_proximity_measure_for_all_leafs
+from hiphop_bot.recommender_system.proximity_measures import calc_generalizing_proximity_measure
 from hiphop_bot.recommender_system.models.artist_pairs_proximity import ArtistsPairsProximityModel
 from hiphop_bot.recommender_system.models.recommender_system_artist import RecommenderSystemArtist
 from hiphop_bot.recommender_system.models.artist import ArtistModel, _Artist
@@ -9,7 +9,7 @@ def update_artist_pairs_proximity():
     artists: List[_Artist] = ArtistModel().get_all()
     recommender_system_artists: List[RecommenderSystemArtist] = \
         [RecommenderSystemArtist(artist) for artist in ArtistModel().get_all()]
-    artist_pairs_proximity = calc_generalizing_proximity_measure_for_all_leafs(recommender_system_artists)
+    artist_pairs_proximity = calc_generalizing_proximity_measure(recommender_system_artists)
     artists_pairs_proximity_model = ArtistsPairsProximityModel()
 
     artists_ids = {artist.name: artist.id for artist in artists}
@@ -33,5 +33,5 @@ def update_artist_pairs_proximity():
         artists_pairs_proximity_model.update_multiple_proximities(pairs_to_update)
 
 
-# update_artist_pairs_proximity()
+update_artist_pairs_proximity()
 
