@@ -1,63 +1,128 @@
-from typing import List, Tuple, Dict
+from typing import List, Tuple, Dict, Iterable
 from hiphop_bot.db.abstract_model import Model, ModelError
+from hiphop_bot.base_models.model_object_class import BaseModelObject
+from psycopg2 import errors
+from hiphop_bot.dialog_bot.services.tools.debug_print import error_print, debug_print
+from hiphop_bot.dialog_bot.config import DEBUG_MODEL
 
 
-class _ArtistPairsProximity:
-    artists_proximity: Dict[str, Dict[str, float]]  # {artist1: {artist2: 0.3, artist3: 0.2}, artist2...}
+class Proximity:
+    general_proximity: float
+    proximities: List[float]
 
-    def __init__(self, raw_data: List[Tuple[int, str, str, float]]):
-        self.artists_proximity = {}
-        for first_artist, second_artist, proximity in raw_data:
-            if first_artist in self.artists_proximity:
-                self.artists_proximity[first_artist].update({second_artist: proximity})
-            else:
-                self.artists_proximity[first_artist] = {second_artist: proximity}
+    def __init__(self, general_proximity: float, proximities: List[float]):
+        self.general_proximity = general_proximity
+        self.proximities = proximities
 
-        self._pairs_len = len(raw_data)
-        
-    def get_proximity(self, first_artist: str, second_artist: str) -> float:
-        try:
-            return self.artists_proximity[first_artist][second_artist]
-        except KeyError as e:
-            raise Exception(f'Artist not found: {e}')
+
+class _ArtistsPairsProximityItem(BaseModelObject):
+    def __init__(
+            self,
+            db_row_id: int,
+            first_artist_name: str,
+            second_artist_name: str,
+            general_proximity: float,
+            proximities: List[float]):
+        super().__init__(db_row_id)
+        self.first_artist_name = first_artist_name
+        self.second_artist_name = second_artist_name
+        self.proximity = Proximity(general_proximity, proximities)
 
     def __str__(self):
-        return f'ArtistPairsProximity: with {self._pairs_len} pairs'
+        return f'ArtistPairsProximityItem {self.first_artist_name} {self.second_artist_name} {self.proximity}'
 
     def __repr__(self):
         return self.__str__()
 
 
-class ArtistPairsProximityModel(Model):
+class ArtistsPairsProximityModel(Model):
     def __init__(self):
-        super().__init__('artist_pairs_proximity', _ArtistPairsProximity)
+        super().__init__('artist_pairs_proximity', _ArtistsPairsProximityItem)
 
         self._get_all_query = (
-            "SELECT art1.name, art2.name, proximity "
-            f"from {self._table_name} "
-            f"inner join artist as art1 on {self._table_name}.first_artist_id = art1.id "
-            f"inner join artist as art2 on {self._table_name}.second_artist_id = art2.id "
+            "SELECT app.id, art1.name, art2.name, proximity, proximities "
+            f"from {self._table_name} as app "
+            f"inner join artist as art1 on app.first_artist_id = art1.id "
+            f"inner join artist as art2 on app.second_artist_id = art2.id "
         )
 
-    def _convert_to_objects(self, raw_data: List[Tuple]) -> _ArtistPairsProximity:
-        """
-        Преобразует список кортежей в объект класса ArtistPairsProximity
-        """
-        try:
-            object_ = self._model_class(raw_data)
-            return object_
-        except TypeError as e:
-            raise ModelError(f'Conversion type error: {e}')
-        except Exception as e:
-            raise ModelError(f'Unknown conversion error: {e}')
+    def get_by_artists_name(self, first_artist_name: str, second_artist_name: str) -> _ArtistsPairsProximityItem | None:
+        query = self._get_all_query + f"where art1.name = '{first_artist_name}' and art2.name = '{second_artist_name}'"
+        artists_pairs_proximity = self._select_model_objects(query)
 
-    def _select_model_objects(self, query) -> _ArtistPairsProximity:
-        raw_data = self._raw_select(query)
-        objects = self._convert_to_objects(raw_data)
-        return objects
+        if len(artists_pairs_proximity) > 0:
+            return artists_pairs_proximity[0]
+        elif len(artists_pairs_proximity) == 0:
+            return None
+        else:
+            raise ModelError('There is more than one record in the database with these names')
 
-    # this method must be overridden because _select_model_objects is overridden
-    def get_all(self) -> _ArtistPairsProximity:
-        genres = self._select_model_objects(self._get_all_query)
-        return genres
+    def get_all(self) -> List[_ArtistsPairsProximityItem]:
+        return super().get_all()
 
+    def get_artists_proximity_dict(self) -> Dict[str, Dict[str, Proximity]]:
+        artists_proximity_dict = {}
+        items = self.get_all()
+        for item in items:
+            first_artist = item.first_artist_name
+            second_artist = item.second_artist_name
+            general_proximity = item.proximity
+            if first_artist in artists_proximity_dict:
+                artists_proximity_dict[first_artist].update({second_artist: general_proximity})
+            else:
+                artists_proximity_dict[first_artist] = {second_artist: general_proximity}
+        return artists_proximity_dict
+
+    def _convert_proximities_list_to_db_array(self, proximities: Iterable[float]) -> str:
+        return '{' + ','.join(map(str, proximities)) + '}'
+
+    def add_record(self, first_artist_id: int, second_artist_id: int, proximity: float, proximities: List[float]):
+        query = (
+            f'insert into {self._table_name} (first_artist_id, second_artist_id, proximity, proximities) '
+            f"VALUES(%s, %s, %s, %s);"
+        )
+        values = (first_artist_id, second_artist_id, proximity, self._convert_proximities_list_to_db_array(proximities))
+
+        added_records_number = self._insert(query, values)
+        if added_records_number < 1:
+            raise ModelError('Failed to add record')
+
+    def update_proximity(self, first_artist_id: int, second_artist_id: int, proximity: float, proximities: List[float]):
+        query = (f"update {self._table_name} "
+                 f"set proximity={proximity}, proximities={self._convert_proximities_list_to_db_array(proximities)} "
+                 f"where first_artist_id={first_artist_id} and second_artist_id={second_artist_id} ")
+
+        updated_records_number = self._update(query)
+        if updated_records_number < 1:
+            raise ModelError('Failed to add record')
+
+    def update_multiple_proximities(self, new_artists_pairs_proximity: List[Tuple[int, int, float, List[float]]]):
+        connection = self._get_connection()
+        cursor = connection.cursor()
+
+        for item in new_artists_pairs_proximity:
+            first_artist_id = item[0]
+            second_artist_id = item[1]
+            proximity = item[2]
+            proximities = item[3]
+
+            proximities_ = self._convert_proximities_list_to_db_array(proximities)
+            query = (f"update {self._table_name} "
+                     f"set proximity={proximity}, proximities='{proximities_}' "
+                     f"where first_artist_id={first_artist_id} and second_artist_id={second_artist_id} ")
+            try:
+                cursor.execute(query)
+            except errors.UndefinedColumn as e:
+                error_print(f'[db UndefinedColumn] {e}')
+            except Exception as e:
+                error_print(f'[db unknown error] {e}')
+
+        connection.conn.commit()
+        added_records_number = cursor.rowcount
+        cursor.close()
+        connection.put_connection()
+        debug_print(DEBUG_MODEL, f'[MODEL] Обновил {added_records_number} запись в таблице {self._table_name}')
+
+    def delete(self, id_: int, cursor) -> int:
+        return self._raw_delete(
+            f"delete from {self._table_name} where first_artist_id = %s or second_artist_id = %s;", (id_, id_), cursor)

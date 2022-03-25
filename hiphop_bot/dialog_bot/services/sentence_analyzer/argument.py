@@ -39,7 +39,7 @@ class SexArgument(StrArgument):
 class ArtistArgument(StrArgument):
     def __init__(self, value: str):
         super().__init__(value)
-        if self.value.lower() not in ARTISTS:
+        if self.value.lower() not in ARTISTS.values():
             raise ArtistArgumentError('This artist is not found ')
 
 

@@ -1,16 +1,16 @@
-from hiphop_bot.recommender_system.tree.node import Node
+from typing import List
 from hiphop_bot.recommender_system.models.artist import _Artist  # импортирутеся для аннотации
-from hiphop_bot.recommender_system.models.artist import ArtistModel
 from hiphop_bot.recommender_system.models.theme import ThemeModel
 
 THEMES = ThemeModel().get_theme_names()
-ARTISTS = ArtistModel().get_artist_names()
 
 
-class ArtistNode(Node):
+class RecommenderSystemArtist:
+    """
+    Класс артиста для рекомендательной системы. Поля класса _Artist пересчитываются в числовые значения
+    """
     def __init__(self, artist: _Artist):
         self._artist = artist
-        super().__init__(val=self._artist.name)
 
     @property
     def artist(self) -> _Artist:
@@ -29,16 +29,16 @@ class ArtistNode(Node):
         return self._artist.group_members_number
 
     @property
-    def theme(self) -> str:
-        return self._artist.theme
+    def themes(self) -> List[str]:
+        return [theme.name for theme in self._artist.themes]
 
     @property
     def gender(self) -> str:
         return self._artist.gender
 
     @property
-    def genre(self) -> str:
-        return self._artist.genre
+    def genres(self) -> List[str]:
+        return [genre.name for genre in self._artist.genres]
 
     @property
     def age(self) -> int:
@@ -58,41 +58,25 @@ class ArtistNode(Node):
     @property
     def values_str(self) -> str:
         attributes = []
-        attributes.append(self.genre.upper())
+        attributes.append(self.genres)
         male_female = self.gender
         attributes.append(male_female)
         attributes.append(self.name)
-        attributes.append(self.theme)
+        attributes.append(self.themes)
         attributes.append(str(self.year_of_birth))
         attributes.append(self.solo_duet_group)
         return ' '.join(attributes)
 
     @property
-    def countable_attributes(self) -> dict:
-        attributes = {}
-        male_female = (1 if self.gender == 'male' else 2) / 2
-        attributes.update({'male_female': male_female})
-        if self.name not in ARTISTS:
-            print(self.name)
-            print(ARTISTS)
-        assert self.name in ARTISTS
-        name = ARTISTS.index(self.name) / len(ARTISTS)
-        attributes.update({'name': name})
-        assert self.theme in THEMES
-        theme = THEMES.index(self.theme) / len(THEMES)
-        attributes.update({'theme': theme})
-        year_of_birth = self.year_of_birth / 10000
-        attributes.update({'year_of_birth': year_of_birth})
-        if self.group_members_number > 2:
-            solo_duet_group = 3
-        else:
-            solo_duet_group = self.group_members_number
-        solo_duet_group = solo_duet_group / 3
-        attributes.update({'solo_duet_group': solo_duet_group})
-        return attributes
+    def countable_gender(self) -> int:
+        return 1 if self.gender == 'male' else 2
+
+    @property
+    def countable_themes(self) -> List[float]:
+        return [THEMES.index(theme) for theme in self.themes]
 
     def __str__(self):
-        return f'ArtistVisualNode: NodeVal={self.value} Artist={self._artist.__str__()}'
+        return f'RecommenderSystemArtist: {self._artist.__str__()}'
 
     def __repr__(self):
         return self.__str__()

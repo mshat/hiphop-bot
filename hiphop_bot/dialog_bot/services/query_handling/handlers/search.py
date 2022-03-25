@@ -10,6 +10,7 @@ from hiphop_bot.dialog_bot.services.query_handling.tag_condition import (AndTagC
                                                                          AndMultiTagCondition as AndMulti,
                                                                          OrMultiTagCondition as OrMulti)
 from hiphop_bot.dialog_bot.services.query_handling.handling_tools import get_arguments_by_type
+from hiphop_bot.dialog_bot.config import SHOW_PROXIMITY_MODE
 
 
 class SearchQueryHandler(QueryHandler, ABC):
@@ -109,7 +110,11 @@ class SearchByArtistHandler(QueryHandler):
     def handle(self, query: Query, user: User, dialog: Dialog):
         artist = get_arguments_by_type(query, 'ArtistArgument')[0]
         artists = self._recommender_system.recommend_by_seed(artist.value, disliked_artists=user.dislikes)
-        dialog.found_artists = artists
+        if SHOW_PROXIMITY_MODE:
+            dialog.found_artists_with_proximity = artists
+        else:
+            dialog.found_artists = [artist_.artist for artist_ in artists]
+
         return DialogState.SEARCH
 
 

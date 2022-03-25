@@ -2,13 +2,9 @@ from typing import Dict, List
 import json
 
 
-genders = {'male': 0, 'female': 1}
+genders = {'male': 1, 'female': 2}
 
-themes = {'hard-gangsta': 0, 'workout': 1, 'soft-gangsta': 2, 'feelings': 3, 'fun': 4, 'art': 5, 'conscious': 6}
-
-with open('artists.json', 'r', encoding='utf-8') as file:
-    artists = json.load(file)
-artists = {artist['name']: artist['id'] for artist in artists}
+themes = {'hard-gangsta': 1, 'workout': 2, 'soft-gangsta': 3, 'feelings': 4, 'fun': 5, 'art': 6, 'conscious': 7}
 
 with open('artist_pairs_proximity_.json', 'r', encoding='utf-8') as file:
     artists_pairs_proximity = json.load(file)
@@ -57,7 +53,7 @@ def genres_tree_hardcode_references():
             if res:
                 nodes_children[node] = list(res.keys())
 
-        i = 0
+        i = 1
         for parent_node, children_nodes in nodes_children.items():
             for child_node in children_nodes:
                 adjacency_table.append({
@@ -89,7 +85,7 @@ def artists_data_hardcode_genre_gender_theme_references():
     new_artists = []
     for artist in artists_source:
         new_artists.append({
-            'id': artist['id'],
+            'id': artist['id'] + 1,
             'name': artist['name'],
             'year_of_birth': artist['year_of_birth'],
             'group_members_num': artist['group_members_num'],
@@ -98,7 +94,6 @@ def artists_data_hardcode_genre_gender_theme_references():
             'genre_id': genres[artist['genre']],
         })
 
-    print(artists_source)
     print(new_artists)
 
     with open('artists.json', 'w', encoding='utf-8') as file:
@@ -106,9 +101,13 @@ def artists_data_hardcode_genre_gender_theme_references():
 
 
 def artist_pairs_proximity_hardcode_references():
+    with open('artists.json', 'r', encoding='utf-8') as file:
+        artists = json.load(file)
+    artists = {artist['name']: artist['id'] for artist in artists}
+
     artists_pairs_proximity_for_db = []
 
-    i = 0
+    i = 1
     for first_artist, pairs_proximity in artists_pairs_proximity.items():
         for second_artist, proximity in pairs_proximity.items():
             artists_pairs_proximity_for_db.append(
@@ -123,9 +122,13 @@ def artist_pairs_proximity_hardcode_references():
 
 
 def streaming_service_links_hardcode_references():
+    with open('artists.json', 'r', encoding='utf-8') as file:
+        artists = json.load(file)
+    artists = {artist['name']: artist['id'] for artist in artists}
+
     print(streaming_service_links_source)
     streaming_service_links_db = []
-    i = 0
+    i = 1
     for streaming_service_item in streaming_service_links_source:
         artist_name = streaming_service_item['artist_name']
         service_name = streaming_service_item['service_name']
@@ -144,11 +147,30 @@ def streaming_service_links_hardcode_references():
         json.dump(streaming_service_links_db, file, ensure_ascii=False)
 
 
+def generate_artists_names_aliases_json():
+    with open('artists.json', 'r', encoding='utf-8') as file:
+        artists = json.load(file)
+    artists = {artist['name']: artist['id'] for artist in artists}
+
+    with open('artists_names_aliases_source.json', 'r', encoding='utf-8') as file:
+        artists_names_aliases_source = json.load(file)
+
+    artists_names_aliases = []
+    for artist_name, aliases in artists_names_aliases_source.items():
+        aliases_ = '{' + ', '.join(aliases) + '}'
+        artists_names_aliases.append({'artist_id': artists[artist_name], 'aliases': f"{aliases_}"})
+
+    print(artists_names_aliases)
+    with open('artists_names_aliases.json', 'w', encoding='utf-8') as file:
+        json.dump(artists_names_aliases, file, ensure_ascii=False)
+
+
 def main():
-    # artist_pairs_proximity_hardcode_references()
-    # artists_data_hardcode_genre_gender_theme_references()
     # genres_tree_hardcode_references()
+    # artists_data_hardcode_genre_gender_theme_references()
+    # artist_pairs_proximity_hardcode_references()
     # streaming_service_links_hardcode_references()
+    generate_artists_names_aliases_json()
     pass
 
 

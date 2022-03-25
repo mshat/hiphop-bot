@@ -1,5 +1,5 @@
 from typing import List, Tuple, Dict
-from hiphop_bot.db.abstract_model import Model, ModelError
+from hiphop_bot.db.abstract_model import Model, ModelError, ModelUniqueViolationError
 from hiphop_bot.recommender_system.models.streaming_service import StreamingServiceModel
 
 
@@ -67,7 +67,7 @@ class ArtistStreamingServiceLinkModel(Model):
         artist_links_dict = {}
         streaming_service_links_raw = self._raw_select(self._get_all_query)
         for streaming_service_link in streaming_service_links_raw:
-            artist_name = streaming_service_link[0]
+            artist_name = streaming_service_link[0]  # TODO если добавлю id в self._get_all_query - поменять
             streaming_name = streaming_service_link[1]
             link = streaming_service_link[2]
 
@@ -76,4 +76,25 @@ class ArtistStreamingServiceLinkModel(Model):
 
             artist_links_dict[artist_name].add_link(streaming_name, link)
         return artist_links_dict
+
+    def add_record(self, artist_id: int, streaming_service_name: str, link: str):
+        streaming_service_model = StreamingServiceModel()
+        streaming_service_id: int = streaming_service_model.get_by_name(streaming_service_name).id
+
+        query = (
+            f'insert into {self._table_name} (artist_id, streaming_service_id, link) '
+            f"VALUES(%s, %s, %s);"
+        )
+        values = (artist_id, streaming_service_id, link)
+
+        try:
+            added_records_number = self._insert(query, values)
+            if added_records_number < 1:
+                raise ModelError('Failed to add record')
+        except ModelUniqueViolationError:
+            raise ModelError('Failed to add record')
+
+    def delete(self, id_: int, cursor) -> int:
+        return self._raw_delete(f"delete from {self._table_name} where artist_id = %s", (id_,), cursor)
+
 

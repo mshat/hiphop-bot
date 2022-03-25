@@ -1,6 +1,7 @@
 import enum
 from typing import List
 from hiphop_bot.recommender_system.models.artist import _Artist  # Импортируется для аннотаций
+from hiphop_bot.recommender_system.recommender_system import RecommendedArtist
 
 
 class DialogState(enum.Enum):
@@ -19,6 +20,7 @@ class DialogTypeError(Exception): pass
 class Dialog:
     _state: DialogState
     _found_artists: List[_Artist] | None
+    _found_artists_with_proximity: List[RecommendedArtist] | None
     info: str | None
     debug_message: str | None
     matched_handler_name: str | None
@@ -26,16 +28,19 @@ class Dialog:
     def __init__(self):
         self._state = DialogState.START
         self._found_artists = None
+        self._found_artists_with_proximity = None
         self.info = None
         self.debug_message = None
         self.matched_handler_name = None
 
     def reset_search_result(self):
         self._found_artists = None
+        self._found_artists_with_proximity = None
 
     def reset(self):
         if self.state not in (DialogState.SEARCH, DialogState.FILTER):
             self._found_artists = None
+            self._found_artists_with_proximity = None
         self.info = None
         self.debug_message = None
         self.matched_handler_name = None
@@ -57,6 +62,14 @@ class Dialog:
     def found_artists(self, artists: List[_Artist]):
         self._check_artists(artists)
         self._found_artists = artists
+
+    @property
+    def found_artists_with_proximity(self) -> List[RecommendedArtist] | None:
+        return self._found_artists_with_proximity
+
+    @found_artists_with_proximity.setter
+    def found_artists_with_proximity(self, artists: List[RecommendedArtist]):
+        self._found_artists_with_proximity = artists
 
     @property
     def artists_were_found(self) -> bool:
