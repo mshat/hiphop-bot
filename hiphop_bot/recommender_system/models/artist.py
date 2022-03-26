@@ -170,7 +170,7 @@ class ArtistModel(Model):
         artists_themes_model = ArtistsThemesModel()
         artists_themes_model.add_multiple_records(artist_id, themes)
 
-    def delete_with_requirements(self, id_: int):
+    def delete(self, id_: int):
         connection = self._get_connection()
         cursor = self._get_cursor(connection)
 
@@ -196,8 +196,8 @@ class ArtistModel(Model):
             themes: List[str],
             gender: str,
             genres: List[str],
-            streaming_service_name: str,
-            streaming_service_link: str,
+            streaming_service_names: List[str],
+            streaming_service_links: List[str],
             artist_name_aliases: List[str],
             update_if_exist=False
     ):
@@ -205,13 +205,13 @@ class ArtistModel(Model):
         themes = [theme_.lower() for theme_ in themes]
         gender = gender.lower()
         genres = [genre_.lower() for genre_ in genres]
-        streaming_service_name = streaming_service_name.lower()
-        streaming_service_link = streaming_service_link.lower()
+        streaming_service_names = list(map(str.lower, streaming_service_names))
+        streaming_service_links = list(map(str.lower, streaming_service_links))
         artist_name_aliases = [alias.lower() for alias in artist_name_aliases]
         existing_record = self.get_by_name(name)
         if existing_record:
             if update_if_exist:
-                self.delete_with_requirements(existing_record.id)
+                self.delete(existing_record.id)
                 assert self.get_by_name(name) is None
             else:
                 error_print(f'Failed to add record. This artist {name} already exists')
@@ -246,7 +246,9 @@ class ArtistModel(Model):
             pass
 
         new_artist_id = self.get_by_name(name).id
-        self._add_streaming_service_link(new_artist_id, streaming_service_name, streaming_service_link)
+        for name, link in zip(streaming_service_names, streaming_service_links):
+            if name != '' and link != '':
+                self._add_streaming_service_link(new_artist_id, name, link)
         self._add_artist_aliases(new_artist_id, artist_name_aliases)
         self._add_artist_genres(new_artist_id, genres)
         self._add_artist_themes(new_artist_id, themes)
