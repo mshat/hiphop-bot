@@ -31,11 +31,11 @@ class ArtistsNamesAliasesModel(Model):
     def get_all(self) -> List[_ArtistsNamesAliases]:
         return super().get_all()
 
-    def get_by_artist_name(self, artist_name: str) -> _ArtistsNamesAliases | None:
+    def get_by_artist_name(self, artist_name: str) -> List[str] | None:
         query = self._get_all_query + f" where a.name = '{artist_name}'"
-        res = self._select_model_objects(query)
-        if res:
-            return res[0]
+        model_objects = self._select_model_objects(query)
+        if model_objects:
+            return model_objects[0].aliases
         else:
             return None
 
