@@ -1,6 +1,7 @@
 from typing import List, Tuple, Dict
 from datetime import datetime
-from hiphop_bot.db.abstract_model import Model, ModelError, ModelUniqueViolationError, DeleteError
+from hiphop_bot.db.abstract_model import (Model, ModelError, ModelUniqueViolationError, DeleteError,
+                                          AlreadyInTheDatabaseError)
 from hiphop_bot.recommender_system.models.theme import ThemeModel, _Theme  # импортирутеся для аннотации
 from hiphop_bot.recommender_system.models.gender import GenderModel, _Gender  # импортирутеся для аннотации
 from hiphop_bot.recommender_system.models.genre import GenreModel, _Genre  # импортирутеся для аннотации
@@ -20,6 +21,7 @@ class _Artist(ModelObject):
     gender: _Gender
     genres: List[_Genre]
     streaming_service_links: _StreamingServiceLinks | None
+    aliases: List[str]
 
     def __init__(
             self,
@@ -36,6 +38,7 @@ class _Artist(ModelObject):
         self.group_members_number = group_members_number
         self._themes = None
         self._genres = None
+        self._aliases = None
 
         self._gender = gender if isinstance(gender, _Gender) else GenderModel().get_by_name(gender)
         self._streaming_service_links = streaming_service_links
@@ -92,9 +95,18 @@ class _Artist(ModelObject):
         else:
             raise ModelError("Argument must be of type _StreamingServiceLinks")
 
+    @property
+    def aliases(self) -> List[str]:
+        return self._aliases
+
+    @aliases.setter
+    def aliases(self, aliases: List[str]):
+        assert isinstance(aliases[0], str)
+        self._aliases = aliases
+
     def __str__(self):
         return f'{self.name} {self.year_of_birth} {self.group_members_number} {self._themes} {self._gender} ' \
-               f'{self._genres} {self.streaming_service_links}'
+               f'{self._genres} {self.streaming_service_links} {self.aliases}'
 
     def __repr__(self):
         return f'Artist: "{self.__str__()}"'
@@ -116,16 +128,15 @@ class ArtistModel(Model):
         streaming_service_link_model = ArtistStreamingServiceLinkModel()
         artist_links = streaming_service_link_model.get_artist_links_dict()
 
-        # добавляем артистам ссылки на стриминговые сервисы
         for artist in artists:
             if artist.name in artist_links:
+                # добавляем артистам ссылки на стриминговые сервисы
                 artist.streaming_service_links = artist_links[artist.name]
-
-        # подргужаю жанры и темы из соответствующих таблиц
-        for artist in artists:
-            if artist.name in artist_links:
+                # подргужаю жанры и темы из соответствующих таблиц
                 artist.genres = ArtistsGenresModel().get_artist_genres_by_artist_id(artist.id)
                 artist.themes = ArtistsThemesModel().get_artists_themes_by_artist_id(artist.id)
+                # добавляем алиасы
+                artist.aliases = ArtistsNamesAliasesModel().get_by_artist_name(artist.name)
 
         return artists
 
@@ -214,8 +225,8 @@ class ArtistModel(Model):
                 self.delete(existing_record.id)
                 assert self.get_by_name(name) is None
             else:
-                error_print(f'Failed to add record. This artist {name} already exists')
-                return
+                raise AlreadyInTheDatabaseError(f'Failed to add record. Artist {name} already exists')
+
         theme_model = ThemeModel()
         gender_model = GenderModel()
         genre_model = GenreModel()
@@ -252,5 +263,3 @@ class ArtistModel(Model):
         self._add_artist_aliases(new_artist_id, artist_name_aliases)
         self._add_artist_genres(new_artist_id, genres)
         self._add_artist_themes(new_artist_id, themes)
-
-
