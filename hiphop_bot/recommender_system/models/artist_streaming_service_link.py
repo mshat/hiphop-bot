@@ -13,7 +13,7 @@ class _StreamingServiceLinks:
         # check if streaming_name exists
         streaming_service_model = StreamingServiceModel()
         if streaming_name not in streaming_service_model.get_streaming_services_names():
-            raise ModelError("Streaming service with that name is not in the database ")
+            raise ModelError(f"Streaming service {streaming_name} is not in the database ")
         if streaming_name in self._streaming_links:
             return self._streaming_links[streaming_name]
         else:
