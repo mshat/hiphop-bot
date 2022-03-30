@@ -94,10 +94,10 @@ class ArtistStreamingServiceLinkModel(Model):
         except ModelUniqueViolationError:
             raise ModelError('Failed to add record')
 
-    def delete(self, id_: int, cursor) -> int:
+    def delete(self, artist_id: int, cursor) -> int:
         try:
-            return self._raw_delete(f"delete from {self._table_name} where artist_id = %s", (id_,), cursor)
+            return self._raw_delete(f"delete from {self._table_name} where artist_id = %s", (artist_id,), cursor)
         except DeleteError as e:
-            raise DeleteError(f'Не смог удалить запись c id {id_} из таблицы {self._table_name}. {e}')
+            raise DeleteError(f'Не смог удалить запись c id {artist_id} из таблицы {self._table_name}. {e}')
 
 

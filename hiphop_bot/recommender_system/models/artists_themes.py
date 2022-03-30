@@ -90,8 +90,10 @@ class ArtistsThemesModel(Model):
         self._commit(connection)
         self._close_cursor_and_connection(cursor, connection)
 
-    def delete(self, id_: int, cursor) -> int:
+    def delete(self, artist_id: int, cursor) -> int:
+        if not self.get_artists_themes_by_artist_id(artist_id):
+            return 0
         try:
-            return self._raw_delete(f"delete from {self._table_name} where artist_id = %s", (id_,), cursor)
+            return self._raw_delete(f"delete from {self._table_name} where artist_id = %s", (artist_id,), cursor)
         except DeleteError as e:
-            raise DeleteError(f'Не смог удалить запись c id {id_} из таблицы {self._table_name}. {e}')
+            raise DeleteError(f'Не смог удалить запись c id {artist_id} из таблицы {self._table_name}. {e}')
