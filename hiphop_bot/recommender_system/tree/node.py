@@ -1,4 +1,10 @@
+from __future__ import annotations
+from typing import List
+
+
 class Node:
+    children: List[Node]
+
     def __init__(self, val: int | str = 0, children: list = None):
         self.value = val
         self.children = children if children else []
@@ -28,6 +34,14 @@ class Node:
             return
         for child in root.children:
             Node.show_tree(child, spaces_num + 1)
+
+    @staticmethod
+    def get_children_names(root: Node, children_names: List):
+        if not root.children:
+            return
+        for child in root.children:
+            children_names.append(child.value)
+            root.get_children_names(child, children_names)
 
     def __str__(self):
         return f'node {self.value}'
