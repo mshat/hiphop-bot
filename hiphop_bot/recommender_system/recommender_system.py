@@ -48,12 +48,20 @@ class RecommenderSystem(metaclass=Singleton):
             sorted(artist_pairs.items(), key=lambda item: item[1].general_proximity)
         )
 
-        recommendations: List[RecommendedArtist] = []
+        recommendations: Dict[str, RecommendedArtist] = OrderedDict()
         for artist_name, proximity in artist_pairs_sorted_by_proximity.items():
             if proximity.general_proximity <= MIN_PROXIMITY and artist_name not in recommendations:
                 artist = self.get_artist_by_name(artist_name)
-                recommendations.append(RecommendedArtist(artist, proximity))
-        return recommendations
+                recommendations.update({artist_name: RecommendedArtist(artist, proximity)})
+
+        # добавляем рекомендации до 5 штук, если по условию MIN_PROXIMITY их получилось меньше
+        for artist_name, proximity in artist_pairs_sorted_by_proximity.items():
+            if len(recommendations) >= 5:
+                break
+            if artist_name not in recommendations:
+                artist = self.get_artist_by_name(artist_name)
+                recommendations.update({artist_name: RecommendedArtist(artist, proximity)})
+        return list(recommendations.values())
 
     def recommend_by_seed(self, seed_artist: str, disliked_artists: List[str], debug=False) -> List[RecommendedArtist]:
         seed = self.get_artist_by_name(seed_artist)
