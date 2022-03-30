@@ -1,5 +1,5 @@
 from typing import List, Iterable
-from hiphop_bot.db.abstract_model import Model, ModelUniqueViolationError, ModelError
+from hiphop_bot.db.abstract_model import Model, ModelUniqueViolationError, ModelError, DeleteError
 from hiphop_bot.base_models.model_object_class import BaseModelObject
 from hiphop_bot.dialog_bot.services.tools.debug_print import debug_print
 from hiphop_bot.dialog_bot.config import DEBUG_MODEL
@@ -102,4 +102,7 @@ class ArtistsNamesAliasesModel(Model):
             raise ModelError('Failed to add record')
 
     def delete(self, id_: int, cursor) -> int:
-        return self._raw_delete(f"delete from {self._table_name} where artist_id = %s", (id_,), cursor)
+        try:
+            return self._raw_delete(f"delete from {self._table_name} where artist_id = %s", (id_,), cursor)
+        except DeleteError as e:
+            raise DeleteError(f'Не смог удалить запись c id {id_} из таблицы {self._table_name}. {e}')

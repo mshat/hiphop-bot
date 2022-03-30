@@ -14,6 +14,7 @@ from hiphop_bot.recommender_system.models.artist_streaming_service_link import (
 from hiphop_bot.base_models.model_object_class import ModelObject
 from hiphop_bot.dialog_bot.services.tools.debug_print import error_print, debug_print
 from hiphop_bot.dialog_bot.config import DEBUG_MODEL
+from hiphop_bot.recommender_system.artists_pairs_proximity_loader import update_artist_pairs_proximity
 
 
 class _Artist(ModelObject):
@@ -161,6 +162,14 @@ class ArtistModel(Model):
         else:
             return None
 
+    def get_by_id(self, id_: int) -> _Artist | None:
+        query = self._get_all_query + f"where artist.id ='{id_}'"
+        artists = self._select_model_objects(query)
+        if len(artists) > 0:
+            return artists[0]
+        else:
+            return None
+
     def _add_streaming_service_link(self, new_artist_id: int, streaming_service_name: str, streaming_service_link: str):
         streaming_service_link_model = ArtistStreamingServiceLinkModel()
         streaming_service_link_model.add_record(new_artist_id, streaming_service_name, streaming_service_link)
@@ -169,9 +178,10 @@ class ArtistModel(Model):
         artist_names_aliases = ArtistsNamesAliasesModel()
         artist_names_aliases.add_record(new_artist_id, aliases)
 
-    # TODO дописать
-    def _add_record_to_artists_pairs_proximity(self, new_user_name, pairs_proximity: Dict[str, float]):
-        artists_pairs_proximity_model = ArtistsPairsProximityModel()
+    def recalc_artists_pairs_proximity(self):
+        all_artists = self.get_all()
+        if len(all_artists) > 1:
+            update_artist_pairs_proximity(all_artists)
 
     def _add_artist_genres(self, artist_id: int, genres: List[str]):
         artists_genres_model = ArtistsGenresModel()
@@ -185,15 +195,19 @@ class ArtistModel(Model):
         connection = self._get_connection()
         cursor = self._get_cursor(connection)
 
-        try:
+        if ArtistsPairsProximityModel().get_by_first_artist_name(self.get_by_id(id_).name):
             ArtistsPairsProximityModel().delete(id_, cursor)
-            ArtistsThemesModel().delete(id_, cursor)
-            ArtistsGenresModel().delete(id_, cursor)
-            ArtistStreamingServiceLinkModel().delete(id_, cursor)
-            ArtistsNamesAliasesModel().delete(id_, cursor)
+        ArtistsThemesModel().delete(id_, cursor)
+        ArtistsGenresModel().delete(id_, cursor)
+        ArtistStreamingServiceLinkModel().delete(id_, cursor)
+        ArtistsNamesAliasesModel().delete(id_, cursor)
+
+        try:
             self._raw_delete(f"delete from {self._table_name} where id = %s", (id_,), cursor)
         except DeleteError as e:
-            raise DeleteError(f'Не смог удалить артиста с id: {id_}: {e}')
+            error_print(f'Не смог удалить артиста с id: {id_}. Изменения не будут сохранены. {e}')
+        except Exception as e:
+            raise DeleteError(f'Неизвестная ошибка при попытке удаления артиста с id: {id_}: {e}')
         else:
             self._commit(connection)
             self._close_cursor_and_connection(cursor, connection)
@@ -210,8 +224,15 @@ class ArtistModel(Model):
             streaming_service_names: List[str],
             streaming_service_links: List[str],
             artist_name_aliases: List[str],
-            update_if_exist=False
+            update_if_exist=False,
+            recalc_artists_pairs_proximity=True
     ):
+        """
+        Метод для добавления или обновления артиста в БД
+        :param update_if_exist: обновлять данные, если артист с таким именем существует в БД
+        :param recalc_artists_pairs_proximity: пересчитывать значения близости всех артистов со всеми. При множественном
+        добавлении лучше задать False и по его окончании самостоятельно вызвать метод _recalc_artists_pairs_proximity
+        """
         name = name.lower()
         themes = [theme_.lower() for theme_ in themes]
         gender = gender.lower()
@@ -263,3 +284,5 @@ class ArtistModel(Model):
         self._add_artist_aliases(new_artist_id, artist_name_aliases)
         self._add_artist_genres(new_artist_id, genres)
         self._add_artist_themes(new_artist_id, themes)
+        if recalc_artists_pairs_proximity:
+            self.recalc_artists_pairs_proximity()
