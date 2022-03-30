@@ -1,6 +1,8 @@
-from typing import List
-from hiphop_bot.recommender_system.models.artist import _Artist  # импортирутеся для аннотации
+from typing import List, TYPE_CHECKING
 from hiphop_bot.recommender_system.models.theme import ThemeModel
+if TYPE_CHECKING:
+    from hiphop_bot.recommender_system.models.artist import _Artist  # импортирутеся для аннотации
+
 
 THEMES = ThemeModel().get_theme_names()
 
@@ -9,11 +11,11 @@ class RecommenderSystemArtist:
     """
     Класс артиста для рекомендательной системы. Поля класса _Artist пересчитываются в числовые значения
     """
-    def __init__(self, artist: _Artist):
+    def __init__(self, artist: '_Artist'):
         self._artist = artist
 
     @property
-    def artist(self) -> _Artist:
+    def artist(self) -> '_Artist':
         return self._artist
 
     @property
