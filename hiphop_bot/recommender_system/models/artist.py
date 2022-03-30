@@ -146,7 +146,10 @@ class ArtistModel(Model):
         return names
 
     def get_by_genre(self, genre: str) -> List[_Artist] | List:
-        query = self._get_all_query + f"where genre.name = '{genre}'"
+        query = self._get_all_query
+        query += (f"inner join artists_genres as a_g on a_g.artist_id = artist.id "
+                  "inner join genre on a_g.genre_id = genre.id "
+                  f"where genre.name = '{genre}'")
         artists = self._select_model_objects(query)
         return artists
 
