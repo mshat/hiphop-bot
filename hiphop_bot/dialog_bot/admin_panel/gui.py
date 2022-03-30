@@ -120,8 +120,10 @@ artist_data_frame = sg.Frame('Artist', [
             ])
     ],
     [
-        sg.Frame('Имя на русском в разных падежах (через запятую) (по вопросам: что? нет кого? кому? вижу кого?)',
-                 [[sg.InputText(default_text='', key='_aliases_', size=(80, 1))]])
+        sg.Frame(
+            'Имя на русском в разных падежах (через запятую) (по вопросам: кто? нет кого? кому? вижу кого? схожий с кем?)',
+            [[sg.Multiline(default_text='', key='_aliases_', size=(98, 2))]]
+        )
     ],
 ])
 
@@ -140,7 +142,7 @@ update_frame = sg.Frame('Update', [
             max_col_width=40, def_col_width=40, auto_size_columns=False, headings=['Имя'],
             justification="left", key='_artists_', enable_events=True)
     ],
-    [sg.Multiline(size=(100, 1), key='_update_output_')]
+    [sg.Multiline(size=(100, 4), key='_update_output_')]
 ])
 
 delete_frame = sg.Frame('Delete', [
@@ -155,7 +157,7 @@ delete_frame = sg.Frame('Delete', [
     ]
 ])
 
-action_frame = sg.Frame('Action', [[add_frame], [update_frame], [delete_frame]], size=(600, 718))
+action_frame = sg.Frame('Action', [[add_frame], [update_frame], [delete_frame]], size=(600, 750))
 
 layout = [
     [artist_data_frame, action_frame]
@@ -164,7 +166,7 @@ layout = [
 
 class Gui:
     def __init__(self):
-        self.window = sg.Window('Artist Model Redactor', layout, font=("Helvetica, 13"), size=(1300, 740)).Finalize()
+        self.window = sg.Window('Artist Model Redactor', layout, font=("Helvetica, 13"), size=(1400, 770)).Finalize()
         self.window.move(self.window.CurrentLocation()[0], 0)
         self.artist_model = ArtistModel()
         self.artists_table = self.window['_artists_']
@@ -295,6 +297,7 @@ class Gui:
 
         raw_aliases: str = values['_aliases_']
         if raw_aliases:
+            raw_aliases = raw_aliases.replace('\n', ' ')
             aliases = raw_aliases.split(',')
             aliases = [alias.strip() for alias in aliases]
             aliases.append(values['_name_'])
