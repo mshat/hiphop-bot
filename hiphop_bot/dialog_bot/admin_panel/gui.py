@@ -9,7 +9,7 @@ from hiphop_bot.db.abstract_model import AlreadyInTheDatabaseError
 
 THEMES_FIELDS = ['_hard-gangsta_', '_workout_theme_', '_soft-gangsta_', '_feelings_', '_fun_', '_art_', '_conscious_']
 GENRES_FIELDS = ['_alternative_', '_emo_', '_raprock_', '_electronichiphop_', '_cloud_', '_club_', '_drill_', '_grime_',
-                 '_mumble_', '_phonk_', '_hardcore_', '_horrorcore_', '_rapcore_', '_underground_', '_popular_',
+                 '_mumble_', '_phonk_', '_electronicvocal_', '_hardcore_', '_horrorcore_', '_rapcore_', '_underground_', '_popular_',
                  '_hookah_', '_pop_', '_oldschoolhardcore_', '_gangsta_', '_workout_', '_russianrap_', '_classic_',
                  '_soft_']
 STREAMING_SERVICES_FIELDS = ['_spotify_', '_boom_', '_yandex_']
@@ -28,6 +28,7 @@ electronic_frame_layout = sg.Frame('Электронный хип-хоп', [[
         sg.Checkbox(text='Грайм', key='_grime_'),
         sg.Checkbox(text='Мамбл', key='_mumble_'),
         sg.Checkbox(text='Фонк', key='_phonk_'),
+        sg.Checkbox(text='Вокал', key='_electronicvocal_'),
 ]])
 
 hardcore_frame_layout = sg.Frame('Хардкор', [[
@@ -207,7 +208,7 @@ class Gui:
                 res = False
                 self.highlight_field(field_name, current_color='#64778d')
 
-        if not values['_male_radio_'] and values['_female_radio_']:
+        if not values['_male_radio_'] and not values['_female_radio_']:
             res = False
             self.highlight_field('_male_radio_', current_color='#64778d')
             self.highlight_field('_female_radio_', current_color='#64778d')
@@ -279,7 +280,7 @@ class Gui:
         themes = [theme[1:-1] for theme in THEMES_FIELDS if values[theme]]
         if 'workout_theme' in themes:
             themes.remove('workout_theme')
-            themes.append('workout_')
+            themes.append('workout')
         genres = [genre[1:-1] for genre in GENRES_FIELDS if values[genre]]
         streaming_services_names = [name[1:-1] for name in STREAMING_SERVICES_FIELDS if values[name] != '']
         streaming_service_links = []
@@ -294,8 +295,8 @@ class Gui:
 
         raw_aliases: str = values['_aliases_']
         if raw_aliases:
-            raw_aliases = raw_aliases.replace(' ', '')
             aliases = raw_aliases.split(',')
+            aliases = [alias.strip() for alias in aliases]
             aliases.append(values['_name_'])
             aliases = list(set(aliases))
 
@@ -334,7 +335,7 @@ class Gui:
             else:
                 self.window['_update_output_'].Update('')
                 self.window['_update_output_'].Update(
-                    f"Артист добавлен!\n {' '.join(map(str, self._get_artist_data(values)))}")
+                    f"Артист обновлён!\n {' '.join(map(str, self._get_artist_data(values)))}")
 
     def clean_add_tab_fields(self):
         self.window['_name_'].Update('')
