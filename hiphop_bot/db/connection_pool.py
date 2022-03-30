@@ -27,13 +27,20 @@ if 'MODE' in os.environ:
 else:
     current_dir = os.path.dirname(os.path.realpath(__file__))
     ENV = dotenv_values(f"{current_dir}/../env")
-
-    DB_USER = ENV['DB_USER']
-    DB_PASSWORD = ENV['DB_PASSWORD']
-    DB_HOST = ENV['DB_HOST']
-    DB_PORT = ENV['DB_PORT']
-    DB_NAME = ENV['DB_NAME']
-
+    if ENV['MODE'] == 'local':
+        DB_USER = ENV['DB_USER']
+        DB_PASSWORD = ENV['DB_PASSWORD']
+        DB_HOST = ENV['DB_HOST']
+        DB_PORT = ENV['DB_PORT']
+        DB_NAME = ENV['DB_NAME']
+    elif ENV['MODE'] == 'heroku_local':
+        DB_USER = ENV['HEROKU_DB_USER']
+        DB_PASSWORD = ENV['HEROKU_DB_PASSWORD']
+        DB_HOST = ENV['HEROKU_DB_HOST']
+        DB_PORT = ENV['HEROKU_DB_PORT']
+        DB_NAME = ENV['HEROKU_DB_NAME']
+    else:
+        raise Exception('DB environ values error!')
 debug_print(DEBUG, f'[INFO] db settings: {DB_USER} {DB_NAME} {DB_HOST}')
 
 
