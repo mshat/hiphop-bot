@@ -1,4 +1,5 @@
 from typing import Dict, List, Set
+from copy import deepcopy
 from hiphop_bot.recommender_system.pow_distance import calc_distance_in_pow
 from hiphop_bot.recommender_system.models.recommender_system_artist import RecommenderSystemArtist
 from hiphop_bot.recommender_system.tree.node import Node
@@ -63,20 +64,33 @@ def calc_generalizing_proximity_measure(artists: List[RecommenderSystemArtist]) 
     members_num_proximities: Set[float] = set()
     genre_proximities: Set[float] = set()
     for artist1 in artists:
-        for artist2 in artists:
-            if artist1 != artist2:
-                proximity = generalizing_proximity_measure(genres_tree, artist1, artist2)
-                gender_proximities.update((proximity.gender_proximity,))
-                theme_proximities.update((proximity.theme_proximity,))
-                year_of_birth_proximities.update((proximity.year_of_birth_proximity,))
-                members_num_proximities.update((proximity.members_num_proximity,))
-                genre_proximities.update((proximity.genre_proximity,))
+        if artist1.name not in artists_pairs_proximity:
+            artists_pairs_proximity.update({artist1.name: {}})
 
-                if artist1.name not in artists_pairs_proximity:
-                    artists_pairs_proximity.update({artist1.name: {}})
-                artists_pairs_proximity[artist1.name].update(
-                    {artist2.name: proximity}
-                )
+        for artist2 in artists:
+            if artist1 == artist2:
+                continue
+
+            if artist2.name not in artists_pairs_proximity:
+                artists_pairs_proximity.update({artist2.name: {}})
+
+            artist2_in_artist1_pairs_proximity: bool = artist2.name in artists_pairs_proximity[artist1.name]
+            artist1_in_artist2_pairs_proximity: bool = artist1.name in artists_pairs_proximity[artist2.name]
+            if artist2_in_artist1_pairs_proximity and artist1_in_artist2_pairs_proximity:
+                continue
+
+            proximity = generalizing_proximity_measure(genres_tree, artist1, artist2)
+            gender_proximities.update((proximity.gender_proximity,))
+            theme_proximities.update((proximity.theme_proximity,))
+            year_of_birth_proximities.update((proximity.year_of_birth_proximity,))
+            members_num_proximities.update((proximity.members_num_proximity,))
+            genre_proximities.update((proximity.genre_proximity,))
+
+            if not artist2_in_artist1_pairs_proximity:
+                artists_pairs_proximity[artist1.name].update({artist2.name: proximity})
+
+            if not artist1_in_artist2_pairs_proximity:
+                artists_pairs_proximity.update({artist2.name: {artist1.name: deepcopy(proximity)}})
 
     # нормализация значений
     min_gender_proximity = min(gender_proximities)
@@ -92,6 +106,8 @@ def calc_generalizing_proximity_measure(artists: List[RecommenderSystemArtist]) 
 
     for first_artist_name, pairs in artists_pairs_proximity.items():
         for pair_name, proximity_ in pairs.items():
+            if first_artist_name == 'slava marlow' and pair_name == 'krec' or first_artist_name == 'krec' and pair_name == 'slava marlow':
+                x = 2
             proximity_.normalize_gender_proximity(min_value=min_gender_proximity, max_value=max_gender_proximity)
             proximity_.normalize_theme_proximity(min_value=min_theme_proximity, max_value=max_theme_proximity)
             proximity_.normalize_members_num_proximity(
@@ -112,8 +128,3 @@ def calc_generalizing_proximity_measure(artists: List[RecommenderSystemArtist]) 
             proximity_.normalize_general_proximity(min_value=min_general_proximity, max_value=max_general_proximity)
 
     return artists_pairs_proximity
-
-
-# def calc_generalizing_proximity_measure(artist_name: str, tree: Node):
-#
-#     pass

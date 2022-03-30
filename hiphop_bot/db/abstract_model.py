@@ -129,9 +129,10 @@ class Model(ABC):
         try:
             cursor.execute(query, values)
             deleted_records_number = cursor.rowcount
+        except errors.ForeignKeyViolation as e:
+            raise DeleteError(e)
         except Exception as e:
-            error_print(f'[db unknown error] {e}')
-            return 0
+            raise DeleteError(f'[db unknown error] {e}')
         if deleted_records_number == 0:
             raise DeleteError('No records has been deleted')
         else:

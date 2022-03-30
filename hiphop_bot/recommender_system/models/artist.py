@@ -1,6 +1,7 @@
 from typing import List, Tuple, Dict
 from datetime import datetime
-from hiphop_bot.db.abstract_model import Model, ModelError, ModelUniqueViolationError, DeleteError
+from hiphop_bot.db.abstract_model import (Model, ModelError, ModelUniqueViolationError, DeleteError,
+                                          AlreadyInTheDatabaseError)
 from hiphop_bot.recommender_system.models.theme import ThemeModel, _Theme  # импортирутеся для аннотации
 from hiphop_bot.recommender_system.models.gender import GenderModel, _Gender  # импортирутеся для аннотации
 from hiphop_bot.recommender_system.models.genre import GenreModel, _Genre  # импортирутеся для аннотации
@@ -13,6 +14,7 @@ from hiphop_bot.recommender_system.models.artist_streaming_service_link import (
 from hiphop_bot.base_models.model_object_class import ModelObject
 from hiphop_bot.dialog_bot.services.tools.debug_print import error_print, debug_print
 from hiphop_bot.dialog_bot.config import DEBUG_MODEL
+from hiphop_bot.recommender_system.artists_pairs_proximity_loader import update_artist_pairs_proximity
 
 
 class _Artist(ModelObject):
@@ -20,6 +22,7 @@ class _Artist(ModelObject):
     gender: _Gender
     genres: List[_Genre]
     streaming_service_links: _StreamingServiceLinks | None
+    aliases: List[str]
 
     def __init__(
             self,
@@ -36,6 +39,7 @@ class _Artist(ModelObject):
         self.group_members_number = group_members_number
         self._themes = None
         self._genres = None
+        self._aliases = None
 
         self._gender = gender if isinstance(gender, _Gender) else GenderModel().get_by_name(gender)
         self._streaming_service_links = streaming_service_links
@@ -50,16 +54,14 @@ class _Artist(ModelObject):
         return self._themes
 
     @themes.setter
-    def themes(self, themes: List[_ArtistsThemes] | List[str]):
-        if isinstance(themes, str):
-            raise Exception('WTTTFFF')
-        if isinstance(themes[0], str):
-            raise Exception('WTTTFFF')
+    def themes(self, themes: List[_ArtistsThemes]):
+        if len(themes) < 1:
+            self._themes = []
+            return
+        if not isinstance(themes[0], _ArtistsThemes):
+            raise TypeError('Unexpected argument type')
 
-        if isinstance(themes[0], _ArtistsThemes):
-            self._themes = [ThemeModel().get_by_id(artist_theme.theme_id) for artist_theme in themes]
-        elif isinstance(themes[0], str):
-            self._themes = [ThemeModel().get_by_name(theme) for theme in themes]
+        self._themes = [ThemeModel().get_by_id(artist_theme.theme_id) for artist_theme in themes]
 
     @property
     def gender(self) -> str:
@@ -70,16 +72,14 @@ class _Artist(ModelObject):
         return self._genres
 
     @genres.setter
-    def genres(self, genres: List[_ArtistsGenres] | List[str]):
-        if isinstance(genres, str):
-            raise Exception('WTTTFFF')
-        if isinstance(genres[0], str):
-            raise Exception('WTTTFFF')
+    def genres(self, genres: List[_ArtistsGenres]):
+        if len(genres) < 1:
+            self._genres = []
+            return
+        if not isinstance(genres[0], _ArtistsGenres):
+            raise TypeError('Unexpected argument type')
 
-        if isinstance(genres[0], _ArtistsGenres):
-            self._genres = [GenreModel().get_by_id(artist_genre.genre_id) for artist_genre in genres]
-        elif isinstance(genres[0], str):
-            self._genres = [GenreModel().get_by_name(genre) for genre in genres]
+        self._genres = [GenreModel().get_by_id(artist_genre.genre_id) for artist_genre in genres]
 
     @property
     def streaming_service_links(self) -> _StreamingServiceLinks:
@@ -92,9 +92,18 @@ class _Artist(ModelObject):
         else:
             raise ModelError("Argument must be of type _StreamingServiceLinks")
 
+    @property
+    def aliases(self) -> List[str]:
+        return self._aliases
+
+    @aliases.setter
+    def aliases(self, aliases: List[str]):
+        assert isinstance(aliases[0], str)
+        self._aliases = aliases
+
     def __str__(self):
         return f'{self.name} {self.year_of_birth} {self.group_members_number} {self._themes} {self._gender} ' \
-               f'{self._genres} {self.streaming_service_links}'
+               f'{self._genres} {self.streaming_service_links} {self.aliases}'
 
     def __repr__(self):
         return f'Artist: "{self.__str__()}"'
@@ -116,16 +125,15 @@ class ArtistModel(Model):
         streaming_service_link_model = ArtistStreamingServiceLinkModel()
         artist_links = streaming_service_link_model.get_artist_links_dict()
 
-        # добавляем артистам ссылки на стриминговые сервисы
         for artist in artists:
             if artist.name in artist_links:
+                # добавляем артистам ссылки на стриминговые сервисы
                 artist.streaming_service_links = artist_links[artist.name]
-
-        # подргужаю жанры и темы из соответствующих таблиц
-        for artist in artists:
-            if artist.name in artist_links:
+                # подргужаю жанры и темы из соответствующих таблиц
                 artist.genres = ArtistsGenresModel().get_artist_genres_by_artist_id(artist.id)
                 artist.themes = ArtistsThemesModel().get_artists_themes_by_artist_id(artist.id)
+                # добавляем алиасы
+                artist.aliases = ArtistsNamesAliasesModel().get_by_artist_name(artist.name)
 
         return artists
 
@@ -150,6 +158,14 @@ class ArtistModel(Model):
         else:
             return None
 
+    def get_by_id(self, id_: int) -> _Artist | None:
+        query = self._get_all_query + f"where artist.id ='{id_}'"
+        artists = self._select_model_objects(query)
+        if len(artists) > 0:
+            return artists[0]
+        else:
+            return None
+
     def _add_streaming_service_link(self, new_artist_id: int, streaming_service_name: str, streaming_service_link: str):
         streaming_service_link_model = ArtistStreamingServiceLinkModel()
         streaming_service_link_model.add_record(new_artist_id, streaming_service_name, streaming_service_link)
@@ -158,9 +174,10 @@ class ArtistModel(Model):
         artist_names_aliases = ArtistsNamesAliasesModel()
         artist_names_aliases.add_record(new_artist_id, aliases)
 
-    # TODO дописать
-    def _add_record_to_artists_pairs_proximity(self, new_user_name, pairs_proximity: Dict[str, float]):
-        artists_pairs_proximity_model = ArtistsPairsProximityModel()
+    def recalc_artists_pairs_proximity(self):
+        all_artists = self.get_all()
+        if len(all_artists) > 1:
+            update_artist_pairs_proximity(all_artists)
 
     def _add_artist_genres(self, artist_id: int, genres: List[str]):
         artists_genres_model = ArtistsGenresModel()
@@ -170,19 +187,23 @@ class ArtistModel(Model):
         artists_themes_model = ArtistsThemesModel()
         artists_themes_model.add_multiple_records(artist_id, themes)
 
-    def delete_with_requirements(self, id_: int):
+    def delete(self, id_: int):
         connection = self._get_connection()
         cursor = self._get_cursor(connection)
 
-        try:
+        if ArtistsPairsProximityModel().get_by_first_artist_name(self.get_by_id(id_).name):
             ArtistsPairsProximityModel().delete(id_, cursor)
-            ArtistsThemesModel().delete(id_, cursor)
-            ArtistsGenresModel().delete(id_, cursor)
-            ArtistStreamingServiceLinkModel().delete(id_, cursor)
-            ArtistsNamesAliasesModel().delete(id_, cursor)
+        ArtistsThemesModel().delete(id_, cursor)
+        ArtistsGenresModel().delete(id_, cursor)
+        ArtistStreamingServiceLinkModel().delete(id_, cursor)
+        ArtistsNamesAliasesModel().delete(id_, cursor)
+
+        try:
             self._raw_delete(f"delete from {self._table_name} where id = %s", (id_,), cursor)
         except DeleteError as e:
-            raise DeleteError(f'Не смог удалить артиста с id: {id_}: {e}')
+            error_print(f'Не смог удалить артиста с id: {id_}. Изменения не будут сохранены. {e}')
+        except Exception as e:
+            raise DeleteError(f'Неизвестная ошибка при попытке удаления артиста с id: {id_}: {e}')
         else:
             self._commit(connection)
             self._close_cursor_and_connection(cursor, connection)
@@ -196,26 +217,33 @@ class ArtistModel(Model):
             themes: List[str],
             gender: str,
             genres: List[str],
-            streaming_service_name: str,
-            streaming_service_link: str,
+            streaming_service_names: List[str],
+            streaming_service_links: List[str],
             artist_name_aliases: List[str],
-            update_if_exist=False
+            update_if_exist=False,
+            recalc_artists_pairs_proximity=True
     ):
+        """
+        Метод для добавления или обновления артиста в БД
+        :param update_if_exist: обновлять данные, если артист с таким именем существует в БД
+        :param recalc_artists_pairs_proximity: пересчитывать значения близости всех артистов со всеми. При множественном
+        добавлении лучше задать False и по его окончании самостоятельно вызвать метод _recalc_artists_pairs_proximity
+        """
         name = name.lower()
         themes = [theme_.lower() for theme_ in themes]
         gender = gender.lower()
         genres = [genre_.lower() for genre_ in genres]
-        streaming_service_name = streaming_service_name.lower()
-        streaming_service_link = streaming_service_link.lower()
+        streaming_service_names = list(map(str.lower, streaming_service_names))
+        streaming_service_links = list(map(str.lower, streaming_service_links))
         artist_name_aliases = [alias.lower() for alias in artist_name_aliases]
         existing_record = self.get_by_name(name)
         if existing_record:
             if update_if_exist:
-                self.delete_with_requirements(existing_record.id)
+                self.delete(existing_record.id)
                 assert self.get_by_name(name) is None
             else:
-                error_print(f'Failed to add record. This artist {name} already exists')
-                return
+                raise AlreadyInTheDatabaseError(f'Failed to add record. Artist {name} already exists')
+
         theme_model = ThemeModel()
         gender_model = GenderModel()
         genre_model = GenreModel()
@@ -246,9 +274,11 @@ class ArtistModel(Model):
             pass
 
         new_artist_id = self.get_by_name(name).id
-        self._add_streaming_service_link(new_artist_id, streaming_service_name, streaming_service_link)
+        for name, link in zip(streaming_service_names, streaming_service_links):
+            if name != '' and link != '':
+                self._add_streaming_service_link(new_artist_id, name, link)
         self._add_artist_aliases(new_artist_id, artist_name_aliases)
         self._add_artist_genres(new_artist_id, genres)
         self._add_artist_themes(new_artist_id, themes)
-
-
+        if recalc_artists_pairs_proximity:
+            self.recalc_artists_pairs_proximity()

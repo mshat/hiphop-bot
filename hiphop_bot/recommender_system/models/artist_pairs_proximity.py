@@ -1,5 +1,5 @@
 from typing import List, Tuple, Dict, Iterable
-from hiphop_bot.db.abstract_model import Model, ModelError
+from hiphop_bot.db.abstract_model import Model, ModelError, DeleteError
 from hiphop_bot.base_models.model_object_class import BaseModelObject
 from psycopg2 import errors
 from hiphop_bot.dialog_bot.services.tools.debug_print import error_print, debug_print
@@ -56,6 +56,15 @@ class ArtistsPairsProximityModel(Model):
             return None
         else:
             raise ModelError('There is more than one record in the database with these names')
+
+    def get_by_first_artist_name(self, first_artist_name: str) -> List[_ArtistsPairsProximityItem] | None:
+        query = self._get_all_query + f"where art1.name = '{first_artist_name}'"
+        artists_pairs_proximity = self._select_model_objects(query)
+
+        if len(artists_pairs_proximity) > 0:
+            return artists_pairs_proximity
+        elif len(artists_pairs_proximity) == 0:
+            return None
 
     def get_all(self) -> List[_ArtistsPairsProximityItem]:
         return super().get_all()
@@ -124,5 +133,8 @@ class ArtistsPairsProximityModel(Model):
         debug_print(DEBUG_MODEL, f'[MODEL] Обновил {added_records_number} запись в таблице {self._table_name}')
 
     def delete(self, id_: int, cursor) -> int:
-        return self._raw_delete(
-            f"delete from {self._table_name} where first_artist_id = %s or second_artist_id = %s;", (id_, id_), cursor)
+        try:
+            return self._raw_delete(
+                f"delete from {self._table_name} where first_artist_id = %s or second_artist_id = %s;", (id_, id_), cursor)
+        except DeleteError as e:
+            raise DeleteError(f'Не смог удалить запись c id {id_} из таблицы {self._table_name}. {e}')

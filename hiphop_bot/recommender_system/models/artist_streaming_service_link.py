@@ -1,5 +1,5 @@
 from typing import List, Tuple, Dict
-from hiphop_bot.db.abstract_model import Model, ModelError, ModelUniqueViolationError
+from hiphop_bot.db.abstract_model import Model, ModelError, ModelUniqueViolationError, DeleteError
 from hiphop_bot.recommender_system.models.streaming_service import StreamingServiceModel
 
 
@@ -13,7 +13,7 @@ class _StreamingServiceLinks:
         # check if streaming_name exists
         streaming_service_model = StreamingServiceModel()
         if streaming_name not in streaming_service_model.get_streaming_services_names():
-            raise ModelError("Streaming service with that name is not in the database ")
+            raise ModelError(f"Streaming service {streaming_name} is not in the database ")
         if streaming_name in self._streaming_links:
             return self._streaming_links[streaming_name]
         else:
@@ -94,7 +94,10 @@ class ArtistStreamingServiceLinkModel(Model):
         except ModelUniqueViolationError:
             raise ModelError('Failed to add record')
 
-    def delete(self, id_: int, cursor) -> int:
-        return self._raw_delete(f"delete from {self._table_name} where artist_id = %s", (id_,), cursor)
+    def delete(self, artist_id: int, cursor) -> int:
+        try:
+            return self._raw_delete(f"delete from {self._table_name} where artist_id = %s", (artist_id,), cursor)
+        except DeleteError as e:
+            raise DeleteError(f'Не смог удалить запись c id {artist_id} из таблицы {self._table_name}. {e}')
 
 

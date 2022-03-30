@@ -1,5 +1,5 @@
 from typing import List, Dict, Tuple
-from hiphop_bot.db.abstract_model import Model, AlreadyInTheDatabaseError, InsertError
+from hiphop_bot.db.abstract_model import Model, AlreadyInTheDatabaseError, InsertError, DeleteError
 from hiphop_bot.base_models.model_object_class import BaseModelObject
 from hiphop_bot.recommender_system.models.genre import GenreModel
 from hiphop_bot.dialog_bot.services.tools.debug_print import error_print
@@ -90,8 +90,13 @@ class ArtistsGenresModel(Model):
         self._commit(connection)
         self._close_cursor_and_connection(cursor, connection)
 
-    def delete(self, id_: int, cursor) -> int:
-        return self._raw_delete(f"delete from {self._table_name} where artist_id = %s", (id_,), cursor)
+    def delete(self, artist_id: int, cursor) -> int:
+        if not self.get_genres_ids_by_artist_id(artist_id):
+            return 0
+        try:
+            return self._raw_delete(f"delete from {self._table_name} where artist_id = %s", (artist_id,), cursor)
+        except DeleteError as e:
+            raise DeleteError(f'Не смог удалить запись c id {artist_id} из таблицы {self._table_name}. {e}')
 
 
 

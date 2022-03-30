@@ -65,6 +65,8 @@ class RawGeneralProximity:
                 self._members_num_proximity, self._genre_proximity]
 
     def _normalize_value(self, value, min_value: float, max_value: float) -> float:
+        if min_value == max_value:
+            return value
         if value < min_value:
             return 0
         value -= min_value

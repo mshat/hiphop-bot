@@ -1,5 +1,5 @@
 from typing import List, Iterable
-from hiphop_bot.db.abstract_model import Model, ModelUniqueViolationError, ModelError
+from hiphop_bot.db.abstract_model import Model, ModelUniqueViolationError, ModelError, DeleteError
 from hiphop_bot.base_models.model_object_class import BaseModelObject
 from hiphop_bot.dialog_bot.services.tools.debug_print import debug_print
 from hiphop_bot.dialog_bot.config import DEBUG_MODEL
@@ -31,11 +31,11 @@ class ArtistsNamesAliasesModel(Model):
     def get_all(self) -> List[_ArtistsNamesAliases]:
         return super().get_all()
 
-    def get_by_artist_name(self, artist_name: str) -> _ArtistsNamesAliases | None:
+    def get_by_artist_name(self, artist_name: str) -> List[str] | None:
         query = self._get_all_query + f" where a.name = '{artist_name}'"
-        res = self._select_model_objects(query)
-        if res:
-            return res[0]
+        model_objects = self._select_model_objects(query)
+        if model_objects:
+            return model_objects[0].aliases
         else:
             return None
 
@@ -101,5 +101,10 @@ class ArtistsNamesAliasesModel(Model):
         if updated_records_number < 1:
             raise ModelError('Failed to add record')
 
-    def delete(self, id_: int, cursor) -> int:
-        return self._raw_delete(f"delete from {self._table_name} where artist_id = %s", (id_,), cursor)
+    def delete(self, artist_id: int, cursor) -> int:
+        if not self.get_by_artist_id(artist_id):
+            return 0
+        try:
+            return self._raw_delete(f"delete from {self._table_name} where artist_id = %s", (artist_id,), cursor)
+        except DeleteError as e:
+            raise DeleteError(f'Не смог удалить запись c id {artist_id} из таблицы {self._table_name}. {e}')
