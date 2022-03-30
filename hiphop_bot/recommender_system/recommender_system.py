@@ -1,10 +1,11 @@
-from typing import List, Dict
+from typing import List, Dict, Set
 from collections import OrderedDict
 from hiphop_bot.recommender_system.singleton import Singleton
 from hiphop_bot.recommender_system.config import MIN_PROXIMITY
 from hiphop_bot.recommender_system.artist_filterer import filter_artists
 from hiphop_bot.recommender_system.models.artist_pairs_proximity import ArtistsPairsProximityModel, Proximity
 from hiphop_bot.recommender_system.models.artist import ArtistModel, _Artist
+from hiphop_bot.recommender_system.tree.tree_loader import load_genres_tree
 
 
 class RecommendedArtist:
@@ -20,13 +21,10 @@ class RecommenderSystemArgumentError(Exception): pass
 
 
 class RecommenderSystem(metaclass=Singleton):
-    _artists: List[_Artist]
-    _artists_pairs_proximity: Dict[str, Dict[str, Proximity]]
-
     def __init__(self):
         self._artist_model = ArtistModel()
-        self._artists = self._artist_model.get_all()
         self.artist_pairs_proximity_model = ArtistsPairsProximityModel()
+        self.genres_tree = load_genres_tree()
 
     def _get_artist_pairs_proximity(self, name: str) -> Dict[str, Proximity]:
         pairs_proximities = self.artist_pairs_proximity_model.get_by_first_artist_name(name)
@@ -100,8 +98,19 @@ class RecommenderSystem(metaclass=Singleton):
         return self._artist_model.get_all()
 
     def get_artists_by_genre(self, genre: str) -> List[_Artist]:
-        artists = self._artist_model.get_by_genre(genre)
-        return artists
+        artists: Set[_Artist] | Set = set()
+
+        genre_node = self.genres_tree.get_child_by_name(self.genres_tree, genre)
+        children_genres_names = []
+        self.genres_tree.get_children_names(genre_node, children_genres_names)
+
+        searched_genres = set([genre] + children_genres_names)
+
+        for genre in searched_genres:
+            genre_artists = self._artist_model.get_by_genre(genre)
+            if genre_artists:
+                artists.update(genre_artists)
+        return list(artists)
 
     def filter_artists(
             self,
