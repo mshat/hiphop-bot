@@ -54,16 +54,14 @@ class _Artist(ModelObject):
         return self._themes
 
     @themes.setter
-    def themes(self, themes: List[_ArtistsThemes] | List[str]):
-        if isinstance(themes, str):
-            raise Exception('WTTTFFF')
-        if isinstance(themes[0], str):
-            raise Exception('WTTTFFF')
+    def themes(self, themes: List[_ArtistsThemes]):
+        if len(themes) < 1:
+            self._themes = []
+            return
+        if not isinstance(themes[0], _ArtistsThemes):
+            raise TypeError('Unexpected argument type')
 
-        if isinstance(themes[0], _ArtistsThemes):
-            self._themes = [ThemeModel().get_by_id(artist_theme.theme_id) for artist_theme in themes]
-        elif isinstance(themes[0], str):
-            self._themes = [ThemeModel().get_by_name(theme) for theme in themes]
+        self._themes = [ThemeModel().get_by_id(artist_theme.theme_id) for artist_theme in themes]
 
     @property
     def gender(self) -> str:
@@ -74,16 +72,14 @@ class _Artist(ModelObject):
         return self._genres
 
     @genres.setter
-    def genres(self, genres: List[_ArtistsGenres] | List[str]):
-        if isinstance(genres, str):
-            raise Exception('WTTTFFF')
-        if isinstance(genres[0], str):
-            raise Exception('WTTTFFF')
+    def genres(self, genres: List[_ArtistsGenres]):
+        if len(genres) < 1:
+            self._genres = []
+            return
+        if not isinstance(genres[0], _ArtistsGenres):
+            raise TypeError('Unexpected argument type')
 
-        if isinstance(genres[0], _ArtistsGenres):
-            self._genres = [GenreModel().get_by_id(artist_genre.genre_id) for artist_genre in genres]
-        elif isinstance(genres[0], str):
-            self._genres = [GenreModel().get_by_name(genre) for genre in genres]
+        self._genres = [GenreModel().get_by_id(artist_genre.genre_id) for artist_genre in genres]
 
     @property
     def streaming_service_links(self) -> _StreamingServiceLinks:
