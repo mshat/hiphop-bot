@@ -74,7 +74,7 @@ def calc_generalizing_proximity_measure(artists: List[RecommenderSystemArtist]) 
                 artists_pairs_proximity.update({artist2.name: {}})
 
             artist2_in_artist1_pairs_proximity: bool = artist2.name in artists_pairs_proximity[artist1.name]
-            artist1_in_artist2_pairs_proximity: bool = artist2.name in artists_pairs_proximity[artist1.name]
+            artist1_in_artist2_pairs_proximity: bool = artist1.name in artists_pairs_proximity[artist2.name]
             if artist2_in_artist1_pairs_proximity and artist1_in_artist2_pairs_proximity:
                 continue
 
