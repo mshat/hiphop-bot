@@ -1,4 +1,5 @@
 from typing import Dict, List, Set
+from copy import deepcopy
 from hiphop_bot.recommender_system.pow_distance import calc_distance_in_pow
 from hiphop_bot.recommender_system.models.recommender_system_artist import RecommenderSystemArtist
 from hiphop_bot.recommender_system.tree.node import Node
@@ -89,7 +90,7 @@ def calc_generalizing_proximity_measure(artists: List[RecommenderSystemArtist]) 
                 artists_pairs_proximity[artist1.name].update({artist2.name: proximity})
 
             if not artist1_in_artist2_pairs_proximity:
-                artists_pairs_proximity.update({artist2.name: {artist1.name: proximity}})
+                artists_pairs_proximity.update({artist2.name: {artist1.name: deepcopy(proximity)}})
 
     # нормализация значений
     min_gender_proximity = min(gender_proximities)
@@ -105,6 +106,8 @@ def calc_generalizing_proximity_measure(artists: List[RecommenderSystemArtist]) 
 
     for first_artist_name, pairs in artists_pairs_proximity.items():
         for pair_name, proximity_ in pairs.items():
+            if first_artist_name == 'slava marlow' and pair_name == 'krec' or first_artist_name == 'krec' and pair_name == 'slava marlow':
+                x = 2
             proximity_.normalize_gender_proximity(min_value=min_gender_proximity, max_value=max_gender_proximity)
             proximity_.normalize_theme_proximity(min_value=min_theme_proximity, max_value=max_theme_proximity)
             proximity_.normalize_members_num_proximity(
@@ -125,62 +128,3 @@ def calc_generalizing_proximity_measure(artists: List[RecommenderSystemArtist]) 
             proximity_.normalize_general_proximity(min_value=min_general_proximity, max_value=max_general_proximity)
 
     return artists_pairs_proximity
-
-
-# TODO дописать
-def calc_generalizing_proximity_measure_(artist: RecommenderSystemArtist, all_artists: List[RecommenderSystemArtist]) \
-        -> Dict[str, RawGeneralProximity]:
-    genres_tree = load_genres_tree()
-
-    artist_pairs_proximity: Dict[str, RawGeneralProximity] = {}
-    gender_proximities: Set[float] = set()
-    theme_proximities: Set[float] = set()
-    year_of_birth_proximities: Set[float] = set()
-    members_num_proximities: Set[float] = set()
-    genre_proximities: Set[float] = set()
-
-    for pair_artist in all_artists:
-        if artist != pair_artist:
-            proximity = generalizing_proximity_measure(genres_tree, artist, pair_artist)
-            gender_proximities.update((proximity.gender_proximity,))
-            theme_proximities.update((proximity.theme_proximity,))
-            year_of_birth_proximities.update((proximity.year_of_birth_proximity,))
-            members_num_proximities.update((proximity.members_num_proximity,))
-            genre_proximities.update((proximity.genre_proximity,))
-
-            artist_pairs_proximity.update(
-                {pair_artist.name: proximity}
-            )
-
-    # нормализация значений
-    min_gender_proximity = min(gender_proximities)
-    max_gender_proximity = max(gender_proximities)
-    min_theme_proximity = min(theme_proximities)
-    max_theme_proximity = max(theme_proximities)
-    min_members_num_proximity = min(members_num_proximities)
-    max_members_num_proximity = max(members_num_proximities)
-    min_year_of_birth_proximity = min(year_of_birth_proximities)
-    max_year_of_birth_proximity = max(year_of_birth_proximities)
-    min_genre_proximity = min(genre_proximities)
-    max_genre_proximity = max(genre_proximities)
-
-    for pair_name, proximity_ in artist_pairs_proximity.items():
-        proximity_.normalize_gender_proximity(min_value=min_gender_proximity, max_value=max_gender_proximity)
-        proximity_.normalize_theme_proximity(min_value=min_theme_proximity, max_value=max_theme_proximity)
-        proximity_.normalize_members_num_proximity(
-            min_value=min_members_num_proximity, max_value=max_members_num_proximity)
-        proximity_.normalize_year_of_birth_proximity(
-            min_value=min_year_of_birth_proximity, max_value=max_year_of_birth_proximity)
-        proximity_.normalize_genre_proximity(min_value=min_genre_proximity, max_value=max_genre_proximity)
-
-    # нормализация general_proximity
-    general_proximities: Set[float] = set()
-    for pair_name, proximity_ in artist_pairs_proximity.items():
-        general_proximities.update((proximity_.general_proximity,))
-
-    min_general_proximity = min(general_proximities)
-    max_general_proximity = max(general_proximities)
-    for pair_name, proximity_ in artist_pairs_proximity.items():
-        proximity_.normalize_general_proximity(min_value=min_general_proximity, max_value=max_general_proximity)
-
-    return artist_pairs_proximity
