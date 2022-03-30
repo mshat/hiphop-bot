@@ -1,6 +1,6 @@
 DEBUG = True  # Общий дебаг флаг. Если имеет значение False, отключаются все остальные флаги
 
-SHOW_PROXIMITY_MODE = True
+SHOW_PROXIMITY_MODE = False
 
 DEBUG_RECOMMENDER_SYSTEM = True  # Флаг для вывода отладочных сообщений рекоммендательной системы
 
