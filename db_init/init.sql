@@ -62,14 +62,14 @@ CREATE TABLE artists_themes(
     id SERIAL PRIMARY KEY,
     artist_id INT REFERENCES artist (id) NOT NULL,
     theme_id INT REFERENCES theme (id) NOT NULL
-)
+);
 
 -- table artists_genres
 CREATE TABLE artists_genres(
     id SERIAL PRIMARY KEY,
     artist_id INT REFERENCES artist (id) NOT NULL,
     genre_id INT REFERENCES genre (id) NOT NULL
-)
+);
 
 --table Artist_pairs_proximity
 CREATE TABLE artist_pairs_proximity (
