@@ -2,9 +2,9 @@ import re
 from typing import List, Dict, Union
 from hiphop_bot.dialog_bot.services.sentence_analyzer.word import BaseWord, Placeholder, Word
 from hiphop_bot.dialog_bot.services.sentence_analyzer.query import Query
-from hiphop_bot.dialog_bot.services.sentence_analyzer.argument import (ArtistArgument, SexArgument, GenreArgument, NumArgument,
-                                                                       ARTISTS, GENRES)
-from hiphop_bot.dialog_bot.models.data import GENDERS
+from hiphop_bot.dialog_bot.services.sentence_analyzer.argument import (ArtistArgument, SexArgument, GenreArgument,
+                                                                       NumArgument)
+from hiphop_bot.dialog_bot.models.data import GENRES, GENDERS, load_artists_aliases
 from hiphop_bot.dialog_bot.services.sentence_analyzer.word_parser import WordParser
 
 PLACEHOLDERS = {'artist': '*ARTISTNAME*', 'genre': '*GENRENAME*', 'gender': '*GENDER*', 'number': '*NUMBER*'}
@@ -67,7 +67,8 @@ class SentenceParser:
         return words
 
     def parse(self) -> Query:
-        artist_args = [ArtistArgument(arg) for arg in self.find_arguments(ARTISTS, PLACEHOLDERS['artist'])]
+        artists_aliases = load_artists_aliases()
+        artist_args = [ArtistArgument(arg) for arg in self.find_arguments(artists_aliases, PLACEHOLDERS['artist'])]
         genre_args = [GenreArgument(arg) for arg in self.find_arguments(GENRES, PLACEHOLDERS['genre'])]
         gender_args = [SexArgument(arg) for arg in self.find_arguments(GENDERS, PLACEHOLDERS['gender'])]
         number_args = [NumArgument(arg) for arg in self.find_number_arguments(PLACEHOLDERS['number'])]

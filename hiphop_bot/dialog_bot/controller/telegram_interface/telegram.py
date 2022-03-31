@@ -98,8 +98,12 @@ class TgBot:
         return view
 
 
-if __name__ == '__main__':
+def run_bot():
     tg_bot = TgBot()
     tg_bot.bot.polling(none_stop=True, interval=0)
+
+
+if __name__ == '__main__':
+    run_bot()
 
 

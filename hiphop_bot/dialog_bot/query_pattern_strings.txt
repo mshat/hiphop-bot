@@ -19,7 +19,7 @@
 Запрос: Вывести исполнителей указанного пола           | Паттерн: Аргументы: SexArgument: 1       | Условие: (artist OR recommend OR show) AND (NOT include AND NOT exclude)
 Запрос: Вывести исполнителей в диапазоне возраста      | Паттерн: Аргументы: NumArgument: 2       | Условие: (NOT exclude AND NOT include) AND (artist OR recommend OR show) AND (range OR (older AND younger))
 Запрос: Вывести исполнителей в указанном возрасте      | Паттерн: Аргументы: NumArgument: 1       | Условие: (NOT exclude AND NOT include) AND (artist OR recommend OR show) AND (older OR younger)
-Запрос: Вывести артистов в определённом жанре          | Паттерн: Аргументы: GenreArgument: 1     | Условие: genre OR recommend OR show
+Запрос: Вывести артистов в определённом жанре          | Паттерн: Аргументы: GenreArgument: 1     | Условие: (genre OR recommend OR show) OR who
 Запрос: Рекомендация по артисту                        | Паттерн: Аргументы: ArtistArgument: 1    | Условие: search OR like/how OR recommend OR show
 Запрос: Рекомендация по интересам                      | Паттерн: Аргументы:                      | Условие: ((search OR recommend OR show OR artist) AND (to me OR like)) OR (to me AND like) OR recommend
 Запрос: Вывести всех артистов в базе                   | Паттерн: Аргументы:                      | Условие: (all OR like/how) AND NOT genre AND (include OR artist OR show)

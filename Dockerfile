@@ -21,4 +21,4 @@ RUN pip install -e .
 COPY . .
 # COPY ./hiphop_bot/env .
 
-ENTRYPOINT ["python3", "hiphop_bot/dialog_bot/controller/telegram_interface/telegram.py"]
+ENTRYPOINT ["python3", "local_telegram_main.py"]

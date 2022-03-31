@@ -78,13 +78,17 @@ GENDERS = {
 
 }
 
-artists_names_aliases_model = ArtistsNamesAliasesModel()
-all_artists_names_aliases = artists_names_aliases_model.get_all()
-ARTISTS = {}
-for artist_aliases in all_artists_names_aliases:
-    artist_name = artist_aliases.artist_name
-    aliases = artist_aliases.aliases
-    ARTISTS.update({alias: artist_name for alias in aliases})
+
+def load_artists_aliases() -> dict | None:
+    artists_names_aliases_model = ArtistsNamesAliasesModel()
+    all_artists_names_aliases = artists_names_aliases_model.get_all()
+    artists = {}
+    for artist_aliases in all_artists_names_aliases:
+        artist_name = artist_aliases.artist_name
+        aliases = artist_aliases.aliases
+        artists.update({alias: artist_name for alias in aliases})
+    return artists
+
 
 GENRES = {
     'newschool': 'newschool',
