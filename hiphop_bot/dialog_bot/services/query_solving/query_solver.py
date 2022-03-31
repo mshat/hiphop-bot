@@ -47,7 +47,7 @@ class QuerySolver:
     def user(self):
         return self._user
 
-    def match_patterns(self, handlers_: List[QueryHandler], query: Query) -> DialogState | None:
+    def match_patterns(self, handlers_: List[QueryHandler], query: Query) -> QueryHandler | None:
         for handler in handlers_:
             match_res = handler.match_pattern(query)
 
@@ -57,17 +57,14 @@ class QuerySolver:
                 f"TO [{query.raw_sentence}] RESULT {match_res}"
             )
             if match_res:
-                next_state = handler.handle(query, self._user, self.dialog)
-                handler.remove_used_keywords_and_args(query)
-                self.dialog.matched_handler_name = handler.__class__.__name__
-                return next_state
+                return handler
         return None
 
-    def match_restart_patterns(self, query: Query) -> DialogState | None:
+    def match_restart_patterns(self, query: Query) -> QueryHandler | None:
         restart_handler = restart_handlers.RestartHandler()
         return self.match_patterns([restart_handler], query)
 
-    def match_like_dislike_patterns(self, query: Query) -> DialogState | None:
+    def match_like_dislike_patterns(self, query: Query) -> QueryHandler | None:
         handlers_ = [
             like_dislike_handlers.ExcludeDislikeHandler(),
             like_dislike_handlers.ExcludeLikeHandler(),
@@ -76,7 +73,7 @@ class QuerySolver:
         ]
         return self.match_patterns(handlers_, query)
 
-    def match_number_query_patterns(self, query: Query) -> DialogState | None:
+    def match_number_query_patterns(self, query: Query) -> QueryHandler | None:
         handlers_ = [
             number_question_handlers.NumberWithSexHandler(),
             number_question_handlers.NumberWithAgeRangeHandler(),
@@ -85,15 +82,12 @@ class QuerySolver:
         ]
         return self.match_patterns(handlers_, query)
 
-    def match_search_patterns(self, query: Query) -> DialogState | None:
+    def match_search_with_filters_pattern(self, query: Query) -> QueryHandler | None:
         search_handler = search_handlers.SearchByArtistHandler()
         if search_handler.match_pattern(query):
-            next_state = search_handler.handle(query, self._user, self.dialog)
-            self.dialog.matched_handler_name = search_handler.__class__.__name__
-            search_handler.remove_used_keywords_and_args(query)
-            self.solve_multi_filters(query)
-            return next_state
+            return search_handler
 
+    def match_search_patterns(self, query: Query) -> QueryHandler | None:
         handlers_ = [
             search_handlers.RecommendationHandler(),
             search_handlers.SearchBySexHandler(),
@@ -105,14 +99,14 @@ class QuerySolver:
         ]
         return self.match_patterns(handlers_, query)
 
-    def match_settings_patterns(self, query: Query) -> DialogState | None:
+    def match_settings_patterns(self, query: Query) -> QueryHandler | None:
         handlers_ = [
             settings_handlers.SetOutputLenHandler(),
             settings_handlers.RemoveFiltersHandler(),
         ]
         return self.match_patterns(handlers_, query)
 
-    def match_info_patterns(self, query: Query) -> DialogState | None:
+    def match_info_patterns(self, query: Query) -> QueryHandler | None:
         handlers_ = [
             info_handlers.InfoHandler(),
             # info_handlers.InfoAboutBotAlgorithmHandler(),
@@ -121,7 +115,7 @@ class QuerySolver:
         ]
         return self.match_patterns(handlers_, query)
 
-    def match_filter_patterns(self, query: Query) -> DialogState | None:
+    def match_filter_patterns(self, query: Query) -> QueryHandler | None:
         handlers_ = [
             filter_handlers.FilterBySexExcludeHandler(),
             filter_handlers.FilterBySexIncludeHandler(),
@@ -137,52 +131,72 @@ class QuerySolver:
 
     def solve_multi_filters(self, query: Query) -> None:
         while True:
-            next_state = self.match_filter_patterns(query)
-            if next_state is None:
+            matched_handler = self.match_filter_patterns(query)
+            if matched_handler is None:
                 break
+            self._run_handler(query, matched_handler)
+
+    def _run_handler(self, query: Query, handler: QueryHandler):
+        self.state = handler.handle(query, self._user, self.dialog)
+        handler.remove_used_keywords_and_args(query)
+        self.dialog.matched_handler_name = handler.__class__.__name__
 
     def solve(self, query: Query):
         # restart
-        next_state = self.match_restart_patterns(query)
-        if next_state:
-            self.state = next_state
+        matched_handler = self.match_restart_patterns(query)
+        if matched_handler:
+            self.dialog.reset_search_result()
+            self._run_handler(query, matched_handler)
             return QuerySolvingState.SOLVED
 
+        # search with filters
+        matched_handler = self.match_search_with_filters_pattern(query)
+        if matched_handler:
+            self.dialog.reset_search_result()
+            self._run_handler(query, matched_handler)
+            self.solve_multi_filters(query)
+            return QuerySolvingState.SOLVED
+
+        # filters
         if self.state in (DialogState.FILTER, DialogState.SEARCH):
-            # filters
-            next_state = self.match_filter_patterns(query)
-            if next_state:
-                self.state = next_state
+            matched_handler = self.match_filter_patterns(query)
+            if matched_handler:
+                self._run_handler(query, matched_handler)
                 return QuerySolvingState.SOLVED
 
         # like / dislike,
-        next_state = self.match_like_dislike_patterns(query)
-        if next_state:
-            self.state = next_state
+        matched_handler = self.match_like_dislike_patterns(query)
+        if matched_handler:
+            self.dialog.reset_search_result()
+            self._run_handler(query, matched_handler)
             return QuerySolvingState.SOLVED
 
         # number query
-        next_state = self.match_number_query_patterns(query)
-        if next_state:
-            self.state = next_state
+        matched_handler = self.match_number_query_patterns(query)
+        if matched_handler:
+            self.dialog.reset_search_result()
+            self._run_handler(query, matched_handler)
             return QuerySolvingState.SOLVED
 
         # search
-        next_state = self.match_search_patterns(query)
-        if next_state:
-            self.state = next_state
+        matched_handler = self.match_search_patterns(query)
+        if matched_handler:
+            self.dialog.reset_search_result()
+            self._run_handler(query, matched_handler)
             return QuerySolvingState.SOLVED
 
         # settings
-        next_state = self.match_settings_patterns(query)
-        if next_state:
-            self.state = next_state
+        matched_handler = self.match_settings_patterns(query)
+        if matched_handler:
+            self.dialog.reset_search_result()
+            self._run_handler(query, matched_handler)
             return QuerySolvingState.SOLVED
 
         # info
-        next_state = self.match_info_patterns(query)
-        if next_state:
-            self.state = next_state
+        matched_handler = self.match_info_patterns(query)
+        if matched_handler:
+            self.dialog.reset_search_result()
+            self._run_handler(query, matched_handler)
             return QuerySolvingState.SOLVED
 
         error_print(f'[UNRECOGNIZED SENTENCE] {query.arguments} {query.keywords} {query.words}')
