@@ -1,7 +1,6 @@
 # hiphop-bot
 
-![GitHub Classroom Workflow](../../workflows/GitHub%20Classroom%20Workflow/badge.svg?branch=master)
-![Deploy on Heroku]https://github.com/mshat/hiphop-bot/actions/workflows/docker-image.yml/badge.svg)
+![Deploy on Heroku](https://github.com/mshat/hiphop-bot/actions/workflows/docker-image.yml/badge.svg)
 
 
 ## Описание
