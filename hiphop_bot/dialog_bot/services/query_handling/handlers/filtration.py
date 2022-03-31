@@ -52,7 +52,10 @@ class FilterBySexExcludeHandler(FilterQueryHandler):
 class FilterByAgeRangeHandler(FilterQueryHandler):
     def __init__(self):
         super().__init__()
-        self.conditions = [Or('range'), OrMulti([And('older'), And('younger')])]
+        self.conditions = [
+            AndMulti([Or('range'), OrMulti([And('older'), And('younger')])]),
+            AndMulti([Or('exclude'), Or('include')])
+        ]
         self.required_arguments = {'NumArgument': 2}
         self.debug_msg = 'Фильтр по возрасту в диапазоне'
 
@@ -71,7 +74,10 @@ class FilterByAgeRangeHandler(FilterQueryHandler):
 class FilterByAgeIncludeHandler(FilterQueryHandler):
     def __init__(self):
         super().__init__()
-        self.conditions = [AndMulti([Or('older'), Or('younger')])]
+        self.conditions = [
+            And('include'),
+            AndMulti([Or('older'), Or('younger')])
+        ]
         self.required_argument_type = 'NumArgument'
         self.debug_msg = 'Фильтр по возрасту "включить"'
 
