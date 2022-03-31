@@ -14,7 +14,7 @@ layout = [
 
 class Gui:
     def __init__(self):
-        self.window = sg.Window('Hiphop dialog bot', layout, font=("Helvetica, 12")).Finalize()
+        self.window = sg.Window('Hiphop dialog bot', layout, font="Helvetica, 12").Finalize()
         self.window.move(self.window.CurrentLocation()[0], 0)
 
         self.controller = UserInterfaceController()
