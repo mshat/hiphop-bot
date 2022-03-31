@@ -1,4 +1,4 @@
-from hiphop_bot.dialog_bot.models.data import ARTISTS, GENRES, GENDERS
+from hiphop_bot.dialog_bot.models.data import GENRES, GENDERS, load_artists_aliases
 
 
 class ArgumentError(Exception): pass
@@ -39,7 +39,8 @@ class SexArgument(StrArgument):
 class ArtistArgument(StrArgument):
     def __init__(self, value: str):
         super().__init__(value)
-        if self.value.lower() not in ARTISTS.values():
+        artists_aliases = load_artists_aliases()
+        if self.value.lower() not in artists_aliases.values():
             raise ArtistArgumentError('This artist is not found ')
 
 
