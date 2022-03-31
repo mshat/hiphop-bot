@@ -75,9 +75,9 @@ class QuerySolver:
 
     def match_number_query_patterns(self, query: Query) -> QueryHandler | None:
         handlers_ = [
-            number_question_handlers.NumberWithSexHandler(),
-            number_question_handlers.NumberWithAgeRangeHandler(),
-            number_question_handlers.NumberWithAgeHandler(),
+            # number_question_handlers.NumberWithSexHandler(),
+            # number_question_handlers.NumberWithAgeRangeHandler(),
+            # number_question_handlers.NumberWithAgeHandler(),
             number_question_handlers.NumberHandler(),
         ]
         return self.match_patterns(handlers_, query)
