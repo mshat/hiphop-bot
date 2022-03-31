@@ -1,6 +1,6 @@
 # hiphop-bot
 
-![GitHub Classroom Workflow](../../workflows/GitHub%20Classroom%20Workflow/badge.svg?branch=master)
+![Deploy on Heroku](../../workflows/GitHub%20Classroom%20Workflow/badge.svg?branch=master)
 
 ## Описание
 Учебный проект: рекомендательная система для подбора музыкантов в жанре русского хип-хопа. 
