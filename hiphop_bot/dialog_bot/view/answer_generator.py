@@ -70,15 +70,17 @@ class AnswerGenerator:
             older=self.user.older_filter,
         )
 
-    def _generate_found_artists_str(self) -> str:
+    def _generate_found_artists_str(self) -> str | None:
         found_artists = self.dialog.found_artists
+        if len(found_artists) < 1:
+            return None
 
         if self.user.has_filters:
             filtered_artists = self._filter_search_result()
             if filtered_artists:
                 found_artists = filtered_artists
             else:
-                return 'Не найдено результатов, подходящих под фильтры'
+                return None
 
         res_str = self._generate_artists_message(found_artists)
 
@@ -118,7 +120,12 @@ class AnswerGenerator:
         if self.dialog.found_artists is not None:
             output.filters = self._generate_used_filters_str()
             res_str = self._generate_found_artists_str()
-            output.artists += res_str
+            if not res_str and output.filters:
+                output.info = 'Не найдено результатов, подходящих под фильтры'
+            elif not res_str:
+                output.info = 'Ничего не найдено :('
+            else:
+                output.artists += res_str
 
         if self.dialog.found_artists_with_proximity is not None:
             output.filters = self._generate_used_filters_str()
