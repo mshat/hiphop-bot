@@ -43,9 +43,12 @@ class View(ABC):
         if query_solving_res == QuerySolvingState.SOLVED:
             if DEBUG_OUTPUT and output.debug_msg:
                 self._send_message(output.debug_msg)
-            if output.artists:
+
+            if dialog.state in (DialogState.SEARCH, DialogState.FILTER):
                 if output.filters:
                     self._send_message(output.filters)
+
+            if output.artists:
                 self._send_message(output.artists)
 
                 # сообщение о том, что можно добавить фильтры
