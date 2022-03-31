@@ -82,20 +82,25 @@ class QuerySolver:
         ]
         return self.match_patterns(handlers_, query)
 
-    def match_search_with_filters_pattern(self, query: Query) -> QueryHandler | None:
+    def match_search_with_multi_filters_pattern(self, query: Query) -> QueryHandler | None:
         search_handler = search_handlers.SearchByArtistHandler()
         if search_handler.match_pattern(query):
             return search_handler
 
-    def match_search_patterns(self, query: Query) -> QueryHandler | None:
+    def match_search_with_filters_pattern(self, query: Query) -> QueryHandler | None:
         handlers_ = [
-            search_handlers.RecommendationHandler(),
             search_handlers.SearchBySexHandler(),
             search_handlers.SearchByAgeRangeHandler(),
             search_handlers.SearchByAgeHandler(),
             search_handlers.SearchByGenreHandler(),
+        ]
+        return self.match_patterns(handlers_, query)
+
+    def match_search_patterns(self, query: Query) -> QueryHandler | None:
+        handlers_ = [
             search_handlers.ShowAllArtistsHandler(),
             genres_handlers.ShowAllGenresHandler(),
+            search_handlers.RecommendationHandler(),
         ]
         return self.match_patterns(handlers_, query)
 
@@ -149,12 +154,19 @@ class QuerySolver:
             self._run_handler(query, matched_handler)
             return QuerySolvingState.SOLVED
 
-        # search with filters
-        matched_handler = self.match_search_with_filters_pattern(query)
+        # search with multi filters
+        matched_handler = self.match_search_with_multi_filters_pattern(query)
         if matched_handler:
             self.dialog.reset_search_result()
             self._run_handler(query, matched_handler)
             self.solve_multi_filters(query)
+            return QuerySolvingState.SOLVED
+
+        # search with filter
+        matched_handler = self.match_search_with_filters_pattern(query)
+        if matched_handler:
+            self.dialog.reset_search_result()
+            self._run_handler(query, matched_handler)
             return QuerySolvingState.SOLVED
 
         # filters
