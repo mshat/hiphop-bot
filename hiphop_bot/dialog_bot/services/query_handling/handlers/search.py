@@ -93,7 +93,10 @@ class SearchByAgeHandler(SearchQueryHandler):
 class SearchByGenreHandler(SearchQueryHandler):
     def __init__(self):
         super().__init__()
-        self.conditions = [Or('genre'), Or('recommend'), Or('show')]
+        self.conditions = [
+            OrMulti([Or('genre'), Or('recommend'), Or('show')]),
+            Or('who'),
+        ]
         self.required_argument_type = 'GenreArgument'
         self.debug_msg = 'Вывести артистов в определённом жанре'
 
