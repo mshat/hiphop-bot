@@ -16,6 +16,7 @@ class QueryHandler(ABC):
     required_arguments: Dict[str, int] | None
     debug_msg: str
     _recommender_system: RecommenderSystem
+    _next_state: DialogState | None
 
     @abstractmethod
     def __init__(self):
@@ -28,6 +29,8 @@ class QueryHandler(ABC):
         self.used_args = []
 
         self._recommender_system = RecommenderSystem()
+
+        self._next_state = None
 
     @property
     def pattern(self):

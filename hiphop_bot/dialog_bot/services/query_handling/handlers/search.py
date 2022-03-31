@@ -14,10 +14,12 @@ from hiphop_bot.dialog_bot.config import SHOW_PROXIMITY_MODE
 
 
 class SearchQueryHandler(QueryHandler, ABC):
-    NEXT_STATE = DialogState.SEARCH
+    def __init__(self):
+        super().__init__()
+        self._next_state = DialogState.SEARCH
 
 
-class SearchBySexHandler(QueryHandler):
+class SearchBySexHandler(SearchQueryHandler):
     def __init__(self):
         super().__init__()
         self.conditions = [Or('artist'), Or('recommend'), Or('show')]
@@ -29,10 +31,10 @@ class SearchBySexHandler(QueryHandler):
         artists = self._recommender_system.get_all_artists()
         artists = self._recommender_system.filter_artists(artists, sex=sex.value.value)
         dialog.found_artists = artists
-        return DialogState.SEARCH
+        return self._next_state
 
 
-class SearchByAgeRangeHandler(QueryHandler):
+class SearchByAgeRangeHandler(SearchQueryHandler):
     def __init__(self):
         super().__init__()
         self.conditions = [
@@ -53,10 +55,10 @@ class SearchByAgeRangeHandler(QueryHandler):
             dialog.found_artists = artists
         else:
             return DialogState.START
-        return DialogState.SEARCH
+        return self._next_state
 
 
-class SearchByAgeHandler(QueryHandler):
+class SearchByAgeHandler(SearchQueryHandler):
     def __init__(self):
         super().__init__()
         self.conditions = [
@@ -80,10 +82,10 @@ class SearchByAgeHandler(QueryHandler):
             artists = self._recommender_system.filter_artists(artists, older=age)
 
         dialog.found_artists = artists
-        return DialogState.SEARCH
+        return self._next_state
 
 
-class SearchByGenreHandler(QueryHandler):
+class SearchByGenreHandler(SearchQueryHandler):
     def __init__(self):
         super().__init__()
         self.conditions = [Or('genre'), Or('recommend'), Or('show')]
@@ -97,10 +99,10 @@ class SearchByGenreHandler(QueryHandler):
             dialog.found_artists = artists
         else:
             dialog.info = 'Артистов в этом жанре нет в базе :('
-        return DialogState.SEARCH
+        return self._next_state
 
 
-class SearchByArtistHandler(QueryHandler):
+class SearchByArtistHandler(SearchQueryHandler):
     def __init__(self):
         super().__init__()
         self.conditions = [Or('search'), Or('like/how'), Or('recommend'), Or('show')]
@@ -115,10 +117,10 @@ class SearchByArtistHandler(QueryHandler):
         else:
             dialog.found_artists = [artist_.artist for artist_ in artists]
 
-        return DialogState.SEARCH
+        return self._next_state
 
 
-class RecommendationHandler(QueryHandler):
+class RecommendationHandler(SearchQueryHandler):
     def __init__(self):
         super().__init__()
         self.conditions = [
@@ -140,10 +142,10 @@ class RecommendationHandler(QueryHandler):
         )
 
         dialog.info = f'Список лайков: {", ".join(user.likes)}'
-        return DialogState.SEARCH
+        return self._next_state
 
 
-class ShowAllArtistsHandler(QueryHandler):
+class ShowAllArtistsHandler(SearchQueryHandler):
     def __init__(self):
         super().__init__()
         self.conditions = [
@@ -162,4 +164,4 @@ class ShowAllArtistsHandler(QueryHandler):
             dialog.info += by_the_way_msg
         else:
             dialog.info = by_the_way_msg
-        return DialogState.SEARCH
+        return self._next_state

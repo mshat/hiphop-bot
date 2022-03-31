@@ -13,6 +13,7 @@ class ShowAllGenresHandler(QueryHandler):
         super().__init__()
         self.conditions = [And('genre'), AndMulti([Or('all'), Or('like/how'), Or('tree')])]
         self.debug_msg = 'Вывести все жанры в базе'
+        self._next_state = DialogState.START
 
     def handle(self, query: Query, user: User, dialog: Dialog):
         genres_tree = """
@@ -43,7 +44,7 @@ class ShowAllGenresHandler(QueryHandler):
 """
         dialog.info = 'Дерево жанров русской хип-хоп музыки по моей версии:\n'
         dialog.info += f'{genres_tree}\n'
-        return DialogState.START
+        return self._next_state
 
 
 

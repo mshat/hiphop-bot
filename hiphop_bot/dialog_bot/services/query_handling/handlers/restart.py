@@ -11,7 +11,8 @@ class RestartHandler(QueryHandler):
         super().__init__()
         self.conditions = [And('restart')]
         self.debug_msg = 'Рестарт'
+        self._next_state = DialogState.START
 
     def handle(self, query: Query, user: User, dialog: Dialog):
         dialog.info = 'Готово!'
-        return DialogState.START
+        return self._next_state

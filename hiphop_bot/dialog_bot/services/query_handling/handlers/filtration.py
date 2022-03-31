@@ -13,7 +13,9 @@ from hiphop_bot.dialog_bot.services.query_handling.query_handler import QueryHan
 
 
 class FilterQueryHandler(QueryHandler, ABC):
-    NEXT_STATE = DialogState.FILTER
+    def __init__(self):
+        super().__init__()
+        self._next_state = DialogState.FILTER
 
 
 class FilterBySexIncludeHandler(FilterQueryHandler):
@@ -28,7 +30,7 @@ class FilterBySexIncludeHandler(FilterQueryHandler):
         dialog.debug_message = f'Убрать всех, кроме {sex.value.value} пола'
 
         user.add_sex_filter(sex.value)
-        return self.NEXT_STATE
+        return self._next_state
 
 
 class FilterBySexExcludeHandler(FilterQueryHandler):
@@ -44,7 +46,7 @@ class FilterBySexExcludeHandler(FilterQueryHandler):
 
         sex = SexFilter.MALE if sex_arg.value == SexFilter.FEMALE else SexFilter.FEMALE
         user.add_sex_filter(sex)
-        return self.NEXT_STATE
+        return self._next_state
 
 
 class FilterByAgeRangeHandler(FilterQueryHandler):
@@ -63,7 +65,7 @@ class FilterByAgeRangeHandler(FilterQueryHandler):
             user.older_filter = from_age
             user.younger_filter = to_age
 
-        return self.NEXT_STATE
+        return self._next_state
 
 
 class FilterByAgeIncludeHandler(FilterQueryHandler):
@@ -82,7 +84,7 @@ class FilterByAgeIncludeHandler(FilterQueryHandler):
         elif 'older' in query.query_tag_structure:
             dialog.debug_message = f'фильтр от {age} лет'
             user.older_filter = age
-        return self.NEXT_STATE
+        return self._next_state
 
 
 class FilterByAgeExcludeHandler(FilterQueryHandler):
@@ -101,7 +103,7 @@ class FilterByAgeExcludeHandler(FilterQueryHandler):
         elif 'older' in query.query_tag_structure:
             dialog.debug_message = f'фильтр до {age} лет'
             user.younger_filter = age
-        return self.NEXT_STATE
+        return self._next_state
 
 
 class FilterByMembersCountHandler(FilterQueryHandler):
@@ -119,10 +121,10 @@ class FilterByMembersCountHandler(FilterQueryHandler):
         elif 'duet' in tags:
             user.group_type_filter = GroupTypeFilter.DUET
         else:
-            return self.NEXT_STATE
+            return self._next_state
 
         dialog.debug_message = f'оставить {user.group_type_filter}'
-        return self.NEXT_STATE
+        return self._next_state
 
 
 class RemoveResultLenFilterHandler(FilterQueryHandler):
@@ -137,7 +139,7 @@ class RemoveResultLenFilterHandler(FilterQueryHandler):
     def handle(self, query: Query, user: User, dialog: Dialog):
         user.max_output_len = 1000
 
-        return self.NEXT_STATE
+        return self._next_state
 
 
 class RemoveFiltersHandler(FilterQueryHandler):
@@ -148,7 +150,7 @@ class RemoveFiltersHandler(FilterQueryHandler):
 
     def handle(self, query: Query, user: User, dialog: Dialog):
         user.set_all_filters_to_default()
-        return self.NEXT_STATE
+        return self._next_state
 
 
 class FilterOutputLenHandler(FilterQueryHandler):
@@ -165,4 +167,4 @@ class FilterOutputLenHandler(FilterQueryHandler):
         output_len = get_arguments_by_type(query, 'NumArgument')[-1]
 
         user.max_output_len = int(output_len.value)
-        return self.NEXT_STATE
+        return self._next_state

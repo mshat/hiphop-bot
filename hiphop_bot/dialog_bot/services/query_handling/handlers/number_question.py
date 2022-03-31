@@ -1,4 +1,5 @@
 from __future__ import annotations
+from abc import ABC
 from hiphop_bot.dialog_bot.services.query_handling.query_handler import QueryHandler
 from hiphop_bot.dialog_bot.services.query_solving.dialog import Dialog, DialogState
 from hiphop_bot.dialog_bot.services.query_solving.user import User
@@ -11,7 +12,13 @@ from hiphop_bot.dialog_bot.services.query_handling.tag_condition import (AndTagC
 from hiphop_bot.dialog_bot.services.query_handling.handling_tools import get_arguments_by_type
 
 
-class NumberWithSexHandler(QueryHandler):
+class NumberQueryHandler(QueryHandler, ABC):
+    def __init__(self):
+        super().__init__()
+        self._next_state = DialogState.NUMBER
+
+
+class NumberWithSexHandler(NumberQueryHandler):
     def __init__(self):
         super().__init__()
         self.conditions = [Or('number'), Or('how many')]
@@ -29,7 +36,7 @@ class NumberWithSexHandler(QueryHandler):
         return DialogState.NUMBER
 
 
-class NumberWithAgeRangeHandler(QueryHandler):
+class NumberWithAgeRangeHandler(NumberQueryHandler):
     def __init__(self):
         super().__init__()
         self.conditions = [
@@ -51,10 +58,10 @@ class NumberWithAgeRangeHandler(QueryHandler):
             dialog.info = f'Количество исполнителей от {from_age} до {to_age} лет: {len(artists)}'
         else:
             return dialog.state
-        return DialogState.NUMBER
+        return self._next_state
 
 
-class NumberWithAgeHandler(QueryHandler):
+class NumberWithAgeHandler(NumberQueryHandler):
     def __init__(self):
         super().__init__()
         self.conditions = [AndMulti([Or('number'), Or('how many')]), AndMulti([Or('older'), Or('younger')])]
@@ -73,10 +80,10 @@ class NumberWithAgeHandler(QueryHandler):
         elif 'older' in query.query_tag_structure:
             artists = self._recommender_system.filter_artists(artists, older=age)
             dialog.info = f'Количество артистов от {age} лет: {len(artists)}'
-        return DialogState.NUMBER
+        return self._next_state
 
 
-class NumberHandler(QueryHandler):
+class NumberHandler(NumberQueryHandler):
     def __init__(self):
         super().__init__()
         self.conditions = [Or('number'), Or('how many')]
@@ -85,4 +92,4 @@ class NumberHandler(QueryHandler):
     def handle(self, query: Query, user: User, dialog: Dialog):
         artists = self._recommender_system.get_all_artists()
         dialog.info = f'В базе {len(artists)} исполнителя'
-        return DialogState.NUMBER
+        return self._next_state

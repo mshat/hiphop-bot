@@ -1,4 +1,5 @@
 from __future__ import annotations
+from abc import ABC
 from hiphop_bot.dialog_bot.services.query_handling.query_handler import QueryHandler
 from hiphop_bot.dialog_bot.services.query_solving.dialog import Dialog, DialogState
 from hiphop_bot.dialog_bot.services.query_solving.user import User
@@ -11,7 +12,13 @@ from hiphop_bot.dialog_bot.services.query_handling.handling_tools import get_arg
 from hiphop_bot.dialog_bot.models import const
 
 
-class InfoHandler(QueryHandler):
+class InfoQueryHandler(QueryHandler, ABC):
+    def __init__(self):
+        super().__init__()
+        self._next_state = DialogState.INFO
+
+
+class InfoHandler(InfoQueryHandler):
     def __init__(self):
         super().__init__()
         self.conditions = [Or('talk about'), Or('about'), Or('info')]
@@ -39,10 +46,10 @@ class InfoHandler(QueryHandler):
                 dialog.info = f'Возраст: {artist.age}\n'
                 dialog.info += f'Пол: {sex}'
 
-        return DialogState.INFO
+        return self._next_state
 
 
-class InfoAboutBotHandler(QueryHandler):
+class InfoAboutBotHandler(InfoQueryHandler):
     def __init__(self):
         super().__init__()
         self.conditions = [Or('you'), Or('who'), AndNot('opportunities')]
@@ -51,10 +58,10 @@ class InfoAboutBotHandler(QueryHandler):
     def handle(self, query: Query, user: User, dialog: Dialog):
         dialog.debug_message = 'Информация о боте'
         dialog.info = 'Я - ваш помощник в мире русского хипхопа'
-        return DialogState.INFO
+        return self._next_state
 
 
-class InfoAboutBotOpportunitiesHandler(QueryHandler):
+class InfoAboutBotOpportunitiesHandler(InfoQueryHandler):
     def __init__(self):
         super().__init__()
         self.conditions = [Or('opportunities')]
@@ -63,10 +70,10 @@ class InfoAboutBotOpportunitiesHandler(QueryHandler):
     def handle(self, query: Query, user: User, dialog: Dialog):
         dialog.debug_message = 'Возможности бота'
         dialog.info = const.BOT_OPPORTUNITIES
-        return DialogState.INFO
+        return self._next_state
 
 
-class InfoAboutBotAlgorithmHandler(QueryHandler):
+class InfoAboutBotAlgorithmHandler(InfoQueryHandler):
     def __init__(self):
         super().__init__()
         self.conditions = [AndMulti([Or('talk about'), Or('like/how')]), And('you'), And('algorithm')]
@@ -75,4 +82,4 @@ class InfoAboutBotAlgorithmHandler(QueryHandler):
     def handle(self, query: Query, user: User, dialog: Dialog):
         dialog.debug_message = 'Алгоритм бота'
         dialog.info = const.BOT_ALGORITHM
-        return DialogState.INFO
+        return self._next_state

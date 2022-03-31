@@ -8,12 +8,10 @@ from hiphop_bot.dialog_bot.services.query_handling.tag_condition import (AndTagC
 from hiphop_bot.dialog_bot.services.query_handling.handling_tools import get_arguments_by_type
 
 
-class ExcludeDislikeHandler(QueryHandler):
+class LikeQueryHandler(QueryHandler):
     def __init__(self):
         super().__init__()
-        self.conditions = [And('dislike'), And('exclude')]
-        self.required_arguments = {'ArtistArgument': ALL}
-        self.debug_msg = 'Лайк'
+        self._next_state = DialogState.LIKE
 
     def handle(self, query: Query, user: User, dialog: Dialog):
         liked_artists = get_arguments_by_type(query, 'ArtistArgument')
@@ -21,10 +19,18 @@ class ExcludeDislikeHandler(QueryHandler):
         for artist in liked_artists:
             user.add_like(artist)
         dialog.info = f'Поставлен лайк: {", ".join(liked_artists)}'
-        return DialogState.LIKE
+        return self._next_state
 
 
-class LikeHandler(ExcludeDislikeHandler):
+class ExcludeDislikeHandler(LikeQueryHandler):
+    def __init__(self):
+        super().__init__()
+        self.conditions = [And('dislike'), And('exclude')]
+        self.required_arguments = {'ArtistArgument': ALL}
+        self.debug_msg = 'Лайк'
+
+
+class LikeHandler(LikeQueryHandler):
     def __init__(self):
         super().__init__()
         self.conditions = [And('like')]
@@ -32,12 +38,10 @@ class LikeHandler(ExcludeDislikeHandler):
         self.debug_msg = 'Лайк'
 
 
-class ExcludeLikeHandler(QueryHandler):
+class DislikeQueryHandler(QueryHandler):
     def __init__(self):
         super().__init__()
-        self.conditions = [And('like'), And('exclude')]
-        self.required_arguments = {'ArtistArgument': ALL}
-        self.debug_msg = 'Дизлайк'
+        self._next_state = DialogState.DISLIKE
 
     def handle(self, query: Query, user: User, dialog: Dialog):
         disliked_artists = get_arguments_by_type(query, 'ArtistArgument')
@@ -45,10 +49,18 @@ class ExcludeLikeHandler(QueryHandler):
         for artist in disliked_artists:
             user.add_dislike(artist)
         dialog.info = f'Поставлен дизлайк: {", ".join(disliked_artists)}'
-        return DialogState.DISLIKE
+        return self._next_state
 
 
-class DislikeHandler(ExcludeLikeHandler):
+class ExcludeLikeHandler(DislikeQueryHandler):
+    def __init__(self):
+        super().__init__()
+        self.conditions = [And('like'), And('exclude')]
+        self.required_arguments = {'ArtistArgument': ALL}
+        self.debug_msg = 'Дизлайк'
+
+
+class DislikeHandler(DislikeQueryHandler):
     def __init__(self):
         super().__init__()
         self.conditions = [And('dislike')]
