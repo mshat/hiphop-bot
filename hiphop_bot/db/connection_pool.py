@@ -10,6 +10,7 @@ from dotenv import dotenv_values
 
 
 if 'MODE' in os.environ:
+    debug_print(DEBUG, f'[INFO] ENV MODE: {os.environ["MODE"]}')
     if os.environ['MODE'] == 'docker':
         DB_USER = os.environ['DB_USER']
         DB_PASSWORD = os.environ['DB_PASSWORD']
@@ -25,6 +26,7 @@ if 'MODE' in os.environ:
     else:
         raise Exception('DB environ values error!')
 else:
+    debug_print(DEBUG, f'[INFO] No key "MODE" in env')
     current_dir = os.path.dirname(os.path.realpath(__file__))
     ENV = dotenv_values(f"{current_dir}/../env")
     if ENV['MODE'] == 'local':
