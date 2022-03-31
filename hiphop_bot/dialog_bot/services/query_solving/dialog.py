@@ -39,8 +39,7 @@ class Dialog:
 
     def reset(self):
         if self.state not in (DialogState.SEARCH, DialogState.FILTER):
-            self._found_artists = None
-            self._found_artists_with_proximity = None
+            self.reset_search_result()
         self.info = None
         self.debug_message = None
         self.matched_handler_name = None
