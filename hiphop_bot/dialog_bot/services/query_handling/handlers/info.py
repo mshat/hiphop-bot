@@ -38,6 +38,7 @@ class InfoHandler(InfoQueryHandler):
                 dialog.info = f'Дуэт {artist.name}'
             else:
                 dialog.info = f'Группа {artist.name}'
+
             if artist.group_members_number > 1:
                 dialog.info = f'Возраст фронтмэна: {artist.age}\n'
                 dialog.info += f'Пол фронтмэна: {sex}\n'
@@ -45,6 +46,8 @@ class InfoHandler(InfoQueryHandler):
             else:
                 dialog.info = f'Возраст: {artist.age}\n'
                 dialog.info += f'Пол: {sex}'
+
+            dialog.info += f'\nЖанры: {", ".join([genre.name for genre in artist.genres])}'
 
         return self._next_state
 
