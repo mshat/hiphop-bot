@@ -4,12 +4,10 @@ from hiphop_bot.dialog_bot.services.query_solving.dialog import DialogState
 
 
 class ConsoleView(View):
-    LINE_LEN = 120
-
-    def __init__(self):
+    def __init__(self, line_len: int = 120):
         super().__init__()
-
-        self._hello_message = f"{'='*self.LINE_LEN}\n{self._hello_message}\n{'='*self.LINE_LEN}"
+        self._line_len = line_len
+        self._hello_message = f"{'='*self._line_len}\n{self._hello_message}\n{'='*self._line_len}"
 
     def get_input_prompt(self, dialog: Dialog):
         input_prompt = 'ФИЛЬТР -> ' if dialog.state == DialogState.FILTER else 'ЗАПРОС -> '
