@@ -66,6 +66,11 @@ class Gui:
         self.window.close()
 
 
-gui = Gui()
-gui.show()
+def run():
+    gui = Gui()
+    gui.show()
+
+
+if __name__ == '__main__':
+    run()
 
