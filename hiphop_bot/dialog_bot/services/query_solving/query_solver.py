@@ -115,8 +115,8 @@ class QuerySolver:
     def match_info_patterns(self, query: Query) -> DialogState | None:
         handlers_ = [
             info_handlers.InfoHandler(),
-            info_handlers.InfoAboutBotAlgorithmHandler(),
-            info_handlers.InfoAboutBotHandler(),
+            # info_handlers.InfoAboutBotAlgorithmHandler(),
+            # info_handlers.InfoAboutBotHandler(),
             info_handlers.InfoAboutBotOpportunitiesHandler(),
         ]
         return self.match_patterns(handlers_, query)
