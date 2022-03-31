@@ -35,6 +35,6 @@
 
 **Нужно добавить файл hiphop_bot/hiphop_bot/env** со следующим содержанием: TG_TOKEN=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX, где вместо Х **токен вашего бота**.
 
-Инструкция по его созданию: https://core.telegram.org/bots#6-botfather
+Инструкция по регистрации бота: https://core.telegram.org/bots#6-botfather
 
 
