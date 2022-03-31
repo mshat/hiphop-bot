@@ -22,7 +22,10 @@ class SearchQueryHandler(QueryHandler, ABC):
 class SearchBySexHandler(SearchQueryHandler):
     def __init__(self):
         super().__init__()
-        self.conditions = [Or('artist'), Or('recommend'), Or('show')]
+        self.conditions = [
+            AndMulti([Or('artist'), Or('recommend'), Or('show')]),
+            AndMulti([AndNot('include'), AndNot('exclude')])
+        ]
         self.required_argument_type = 'SexArgument'
         self.debug_msg = 'Вывести исполнителей указанного пола'
 
@@ -38,6 +41,7 @@ class SearchByAgeRangeHandler(SearchQueryHandler):
     def __init__(self):
         super().__init__()
         self.conditions = [
+            AndMulti([AndNot('exclude'), AndNot('include')]),
             AndMulti([Or('artist'), Or('recommend'), Or('show')]),
             AndMulti([Or('range'), OrMulti([And('older'), And('younger')])])
         ]
@@ -62,6 +66,7 @@ class SearchByAgeHandler(SearchQueryHandler):
     def __init__(self):
         super().__init__()
         self.conditions = [
+            AndMulti([AndNot('exclude'), AndNot('include')]),
             AndMulti([Or('artist'), Or('recommend'), Or('show')]),
             AndMulti([Or('older'), Or('younger')])
         ]
@@ -127,7 +132,9 @@ class RecommendationHandler(SearchQueryHandler):
             OrMulti([
                 AndMulti([Or('search'), Or('recommend'), Or('show'), Or('artist')]), AndMulti([Or('to me'), Or('like')])
             ]),
-            OrMulti([And('to me'), And('like')])]
+            OrMulti([And('to me'), And('like')]),
+            Or('recommend')
+        ]
         self.debug_msg = 'Рекомендация по интересам'
 
     def handle(self, query: Query, user: User, dialog: Dialog):
