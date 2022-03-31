@@ -81,7 +81,7 @@ class RecommenderSystem(metaclass=Singleton):
             recommendations_: List[RecommendedArtist] = self.recommend_by_seed(artist_name, disliked_artists, debug)
             artists_recommendations[artist_name] = [artist.artist for artist in recommendations_]
 
-        recommendations_by_likes: List[_Artist] = []
+        recommendations_by_likes: Dict[str, _Artist] = OrderedDict()
         max_recommendation_len = max(map(len, artists_recommendations.values()))
         for i in range(max_recommendation_len):
             for artist, recommended_artists in artists_recommendations.items():
@@ -91,8 +91,8 @@ class RecommenderSystem(metaclass=Singleton):
                         continue
                     if recommended_artist.name in liked_artists:
                         continue
-                    recommendations_by_likes.append(recommended_artist)
-        return recommendations_by_likes
+                    recommendations_by_likes.update({recommended_artist.name: recommended_artist})
+        return list(recommendations_by_likes.values())
 
     def get_all_artists(self) -> List[_Artist]:
         return self._artist_model.get_all()

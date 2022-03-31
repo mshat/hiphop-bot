@@ -45,6 +45,6 @@ class RemoveFiltersHandler(SettingsQueryHandler):
         self.debug_msg = 'Удалить все фильтры'
 
     def handle(self, query: Query, user: User, dialog: Dialog):
-        user.set_all_filters_to_default()
+        user.reset_filters()
         dialog.info = f'Все фильтры удалены'
         return self._next_state

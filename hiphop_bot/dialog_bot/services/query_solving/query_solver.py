@@ -41,6 +41,9 @@ class QuerySolver:
         # Если по запросу поиска ничего не было найдено, состояние диалога сбрасыватся до START, тк фильтровать нечего
         if val == DialogState.SEARCH and not self.dialog.artists_were_found:
             self.dialog.state = DialogState.START
+
+        if val != DialogState.FILTER:
+            self.user.reset_filters()
         debug_print(DEBUG_QUERY_HANDLER, f'[QUERY_HANDLER] new dialog state: {self.dialog.state}')
 
     @property
@@ -151,6 +154,7 @@ class QuerySolver:
         matched_handler = self.match_restart_patterns(query)
         if matched_handler:
             self.dialog.reset_search_result()
+            self.user
             self._run_handler(query, matched_handler)
             return QuerySolvingState.SOLVED
 

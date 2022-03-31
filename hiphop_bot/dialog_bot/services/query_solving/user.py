@@ -92,7 +92,7 @@ class User:
     def sex_filter(self) -> SexFilter | None:
         return self._sex_filter
 
-    def set_all_filters_to_default(self):
+    def reset_filters(self):
         self._group_type_filter = GroupTypeFilter.ANY
         self._younger_filter = None
         self._older_filter = None
