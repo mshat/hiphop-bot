@@ -59,6 +59,9 @@ class Dialog:
 
     @found_artists.setter
     def found_artists(self, artists: List[_Artist]):
+        if len(artists) < 1:
+            self._found_artists = []
+            return
         self._check_artists(artists)
         self._found_artists = artists
 
