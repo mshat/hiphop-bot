@@ -1,9 +1,9 @@
 from typing import Tuple, List, Callable
-from abc import ABC
 from psycopg2 import errors
 from hiphop_bot.db.connection_pool import Connection, CONNECTION_POOL
 from hiphop_bot.dialog_bot.services.tools.debug_print import error_print, debug_print
 from hiphop_bot.dialog_bot.config import DEBUG_MODEL
+from hiphop_bot.singleton import Singleton
 
 
 class ModelError(Exception): pass
@@ -14,7 +14,7 @@ class DeleteError(Exception): pass
 class NotFoundError(Exception): pass
 
 
-class Model(ABC):
+class Model(metaclass=Singleton):
     def __init__(self, table_name, model_class: Callable, get_all_query: str = None):
         self._table_name = table_name
         self._check_if_table_exists()

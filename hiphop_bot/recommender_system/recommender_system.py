@@ -1,6 +1,6 @@
 from typing import List, Dict, Set
 from collections import OrderedDict
-from hiphop_bot.recommender_system.singleton import Singleton
+from hiphop_bot.singleton import Singleton
 from hiphop_bot.recommender_system.config import MIN_PROXIMITY
 from hiphop_bot.recommender_system.artist_filterer import filter_artists
 from hiphop_bot.recommender_system.models.artist_pairs_proximity import ArtistsPairsProximityModel, Proximity
