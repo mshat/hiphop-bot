@@ -138,7 +138,7 @@ update_frame = sg.Frame('Update', [
     [sg.Button(button_text='Обновить')],
     [
         sg.Table(
-            values=[[artist] for artist in ArtistModel().get_artist_names()],
+            values=[[artist] for artist in sorted(ArtistModel().get_artist_names())],
             max_col_width=40, def_col_width=40, auto_size_columns=False, headings=['Имя'],
             justification="left", key='_artists_', enable_events=True)
     ],
@@ -169,7 +169,6 @@ class Gui:
         self.window = sg.Window('Artist Model Redactor', layout, font=("Helvetica, 13"), size=(1400, 770)).Finalize()
         self.window.move(self.window.CurrentLocation()[0], 0)
         self.artist_model = ArtistModel()
-        self.artists_table = self.window['_artists_']
         self._selected_artist: str | None = None
 
     def _do_after_time(self, func: Callable, time: float = 1):
@@ -297,11 +296,12 @@ class Gui:
 
         raw_aliases: str = values['_aliases_']
         if raw_aliases:
-            raw_aliases = raw_aliases.replace('\n', ' ')
+            raw_aliases = raw_aliases.strip()
+            raw_aliases = raw_aliases.strip(',')
+            raw_aliases = raw_aliases.replace('\n', ' ').replace(',,', ',')
             aliases = raw_aliases.split(',')
             aliases = [alias.strip() for alias in aliases]
-            aliases.append(values['_name_'])
-            aliases = list(set(aliases))
+            aliases = [values['_name_']] + aliases
 
         return name, year_of_birth, members_num, themes, gender, genres, streaming_services_names,\
                streaming_service_links, aliases
