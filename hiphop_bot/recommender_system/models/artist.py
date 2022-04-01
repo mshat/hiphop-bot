@@ -99,6 +99,9 @@ class _Artist(ModelObject):
 
     @aliases.setter
     def aliases(self, aliases: List[str]):
+        if not aliases or len(aliases) < 1:
+            self._aliases = []
+            return
         assert isinstance(aliases[0], str)
         self._aliases = aliases
 
@@ -223,7 +226,7 @@ class ArtistModel(Model):
             genres: List[str],
             streaming_service_names: List[str],
             streaming_service_links: List[str],
-            artist_name_aliases: List[str],
+            artist_name_aliases_: List[str],
             update_if_exist=False,
             recalc_artists_pairs_proximity=True
     ):
@@ -239,10 +242,12 @@ class ArtistModel(Model):
         genres = [genre_.lower() for genre_ in genres]
         streaming_service_names = list(map(str.lower, streaming_service_names))
         streaming_service_links = list(map(str.lower, streaming_service_links))
-        artist_name_aliases = [alias.lower() for alias in artist_name_aliases]
+        artist_name_aliases = []
+        [artist_name_aliases.append(a.lower()) for a in artist_name_aliases_ if a not in artist_name_aliases]
         existing_record = self.get_by_name(name)
         if existing_record:
             if update_if_exist:
+                # TODO при обновлении записи может произойти ошибка, а удаление уже будет закоммичено
                 self.delete(existing_record.id)
                 assert self.get_by_name(name) is None
             else:
