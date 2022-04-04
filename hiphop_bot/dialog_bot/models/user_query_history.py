@@ -1,8 +1,6 @@
 import datetime
 from typing import List, Tuple, Dict
-from hiphop_bot.db.abstract_model import Model, ModelUniqueViolationError, ModelError
-from hiphop_bot.dialog_bot.services.tools.debug_print import debug_print
-from hiphop_bot.dialog_bot.config import DEBUG_MODEL
+from hiphop_bot.base_models.abstract_model import Model, ModelUniqueViolationError, ModelError
 from hiphop_bot.dialog_bot.models.tg_user import _TelegramUser, TelegramUserModel
 from hiphop_bot.dialog_bot.services.query_solving.query_solver import QuerySolvingState
 

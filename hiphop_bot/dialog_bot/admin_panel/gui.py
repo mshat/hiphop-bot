@@ -4,7 +4,7 @@ from typing import Callable, List
 import validators
 import PySimpleGUI as sg
 from hiphop_bot.recommender_system.models.artist import ArtistModel, _Artist  # Импортируется для аннотаций
-from hiphop_bot.db.abstract_model import AlreadyInTheDatabaseError
+from hiphop_bot.base_models.abstract_model import AlreadyInTheDatabaseError
 
 
 THEMES_FIELDS = ['_hard-gangsta_', '_workout_theme_', '_soft-gangsta_', '_feelings_', '_fun_', '_art_', '_conscious_']

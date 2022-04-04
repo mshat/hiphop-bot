@@ -1,5 +1,5 @@
 from typing import List
-from hiphop_bot.db.abstract_model import Model, ModelUniqueViolationError, ModelError
+from hiphop_bot.base_models.abstract_model import Model, ModelUniqueViolationError, ModelError
 
 
 class _TelegramUser:

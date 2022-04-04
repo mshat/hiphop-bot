@@ -1,5 +1,5 @@
 from typing import List, Iterable
-from hiphop_bot.db.abstract_model import Model, ModelUniqueViolationError, ModelError, DeleteError
+from hiphop_bot.base_models.abstract_model import Model, ModelUniqueViolationError, ModelError, DeleteError
 from hiphop_bot.base_models.model_object_class import BaseModelObject
 from hiphop_bot.dialog_bot.services.tools.debug_print import debug_print
 from hiphop_bot.dialog_bot.config import DEBUG_MODEL

@@ -1,6 +1,6 @@
 from typing import List, Tuple, Dict
 from copy import deepcopy
-from hiphop_bot.db.abstract_model import Model, ModelError
+from hiphop_bot.base_models.abstract_model import Model, ModelError
 
 
 class _GenreTreeConverter:

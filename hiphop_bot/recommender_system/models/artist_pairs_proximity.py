@@ -1,5 +1,5 @@
 from typing import List, Tuple, Dict, Iterable
-from hiphop_bot.db.abstract_model import Model, ModelError, DeleteError
+from hiphop_bot.base_models.abstract_model import Model, ModelError, DeleteError
 from hiphop_bot.base_models.model_object_class import BaseModelObject
 from psycopg2 import errors
 from hiphop_bot.dialog_bot.services.tools.debug_print import error_print, debug_print

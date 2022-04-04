@@ -1,5 +1,5 @@
 from typing import List, Dict, Tuple
-from hiphop_bot.db.abstract_model import Model, AlreadyInTheDatabaseError, InsertError, DeleteError
+from hiphop_bot.base_models.abstract_model import Model, AlreadyInTheDatabaseError, InsertError, DeleteError
 from hiphop_bot.base_models.model_object_class import BaseModelObject
 from hiphop_bot.recommender_system.models.genre import GenreModel
 from hiphop_bot.dialog_bot.services.tools.debug_print import error_print

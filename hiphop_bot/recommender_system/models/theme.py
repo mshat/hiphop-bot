@@ -1,5 +1,5 @@
 from typing import List, Tuple
-from hiphop_bot.db.abstract_model import Model
+from hiphop_bot.base_models.abstract_model import Model
 from hiphop_bot.base_models.model_object_class import ModelObject
 
 
